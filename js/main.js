@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
 import { buildPark, PARK_OFF } from './park.js?v=8';
+import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=2';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
@@ -718,7 +719,7 @@ function renderHousePanel(h) {
   $$('[data-hi]').forEach((b) => (b.onclick = () => { const it = ITEMS.find((i) => i.id === b.dataset.hi); if (H.items.includes(it.id)) return; if (S.coins < it.cost) { toast(`محتاج ${it.cost - S.coins} 🪙 كمان`); return; } S.coins -= it.cost; H.items.push(it.id); save(); updPills(); buildItem(h, it.id); sfx.win(); renderHousePanel(h); decorDone(); }));
 }
 function openHouse(h) { renderHousePanel(h); $('#hpTitle').textContent = S.house && S.house.id === h.id ? '🏠 بيتي' : '🏡 بيت للبيع'; openPanel('houseP'); }
-function goHome() { const h = myHouse(); if (!h) { toast('لسه معندكش بيت — روح الحي السكني 🏡'); return; } if (PL.mode === 'drive') exitCar(); if (PL.mode === 'drive') return; PL.x = h.x + 2; PL.z = h.z + h.dir * 9; PL.y = 0.12; PL.yaw = h.dir > 0 ? Math.PI : 0; camYaw = PL.yaw; updCam(0, true); closePanel(); toast('🏠 أهلاً بيك في بيتك'); }
+function goHome() { const h = myHouse(); if (!h) { toast('لسه معندكش بيت — روح الحي السكني 🏡'); return; } if (PL.mode === 'drive') exitCar(); if (PL.mode === 'drive') return; if (WORLD !== 'city') { closePanel(); teleport('city', h.x + 2, h.z + h.dir * 9, h.dir > 0 ? Math.PI : 0, 'رجوع للبيت…'); return; } PL.x = h.x + 2; PL.z = h.z + h.dir * 9; PL.y = 0.12; PL.yaw = h.dir > 0 ? Math.PI : 0; camYaw = PL.yaw; updCam(0, true); closePanel(); toast('🏠 أهلاً بيك في بيتك'); }
 
 // ================= beach shells =================
 const SHELLS = [];
@@ -758,6 +759,7 @@ function completeMission() {
 function updGoal() {
   const m = curMis(), el = $('#goal');
   if (WORLD === 'park' && PARK) { el.innerHTML = PARK.goal(); return; }
+  if (WORLD === 'home') { el.innerHTML = HOME && HOME.editable ? '🏠 بيتي من جوه<small>قرّب من أي حاجة وغيّرها، أو افتح 🎨 ديكور البيت</small>' : '🏡 بيت للبيع<small>اشتري البيت عشان تغيّر الديكور</small>'; return; }
   if (!m) { el.innerHTML = '⭐ استكشف المدينة<small>لِم العملات 🪙 والجواهر 💎 المستخبية</small>'; return; }
   el.innerHTML = `⭐ ${m.name}<small>${m.desc()}</small>` + (m.prog ? `<div class="bar"><i style="width:${m.prog() * 100}%"></i></div>` : '');
 }
@@ -779,6 +781,7 @@ function nextLine() {
 function interactables() {
   if (ACT) return [{ x: PL.x, z: PL.z, r: 99, label: '🚪 انزل', act: endAct }];
   if (WORLD === 'park') return PL.mode === 'walk' ? PARK.interactables() : [];
+  if (WORLD === 'home') return PL.mode === 'walk' && HOME ? HOME.interactables() : [];
   const L = [];
   if (PL.mode === 'walk') L.push({ x: 90, z: 4, r: 5, label: '🎡 ادخل مدينة الملاهي الكبيرة', act: goPark });
   if (PL.mode === 'walk') {
@@ -787,7 +790,7 @@ function interactables() {
     L.push({ x: teacher.x, z: teacher.z, r: 3.5, label: '💬 كلّم أبلة نور', act: talkTeacher });
     L.push({ x: LAND.mall.x - 4, z: LAND.mall.z, r: 4.5, label: '🛍️ ادخل المول', act: () => toast('🛍️ المول هيفتح أبوابه قريب!') });
     if (!RIDE.on) L.push({ x: 90, z: 83, r: 5, label: '🎡 اركب العجلة', act: startRide });
-    for (const h of HOUSES) { const mine = S.house && S.house.id === h.id; L.push({ x: h.x + 3.2, z: h.z + h.dir * 7.4, r: 3.5, label: mine ? '🏠 زيّن بيتي' : '🏡 شوف البيت', act: () => openHouse(h) }); }
+    for (const h of HOUSES) { const mine = S.house && S.house.id === h.id; L.push({ x: h.x + 3.2, z: h.z + h.dir * 7.4, r: 3.5, label: mine ? '🏠 زيّن بيتي' : '🏡 شوف البيت', act: () => openHouse(h) }); L.push({ x: h.x, z: h.z + h.dir * 5.6, r: 2.2, label: mine ? '🚪 ادخل بيتي' : '🚪 اتفرج على البيت من جوه', act: () => enterHouse(h) }); }
   }
   return L;
 }
@@ -869,6 +872,7 @@ function collide(o, r) {
     if (m === pl) o.x -= pl; else if (m === pr) o.x += pr; else if (m === pu) o.z -= pu; else o.z += pd; hit = true;
   }
   for (const c of circles) { const dx = o.x - c.x, dz = o.z - c.z, d = Math.hypot(dx, dz), m = r + c.r; if (d < m && d > 0.001) { o.x += (dx / d) * (m - d); o.z += (dz / d) * (m - d); hit = true; } }
+  if (WORLD === 'home' && HOME) { const bx = HOME.HX - 0.45, bz = HOME.HZ - 0.45; if (o.x < HOME_OFF - bx) { o.x = HOME_OFF - bx; hit = true; } if (o.x > HOME_OFF + bx) { o.x = HOME_OFF + bx; hit = true; } if (o.z < -bz) { o.z = -bz; hit = true; } if (o.z > bz) { o.z = bz; hit = true; } return hit; }
   if (WORLD === 'park') { const B = PARK.B; if (o.x < PARK_OFF - B) { o.x = PARK_OFF - B; hit = true; } if (o.x > PARK_OFF + B) { o.x = PARK_OFF + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
   const lr = landR(o.x, o.z), d = Math.hypot(o.x, o.z); if (d > lr) { o.x *= lr / d; o.z *= lr / d; hit = true; }
   return hit;
@@ -946,7 +950,7 @@ function updCollect(now) {
   for (let n = BALLOONS.length - 1; n >= 0; n--) { const b = BALLOONS[n]; b.m.position.y = Math.sin(now / 500 + n) * 0.3; if (Math.hypot(PL.x - b.x, PL.z - b.z) < r2 + 0.8) { scene.remove(b.m); BALLOONS.splice(n, 1); S.bal.push(b.id); save(); sfx.coin(); toast(`🎈 بالونة ${S.bal.length} من 3`); updGoal(); if (S.bal.length >= 3 && curMis() && curMis().id === 'balloons') completeMission(); } }
 }
 function updMission(now) {
-  const m = curMis(); let tgt = WORLD === 'park' ? null : m && m.at && m.at();
+  const m = curMis(); let tgt = WORLD !== 'city' ? null : m && m.at && m.at();
   pin.visible = ring.visible = !!tgt;
   if (tgt) {
     pin.position.set(tgt.x, (m.id === 'car' ? 3 : 3.6) + Math.sin(now / 300) * 0.35, tgt.z); pin.rotation.y = now / 600;
@@ -964,12 +968,12 @@ function updMission(now) {
 const ray = new THREE.Raycaster(), camT = new THREE.Vector3(), camW = new THREE.Vector3();
 let shake = 0;
 function updCam(dt, snap) {
-  const drive = PL.mode === 'drive', dist = RIDE.on ? 30 : drive ? 10.5 : 6.2, hgt = drive ? 1.6 : 1.3;
+  const drive = PL.mode === 'drive', dist = RIDE.on ? 30 : drive ? 10.5 : WORLD === 'home' ? 5.4 : 6.2, hgt = drive ? 1.6 : 1.3;
   if (RIDE.on) { camYaw = angLerp(camYaw, 0, dt * 2); camPitch = lerp(camPitch, 0.12, dt * 2); }
   let distA = dist; if (ACT && ACT.cam) { const c = ACT.cam; distA = c.dist; camPitch = lerp(camPitch, c.pitch, dt * 2); if (c.yaw !== undefined) camYaw = angLerp(camYaw, c.yaw, dt * 2); if (c.follow && performance.now() - lastDrag > 1200) camYaw = angLerp(camYaw, PL.yaw, dt * 2.5); }
   camT.set(PL.x, PL.y + hgt, PL.z);
   const cp = Math.cos(camPitch), dir = new THREE.Vector3(-Math.sin(camYaw) * cp, Math.sin(camPitch), -Math.cos(camYaw) * cp);
-  ray.set(camT, dir); ray.far = distA; const hit = RIDE.on || ACT || WORLD === 'park' ? null : ray.intersectObjects(camBlock, false)[0];
+  ray.set(camT, dir); ray.far = distA; const hit = RIDE.on || ACT || WORLD !== 'city' ? null : ray.intersectObjects(camBlock, false)[0];
   const d = hit ? Math.max(1.5, hit.distance - 0.6) : distA;
   camW.copy(camT).addScaledVector(dir, d); if (camW.y < 0.6) camW.y = 0.6;
   if (snap) camera.position.copy(camW); else camera.position.lerp(camW, 1 - Math.exp(-dt * 12));
@@ -994,6 +998,7 @@ const mini = $('#mini'), mg = mini.getContext('2d');
 function drawMini() {
   const W = mini.width, s = 1.6;
   mg.save(); mg.clearRect(0, 0, W, W); mg.beginPath(); mg.arc(W / 2, W / 2, W / 2, 0, 7); mg.clip();
+  if (WORLD === 'home' && HOME) { const s3 = 9; mg.fillStyle = '#3b2a63'; mg.fillRect(0, 0, W, W); mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - HOME_OFF) * s3, -PL.z * s3); HOME.drawMap(mg, s3); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
   if (WORLD === 'park') { mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - PARK_OFF) * s, -PL.z * s); PARK.drawMap(mg, s); NET.dots(mg, s, PARK_OFF); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
   mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-PL.x * s, -PL.z * s);
   drawWorld(mg, s);
@@ -1011,6 +1016,7 @@ function drawMini() {
 function drawBig() {
   const c = $('#bm'), g = c.getContext('2d'), W = c.width, s = W / 380;
   g.save(); g.clearRect(0, 0, W, W); g.translate(W / 2, W / 2);
+  if (WORLD === 'home' && HOME) { const s3 = W / 22; HOME.drawMap(g, s3); g.translate((PL.x - HOME_OFF) * s3, PL.z * s3); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
   if (WORLD === 'park') { const s2 = W / 230; PARK.drawMap(g, s2); NET.dots(g, s2, PARK_OFF, true); g.font = '900 30px Cairo, Tajawal, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; for (const [n, x, z] of PARK.LABELS) { g.lineWidth = 7; g.strokeStyle = '#fff'; g.strokeText(n, x * s2, z * s2); g.fillStyle = '#5a20b8'; g.fillText(n, x * s2, z * s2); } g.translate((PL.x - PARK_OFF) * s2, PL.z * s2); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
   drawWorld(g, s);
   g.font = '900 34px Cairo, Tajawal, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -1164,7 +1170,7 @@ document.addEventListener('click', (e) => {
 });
 function goToFriend(o) {
   const inPark = o.x > PARK_OFF / 2, x = o.x + 1.6, z = o.z + 1.6;
-  if (inPark !== (WORLD === 'park')) { teleport(inPark ? 'park' : 'city', x, z, 0, 'رايحين لصاحبك…'); setTimeout(() => toast(`🎉 وصلت عند ${o.name}!`), 1200); return; }
+  if (inPark !== (WORLD === 'park') || WORLD === 'home') { teleport(inPark ? 'park' : 'city', x, z, 0, 'رايحين لصاحبك…'); setTimeout(() => toast(`🎉 وصلت عند ${o.name}!`), 1200); return; }
   if (ACT) endAct(true); if (RIDE.on) RIDE.on = false; if (PL.mode === 'drive') exitCarForce();
   PL.x = x; PL.z = z; PL.y = (o.k.position.y || 0) + 0.3; PL.vy = 0; camYaw = PL.yaw; updCam(0, true); toast(`🎉 وصلت عند ${o.name}!`); bubble(kid, 'wave'); NET.send({ t: 'e', k: 'wave' });
 }
@@ -1227,7 +1233,7 @@ function startVs(ch) {
     if (ch.ev === 'stars') { const R = seeded(ch.seed), used = new Set(); while (VS.stars.length < D.count) { const along = R() < 0.5, k = G[1 + Math.floor(R() * 3)], t = -96 + R() * 192, key = Math.round(t / 6) + ',' + k + along; if (used.has(key) || Math.abs(t - k) < 8) continue; used.add(key); const s = new THREE.Mesh(vsStarGeo, vsStarMat); const off = (R() - 0.5) * 6; along ? s.position.set(k + off, 1.4, t) : s.position.set(t, 1.4, k + off); scene.add(s); VS.stars.push(s); } }
     else vsShowCp();
   };
-  if (WORLD === 'park') { teleport('city', 0, 0, 0, 'رايحين للتحدي…'); setTimeout(place, 900); } else place();
+  if (WORLD !== 'city') { teleport('city', 0, 0, 0, 'رايحين للتحدي…'); setTimeout(place, 900); } else place();
   $('#vsbar').classList.add('on'); sfx.win(); bubble(kid, 'race');
 }
 function vsShowCp() { const c = VS.cps[VS.cp]; if (!c) { cpRing.visible = cpBeam.visible = false; return; } const pv = VS.cp ? VS.cps[VS.cp - 1] : { x: VS.sx, z: VS.sz }; cpRing.position.set(c.x, 3.4, c.z); cpRing.rotation.set(0, Math.atan2(c.x - pv.x, c.z - pv.z), 0); cpBeam.position.set(c.x, 30, c.z); cpRing.visible = cpBeam.visible = true; }
@@ -1293,7 +1299,24 @@ function music() { if (!AC) return; const play = S.sound && state.play !== undef
 
 
 // ================= scene switching + attraction system =================
-let WORLD = 'city', PARK = null, ACT = null, goalT = 0;
+let WORLD = 'city', PARK = null, HOME = null, ACT = null, goalT = 0;
+function ensureHome() { if (!HOME) HOME = buildHome({ THREE, scene, ctex, solids, sfx, toast, save, grad, openDecor }); return HOME; }
+function enterHouse(h) {
+  if (PL.mode !== 'walk') return; const mine = !!(S.house && S.house.id === h.id); ensureHome();
+  HOME.enter(mine ? S.house : { in: { wall: h.id % 6, floor: h.id % 5, f: {} } }, mine, () => { teleport('city', h.x, h.z + h.dir * 7, h.dir > 0 ? 0 : Math.PI, 'خارجين من البيت…'); });
+  teleport('home', HOME.SPAWN.x, HOME.SPAWN.z, HOME.SPAWN.yaw, mine ? 'داخلين بيتك…' : 'داخلين نتفرج…');
+  setTimeout(() => toast(mine ? '🏠 أهلاً بيك في بيتك! قرّب من أي حاجة وغيّرها' : '🏡 ده شكل البيت من جوه — اشتريه عشان تغيّر الديكور'), 1300);
+}
+function openDecor() {
+  if (!HOME || !HOME.editable) return; const st = HOME.state(), el = $('#hpBody'); $('#hpTitle').textContent = '🎨 ديكور البيت';
+  el.innerHTML = `<div class="hsec">🎨 لون الحيطان</div><div class="sw">${HOME.WALLS.map((c, n) => `<button style="background:${c}" class="${(st.wall || 0) === n ? 'on' : ''}" data-dw="${n}"></button>`).join('')}</div>
+  <div class="hsec">🧱 الأرضية</div><div class="hitems">${HOME.FLOORS.map((f, n) => `<button class="hit ${(st.floor || 0) === n ? 'own' : ''}" data-df="${n}">${f.name}</button>`).join('')}</div>
+  ${HOME.SLOTS.map((sl) => `<div class="hsec">${sl.icon} ${sl.name}</div><div class="hitems">${sl.names.map((nm, n) => `<button class="hit ${HOME.val(sl.id) === n ? 'own' : ''}" data-ds="${sl.id}" data-dv="${n}">${nm}</button>`).join('')}</div>`).join('')}`;
+  $$('[data-dw]').forEach((b) => (b.onclick = () => { HOME.setWall(+b.dataset.dw); openDecor(); }));
+  $$('[data-df]').forEach((b) => (b.onclick = () => { HOME.setFloor(+b.dataset.df); openDecor(); }));
+  $$('[data-ds]').forEach((b) => (b.onclick = () => { HOME.setSlot(b.dataset.ds, +b.dataset.dv); openDecor(); }));
+  if (state.panel !== 'houseP') openPanel('houseP');
+}
 async function ensurePark() {
   if (PARK) return PARK;
   PARK = buildPark({ THREE, scene, toon, ctex, signTex, plane, bake, makeKid, solids, circles, PL, sfx, toast, S, save, updPills, platform, grad, inst, instModel, NATURE, getKid: () => kid, animKid, startAct, inAct: () => !!ACT, input: actInput, shake: (v) => (shake = v), music: (on) => (carouselMusic = on), miniGame, openPrizes, treat: () => {}, goCity });
@@ -1308,7 +1331,7 @@ function startAct(ctrl) {
 function endAct(silent) { if (!ACT) return; const a = ACT; ACT = null; $('#ctl').classList.remove('drive'); $('#pedals').classList.remove('on'); a.ctrl.end(); PL.vy = 0; PL.ground = true; }
 function teleport(world, x, z, yaw, label) {
   $('#fadeTx').textContent = label; $('#fade').classList.add('on');
-  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
+  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
 }
 function goPark() { teleport('park', PARK_OFF, 96, Math.PI, 'جاري تحميل مدينة الملاهي…'); setTimeout(() => toast('🎡 أهلاً بيك في مدينة الملاهي!'), 1400); }
 function goCity() { teleport('city', 90, 2, 0, 'رجوع للمدينة…'); }
@@ -1538,7 +1561,7 @@ const MapSelectionManager = {
     if (m.SceneName === 'lolo-drive') { setTimeout(() => (location.href = '../lolo-drive/'), 450); return true; }
     setTimeout(async () => {
       let sp = m.spawn;
-      if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD === 'park' || PL.x > 1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
+      if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD !== 'city' || PL.x > 1000 || PL.x < -1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
       if (ACT) endAct(true);
       if (sp === 'home') { const h = myHouse(); sp = h ? { x: h.x + 2, z: h.z + h.dir * 9, yaw: h.dir > 0 ? Math.PI : 0 } : null; }
       if (sp === 'street') { CAR.x = 3.5; CAR.z = -100; CAR.yaw = 0; CAR.v = 0; syncCar(0); sp = { x: CAR.x - 2.5, z: CAR.z, yaw: 0 }; }
@@ -1674,5 +1697,5 @@ Promise.allSettled([
   try { await renderer.compileAsync(scene, camera); } catch (e) { try { renderer.compile(scene, camera); } catch (x) {} }
   draw(); ready = true; setTimeout(() => $('#load').classList.add('hide'), 150);
 });
-window.LOLO_WORLD = { get PARK() { return PARK; }, get WORLD() { return WORLD; }, get ACT() { return ACT; }, goPark, goCity, startAct, endAct, MAP_DATA, MapSelectionManager, RIDE, OB, SH: SHELLS, census: () => { const c = {}; scene.traverse((o) => { if (!o.isMesh || !o.visible) return; let p = o, vis = true; while (p) { if (!p.visible) vis = false; p = p.parent; } if (!vis) return; const top = (() => { let q = o; while (q.parent && q.parent !== scene) q = q.parent; return q; })(); const k = (o.isInstancedMesh ? 'I:' : '') + (top === o ? 'direct:' + o.geometry.type + ':' + o.material.type : 'group:' + (top.name || top.type) + ':' + top.children.length); c[k] = (c[k] || 0) + 1; }); return JSON.stringify(Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 25)); }, prof: () => { renderer.info.autoReset = false; renderer.info.reset(); const t = performance.now(); renderer.render(scene, camera); const r = Object.assign({ ms: +(performance.now() - t).toFixed(1) }, renderer.info.render); renderer.info.autoReset = true; let meshes = 0, inst = 0, shadowCasters = 0; scene.traverse((o) => { if (o.isMesh) { meshes++; if (o.isInstancedMesh) inst++; if (o.castShadow && o.visible) shadowCasters++; } }); return Object.assign(r, { meshes, inst, shadowCasters, camBlock: camBlock.length, solids: solids.length, circles: circles.length }); }, dbgInst: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.name) { o.geometry.computeBoundingBox(); const m = new THREE.Matrix4(); o.getMatrixAt(0, m); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(p, q, sc); const bb = o.geometry.boundingBox; out.push([o.material.name, o.count, [bb.min.x, bb.min.y, bb.max.x, bb.max.y].map((v) => +v.toFixed(2)), [p.x, p.y, p.z, sc.x, sc.y, sc.z].map((v) => +v.toFixed(2)), o.visible, o.material.visible, o.material.opacity, o.material.transparent, o.material.alphaTest]); } }); return JSON.stringify(out); }, dbgLeaves: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.alphaTest) { const m = o.material; out.push([m.name, o.count, m.alphaTest, m.side, m.map && m.map.image && m.map.image.width, m.color && m.color.getHexString(), o.geometry.attributes.color ? 'vc' : '', o.geometry.attributes.position.count]); } }); return JSON.stringify(out); }, info: () => JSON.stringify(renderer.info.render), setCam: (y, p) => { camYaw = y; camPitch = p; lastDrag = performance.now() + 1e5; }, S, PL, CAR, MIS, begin, enterCar, exitCar, completeMission, get state() { return state; }, LAND };
+window.LOLO_WORLD = { get HOME() { return HOME; }, enterHouse, HOUSES, PL, get S() { return S; }, get PARK() { return PARK; }, get WORLD() { return WORLD; }, get ACT() { return ACT; }, goPark, goCity, startAct, endAct, MAP_DATA, MapSelectionManager, RIDE, OB, SH: SHELLS, census: () => { const c = {}; scene.traverse((o) => { if (!o.isMesh || !o.visible) return; let p = o, vis = true; while (p) { if (!p.visible) vis = false; p = p.parent; } if (!vis) return; const top = (() => { let q = o; while (q.parent && q.parent !== scene) q = q.parent; return q; })(); const k = (o.isInstancedMesh ? 'I:' : '') + (top === o ? 'direct:' + o.geometry.type + ':' + o.material.type : 'group:' + (top.name || top.type) + ':' + top.children.length); c[k] = (c[k] || 0) + 1; }); return JSON.stringify(Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 25)); }, prof: () => { renderer.info.autoReset = false; renderer.info.reset(); const t = performance.now(); renderer.render(scene, camera); const r = Object.assign({ ms: +(performance.now() - t).toFixed(1) }, renderer.info.render); renderer.info.autoReset = true; let meshes = 0, inst = 0, shadowCasters = 0; scene.traverse((o) => { if (o.isMesh) { meshes++; if (o.isInstancedMesh) inst++; if (o.castShadow && o.visible) shadowCasters++; } }); return Object.assign(r, { meshes, inst, shadowCasters, camBlock: camBlock.length, solids: solids.length, circles: circles.length }); }, dbgInst: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.name) { o.geometry.computeBoundingBox(); const m = new THREE.Matrix4(); o.getMatrixAt(0, m); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(p, q, sc); const bb = o.geometry.boundingBox; out.push([o.material.name, o.count, [bb.min.x, bb.min.y, bb.max.x, bb.max.y].map((v) => +v.toFixed(2)), [p.x, p.y, p.z, sc.x, sc.y, sc.z].map((v) => +v.toFixed(2)), o.visible, o.material.visible, o.material.opacity, o.material.transparent, o.material.alphaTest]); } }); return JSON.stringify(out); }, dbgLeaves: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.alphaTest) { const m = o.material; out.push([m.name, o.count, m.alphaTest, m.side, m.map && m.map.image && m.map.image.width, m.color && m.color.getHexString(), o.geometry.attributes.color ? 'vc' : '', o.geometry.attributes.position.count]); } }); return JSON.stringify(out); }, info: () => JSON.stringify(renderer.info.render), setCam: (y, p) => { camYaw = y; camPitch = p; lastDrag = performance.now() + 1e5; }, S, PL, CAR, MIS, begin, enterCar, exitCar, completeMission, get state() { return state; }, LAND };
 window.__LW = { NET, PL, S, curLook, VS, GUIDE };
