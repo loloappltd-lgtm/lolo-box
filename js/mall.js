@@ -15,8 +15,9 @@ export const MALL_OFF = 6000;
 // ---------------- product catalogue (fictional models, virtual prices in coins) ----------------
 export const DEPTS = {
   phones: { n: 'الموبايلات', i: '📱' }, computers: { n: 'اللابتوب والكمبيوتر', i: '💻' }, tv: { n: 'الشاشات', i: '📺' },
-  home: { n: 'الأجهزة المنزلية', i: '🧊' }, gaming: { n: 'الألعاب', i: '🎮' },
+  home: { n: 'الأجهزة المنزلية', i: '🧊' }, gaming: { n: 'الألعاب', i: '🎮' }, acc: { n: 'الإكسسوارات', i: '🎧' },
 };
+export const STORES = { btech: 'بي تك', dream: 'دريم 2000' };
 export const PRODUCTS = [
   { id: 'p1', d: 'phones', k: 'phone', n: 'موبايل نوفا X', price: 180, c: '#2b2f48', specs: { 'الشاشة': '6.7 بوصة', 'الكاميرا': '108 ميجا', 'البطارية': '5000 ملي أمبير', 'المساحة': '256 جيجا' }, f: ['كاميرا ليلية', 'شحن سريع', 'مقاوم للمية'] },
   { id: 'p2', d: 'phones', k: 'phone', n: 'موبايل لايت 5', price: 90, c: '#ff6fb5', specs: { 'الشاشة': '6.1 بوصة', 'الكاميرا': '48 ميجا', 'البطارية': '4000 ملي أمبير', 'المساحة': '128 جيجا' }, f: ['خفيف', 'ألوان مبهجة', 'سعر مناسب'] },
@@ -39,6 +40,25 @@ export const PRODUCTS = [
   { id: 'g2', d: 'gaming', k: 'controller', n: 'ذراع ألعاب لاسلكي', price: 50, c: '#7a4dff', specs: { 'التوصيل': 'لاسلكي', 'البطارية': '20 ساعة', 'الاهتزاز': 'متاح', 'الزراير': 'قابلة للبرمجة' }, f: ['مريح في الإيد', 'ألوان', 'شحن USB-C'] },
   { id: 'g3', d: 'gaming', k: 'headset', n: 'سماعة جيمنج', price: 60, c: '#ff4fc8', specs: { 'الصوت': 'محيطي', 'المايك': 'عازل للدوشة', 'التوصيل': 'لاسلكي', 'البطارية': '30 ساعة' }, f: ['مريحة', 'إضاءة', 'كلام واضح مع صحابك'] },
 ];
+// store 2: Dream 2000 (LOLO_MALL_DREAM_2026)
+PRODUCTS.push(...[
+  { id: 'd1', d: 'phones', k: 'phone', n: 'موبايل دريم ستار 12', price: 150, c: '#1fb8ff', specs: { 'الشاشة': '6.5 بوصة', 'الكاميرا': '64 ميجا', 'البطارية': '5000 ملي أمبير', 'المساحة': '256 جيجا' }, f: ['ألوان زاهية', 'شحن سريع', 'صوت ستيريو'] },
+  { id: 'd2', d: 'phones', k: 'phone', n: 'موبايل سكاي 7', price: 110, c: '#18c95a', specs: { 'الشاشة': '6.3 بوصة', 'الكاميرا': '50 ميجا', 'البطارية': '4500 ملي أمبير', 'المساحة': '128 جيجا' }, f: ['خفيف', 'بطارية طويلة', 'سعر كويس'] },
+  { id: 'd3', d: 'phones', k: 'phone', n: 'موبايل برو ماكس 15', price: 230, c: '#2b2f37', specs: { 'الشاشة': '6.9 بوصة', 'الكاميرا': '200 ميجا', 'البطارية': '5500 ملي أمبير', 'المساحة': '512 جيجا' }, f: ['تصوير 8K', 'شاشة 120 هرتز', 'مقاوم للمية'] },
+  { id: 'd4', d: 'phones', k: 'charger', n: 'شاحن لاسلكي سريع', price: 25, c: '#ffffff', specs: { 'القدرة': '15 وات', 'النوع': 'لاسلكي', 'المنفذ': 'USB-C', 'الإضاءة': 'مؤشر أخضر' }, f: ['تحط الموبايل وبس', 'آمن', 'بيشحن السماعات كمان'] },
+  { id: 'd5', d: 'computers', k: 'laptop', n: 'لابتوب جيمنج فينوم', price: 300, c: '#1d2030', rgb: true, specs: { 'الشاشة': '15.6 بوصة 144 هرتز', 'المعالج': '10 أنوية', 'الرامات': '16 جيجا', 'كارت الشاشة': 'جيمنج' }, f: ['كيبورد ملون', 'مراوح قوية', 'صوت محيطي'] },
+  { id: 'd6', d: 'computers', k: 'laptop', n: 'لابتوب بيزنس برو 15', price: 240, c: '#8f96a8', specs: { 'الشاشة': '15 بوصة', 'المعالج': '8 أنوية', 'الرامات': '16 جيجا', 'البطارية': '14 ساعة' }, f: ['خفيف للشغل', 'بصمة إصبع', 'كاميرا واضحة'] },
+  { id: 'd7', d: 'computers', k: 'monitor', n: 'شاشة وكيبورد للمكتب', price: 130, c: '#2b2f37', specs: { 'المقاس': '24 بوصة', 'الدقة': 'Full HD', 'الكيبورد': 'لاسلكي', 'المنافذ': 'HDMI' }, f: ['مريحة للمذاكرة', 'ألوان حلوة', 'سهلة التركيب'] },
+  { id: 'd8', d: 'acc', k: 'headset', n: 'سماعة رأس لاسلكية', price: 55, c: '#2b2f37', specs: { 'الصوت': 'عزل للدوشة', 'البطارية': '40 ساعة', 'التوصيل': 'بلوتوث', 'الوزن': 'خفيفة' }, f: ['مريحة', 'بتتطبق', 'صوت نقي'] },
+  { id: 'd9', d: 'acc', k: 'speaker', n: 'سماعة بلوتوث محمولة', price: 35, c: '#18c95a', specs: { 'القدرة': '20 وات', 'البطارية': '12 ساعة', 'المية': 'مقاومة', 'التوصيل': 'بلوتوث' }, f: ['صوت عالي', 'إضاءة', 'تتعلق في الشنطة'] },
+  { id: 'd10', d: 'acc', k: 'watch', n: 'ساعة ذكية سبورت', price: 70, c: '#1fb8ff', specs: { 'الشاشة': '1.8 بوصة', 'البطارية': '7 أيام', 'المية': 'مقاومة', 'الحساسات': 'نبض وخطوات' }, f: ['تعد خطواتك', 'إشعارات', 'أسورة ملونة'] },
+  { id: 'd11', d: 'acc', k: 'case', n: 'جراب موبايل ملون', price: 10, c: '#ff4fc8', specs: { 'الخامة': 'سيليكون', 'الحماية': 'ضد الوقوع', 'الألوان': '8 ألوان', 'الوزن': 'خفيف' }, f: ['ناعم في الإيد', 'بيحمي الكاميرا', 'سهل التركيب'] },
+  { id: 'd12', d: 'acc', k: 'powerbank', n: 'باور بانك 20000', price: 30, c: '#2b2f37', specs: { 'السعة': '20000 ملي أمبير', 'المنافذ': '3', 'الشحن': 'سريع', 'الشاشة': 'نسبة الشحن' }, f: ['يشحن الموبايل 4 مرات', 'للرحلات', 'آمن'] },
+  { id: 'd13', d: 'gaming', k: 'console', n: 'جهاز ألعاب نيو بلاي', price: 240, c: '#1d2030', specs: { 'التخزين': '1 تيرا', 'الدقة': '4K', 'الأذرع': 'ذراع واحد', 'اللعب': 'أونلاين' }, f: ['تحميل سريع', 'ألعاب عيلة', 'إضاءة خضرا'] },
+  { id: 'd14', d: 'gaming', k: 'controller', n: 'دراع تحكم برو', price: 45, c: '#18c95a', specs: { 'التوصيل': 'لاسلكي', 'البطارية': '25 ساعة', 'الاهتزاز': 'متاح', 'الزراير': 'زراير ضهر' }, f: ['مسكة مريحة', 'سريع', 'شحن USB-C'] },
+  { id: 'd15', d: 'gaming', k: 'headset', n: 'سماعة جيمنج آر جي بي', price: 50, c: '#18c95a', specs: { 'الصوت': 'محيطي 7.1', 'المايك': 'عازل للدوشة', 'الإضاءة': 'ملونة', 'التوصيل': 'USB' }, f: ['كلام واضح', 'وسادات ناعمة', 'إضاءة'] },
+  { id: 'd16', d: 'gaming', k: 'chair', n: 'كرسي جيمنج', price: 140, c: '#18c95a', specs: { 'الخامة': 'جلد صناعي', 'الظهر': 'بيرجع لورا', 'العجل': '5 عجلات', 'الوسائد': 'رقبة وضهر' }, f: ['مريح للعب الطويل', 'بيلف', 'ارتفاع بيتظبط'] },
+].map((p) => Object.assign(p, { store: 'dream' })));
 const PBY = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
 
 const CSS = `
@@ -217,7 +237,7 @@ export function buildMall(C) {
     L.push(...bench(-46, -14.6, false), ...bench(46, -14.6, false), ...bench(-46, -25.4, false), ...bench(46, -25.4, false));
     vox(L, root, { shadow: true });
     sign(textTex([['الاستعلامات', 64, '#ffffff', '#4a14b0'], ['Information', 40, '#ffd23f']], { w: 512, h: 200 }), 4, 1.6, -18, 3.2, -20, Math.PI / 2);
-    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000', 40, '#ffd23f'], ['راية  ·  الفين  ·  سينما', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
+    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000 ✅', 40, '#ffd23f'], ['راية  ·  الفين  ·  سينما', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
     sign(dir, 4, 3.1, 17.7, 2.3, -20, -Math.PI / 2);
     sign(textTex([['🍿 فشار', 64, '#ffffff', '#b32466']], { w: 256, h: 96 }), 3, 1.1, -34, 4.2, -18.15); sign(textTex([['🍦 آيس كريم', 56, '#ffffff', '#1f64b8']], { w: 256, h: 96 }), 3, 1.1, 34, 4.2, -18.15);
   }
@@ -228,8 +248,8 @@ export function buildMall(C) {
   const front = (x0, x1, z, doorX0, doorX1) => { if (doorX0 === undefined) { wall(x0, z, x1, z, H, '#e4daf6', true, SW); return; } wall(x0, z, doorX0, z, H, '#e4daf6', true, SW); wall(doorX1, z, x1, z, H, '#e4daf6', true, SW); SW.push([(doorX0 + doorX1) / 2, (H + 7.5) / 2, z, doorX1 - doorX0, H - 7.5, WT, '#e4daf6']); };
   // B.TECH (north-east): x 8..50, z -64..-27, door x 22..34
   front(8, 50, -27, 22, 34); wall(8, -27, 8, -66, H, '#e4daf6', true, SW); wall(50, -27, 50, -66, H, '#e4daf6', true, SW);
-  // Dream 2000 (north-west, closed for now)
-  front(-50, -8, -27); wall(-8, -27, -8, -66, H, '#e4daf6', true, SW);
+  // Dream 2000 (north-west, store 2) — door x -35..-23
+  front(-50, -8, -27, -35, -23); wall(-8, -27, -8, -66, H, '#e4daf6', true, SW);
   // atrium niche north wall (cinema teaser)
   wall(-8, -40, 8, -40, H, '#e4daf6', true, SW);
   // RAYA (south-west) and ELFIN (south-east), closed for now
@@ -239,14 +259,13 @@ export function buildMall(C) {
   // shop signs, display windows and shutters
   const brand = (ar, en, bg, fg, x, z, ry, w = 14) => sign(textTex([[en, 92, fg], [ar, 64, fg]], { w: 1024, h: 300, bg, r: 26 }), w, w * 300 / 1024, x, 9.4, z, ry);
   brand('بي تك', 'B.TECH', '#14161f', '#ffffff', 28, -26.5, 0, 16); // name only (official logo files can replace this sign)
-  brand('دريم 2000', 'Dream 2000', '#ffffff', '#0b7a9e', -29, -26.5, 0);
   brand('راية', 'RAYA', '#ffffff', '#1d3d8f', -29, -13.5, Math.PI);
   brand('الفين', 'ELFIN', '#ffffff', '#b0123b', 29, -13.5, Math.PI);
   sign(textTex([['🎬 السينما', 90, '#ffffff', '#b32466'], ['قريبًا', 60, '#ffd23f']], { w: 1024, h: 300, bg: '#2b1650', border: '#ffd23f', r: 26 }), 12, 3.5, 0, 6.5, -39.5);
   const shutterT = ctex(64, 64, (g) => { for (let y = 0; y < 64; y += 4) { g.fillStyle = y % 8 ? '#b9b3cc' : '#cfc9e0'; g.fillRect(0, y, 64, 4); } }); shutterT.wrapS = shutterT.wrapT = THREE.RepeatWrapping; shutterT.repeat.set(1, 6);
   const shutterM = new THREE.MeshToonMaterial({ map: shutterT });
   const soon = textTex([['🚧 بيفتح قريبًا', 64, '#4a14b0'], ['Opening soon', 40, '#7a3cf0']], { w: 512, h: 180, bg: '#ffd23f', r: 20 });
-  for (const [x, z, ry] of [[-29, -26.55, 0], [-29, -13.45, Math.PI], [29, -13.45, Math.PI]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(36, 6.6), shutterM); m.position.set(x, 3.4, z); m.rotation.y = ry; root.add(m); sign(soon, 5, 1.75, x, 3.6, z + (ry ? -0.05 : 0.05), ry); }
+  for (const [x, z, ry] of [[-29, -13.45, Math.PI], [29, -13.45, Math.PI]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(36, 6.6), shutterM); m.position.set(x, 3.4, z); m.rotation.y = ry; root.add(m); sign(soon, 5, 1.75, x, 3.6, z + (ry ? -0.05 : 0.05), ry); }
   // B.TECH display windows (glass) beside its door
   { const g = new THREE.MeshToonMaterial({ color: '#8fdcff', transparent: true, opacity: 0.45, emissive: '#3fa8ff', emissiveIntensity: 0.2 }); for (const [x, w] of [[15, 12], [42, 14]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 5), g); m.position.set(x, 3, -26.55); root.add(m); } }
 
@@ -279,7 +298,7 @@ export function buildMall(C) {
   const PL3 = [];
   const place = { p1: [14.6, 1.02, -36], p2: [16, 1.02, -36], p3: [17.4, 1.02, -36], c1: [14.3, 1.02, -47], c2: [17.7, 1.02, -47], c3: [14.5, 1.02, -58], c4: [17.6, 1.02, -58], c5: [16, 1.02, -46.2],
     t1: [48.9, 3.9, -36], t2: [48.9, 3.6, -43.5], t3: [48.9, 3.3, -50], h1: [14, 0.3, -61.6], h2: [20, 0.3, -61.6], h3: [26, 3.6, -64.8], h4: [32, 0.3, -61.6], h5: [38, 0.3, -61.6], h6: [44, 0.3, -61.6], g1: [30.6, 1.02, -42], g2: [32.6, 1.02, -42], g3: [34.2, 1.02, -42] };
-  for (const p of PRODUCTS) {
+  for (const p of PRODUCTS.filter((x) => !x.store)) {
     const m = productModel(p, screenTex); const [x, y, z] = place[p.id];
     m.position.set(x, y, z); if (p.d === 'tv') m.rotation.y = -Math.PI / 2; if (p.id === 'h3') m.rotation.y = 0;
     root.add(m);
@@ -302,7 +321,7 @@ export function buildMall(C) {
     { id: 'cash', nm: 'نادية', role: 'الكاشير', av: '👩‍💻', x: 42, z: -33.6, yaw: 0, ix: 42, iz: -30.2, look: uniform(0, { hair: 'pony' }) },
   ];
   const NPC = [];
-  for (const e of EMP) { const k = C.makeAvatar(e.look); k.scale.setScalar(1.1); k.position.set(OFF + e.x, 0.12, e.z); k.rotation.y = e.yaw; C.scene.add(k); const tag = nameTag(e.nm); tag.position.set(0, 2.55, 0); k.add(tag); const n = Object.assign({ k, emp: true, seen: false, bub: null, bubT: 0, wi: 0, home: [e.x, e.z], go: null }, e); NPC.push(n); circ(e.x, e.z, 0.5); n.ci = C.circles[C.circles.length - 1]; }
+  const addEmployee = (e) => { const k = C.makeAvatar(e.look); k.scale.setScalar(1.1); k.position.set(OFF + e.x, 0.12, e.z); k.rotation.y = e.yaw; C.scene.add(k); const tag = nameTag(e.nm); tag.position.set(0, 2.55, 0); k.add(tag); const n = Object.assign({ k, emp: true, seen: false, bub: null, bubT: 0, wi: 0, home: [e.x, e.z], go: null }, e); NPC.push(n); circ(e.x, e.z, 0.5); n.ci = C.circles[C.circles.length - 1]; }; EMP.forEach(addEmployee);
   // visitors walking loops (inside corridor + outside plaza) and standing families
   const LOOPS = [[[-40, -15.2], [40, -15.2], [40, -24.8], [-40, -24.8]], [[-12, 30], [12, 30], [12, 80], [-12, 80]], [[-40, 16], [-24, 70], [24, 70], [40, 16]]];
   const VIS = [];
@@ -348,6 +367,103 @@ export function buildMall(C) {
   function say(n, tx) { if (n.bub) n.k.remove(n.bub); n.bub = bubbleSprite(tx); n.bub.position.set(0, 3.1, 0); n.k.add(n.bub); n.bubT = 3.2; }
   function walkNPC(n, x, z) { n.go = [x, z]; }
 
+  // ======================= STORE 2: DREAM 2000 (LOLO_MALL_DREAM_2026) =======================
+  // Same size and systems as B.TECH: x -50..-8, z -66..-27, door x -35..-23 on the main corridor.
+  // Brand colours green / blue / white. The sign shows the name as text — the official logo file can replace it.
+  (function buildDream() {
+    const DX = -29, LIME = '#8be000', BLUE = '#1fb8ff', DARK = '#2b2f37';
+    const neon = (c) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
+    // ---- exterior: dark brand band, sign, neon door frame, glass windows, promo screens ----
+    vox([[DX, 9.4, -26.7, 22, 3.6, 0.5, DARK], [DX, 0.25, -26.6, 42, 0.5, 0.4, DARK]], root);
+    sign(textTex([['dream 2000', 120, '#ffffff'], ['دريم 2000', 70, LIME]], { w: 1024, h: 300, bg: DARK, r: 30 }), 16, 4.7, DX, 9.4, -26.4);
+    { const g = new THREE.Group(); root.add(g);
+      for (const [x, y, w, h, c] of [[DX - 6.2, 3.8, 0.25, 7.6, LIME], [DX + 6.2, 3.8, 0.25, 7.6, LIME], [DX, 7.6, 12.6, 0.25, LIME], [DX, 7.95, 12.6, 0.12, BLUE]]) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.12), neon(c)); m.position.set(x, y, -26.35); g.add(m); } }
+    const glass = new THREE.MeshToonMaterial({ color: '#9fe8ff', transparent: true, opacity: 0.45, emissive: '#3fa8ff', emissiveIntensity: 0.2 });
+    for (const [x, w] of [[-41.5, 11], [-15.5, 13]]) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, 5), glass); m.position.set(x, 3, -26.55); root.add(m); }
+    const ad = (title, emoji, c1, c2) => textTex([[emoji, 150, '#ffffff'], [title, 54, '#ffffff'], ['dream 2000', 44, LIME]], { w: 360, h: 620, bg: c1, border: c2, r: 26 });
+    sign(ad('أحدث الموبايلات', '📱', '#1d4f8f', LIME), 2.2, 3.8, -37.7, 2.6, -26.3);
+    sign(ad('سماعات بعروض', '🎧', '#155c3b', BLUE), 2.2, 3.8, -20.3, 2.6, -26.3);
+    { const L = []; for (const x of [-39.6, -18.4]) L.push([x, 0.5, -25.2, 1.2, 1, 1.2, '#ffffff'], [x, 1.4, -25.2, 1, 0.8, 1, '#3ec95a'], [x, 2.1, -25.2, 0.7, 0.6, 0.7, '#5fd34a']); vox(L, root, { shadow: true }); circ(-39.6, -25.2, 0.7); circ(-18.4, -25.2, 0.7); }
+    // ---- interior shell: floor, ceiling with lights + green neon ring, brand wall, storage room ----
+    tiledPlane(T.store, 41, 38, DX, -46.5, 0.07, 2.5);
+    { const c = new THREE.Mesh(new THREE.BoxGeometry(42, 0.3, 39), toon('#cfd6e4')); c.position.set(DX, 7.6, -46.5); root.add(c);
+      const lm = neon('#f4fbff'); for (let x = -46; x <= -12; x += 8.5) { const st = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.08, 30), lm); st.position.set(x, 7.42, -45); root.add(st); }
+      for (const [x, z, w, d] of [[DX, -39, 16, 0.3], [DX, -51, 16, 0.3], [DX - 8, -45, 0.3, 12], [DX + 8, -45, 0.3, 12]]) { const r = new THREE.Mesh(new THREE.BoxGeometry(w, 0.1, d), neon(LIME)); r.position.set(x, 7.4, z); root.add(r); } }
+    const W2 = [];
+    const wl = (x0, z0, x1, z1, h, c) => { const cx = (x0 + x1) / 2, cz = (z0 + z1) / 2, w = Math.abs(x1 - x0) || 0.5, d = Math.abs(z1 - z0) || 0.5; W2.push([cx, h / 2, cz, w, h, d, c]); solid(cx - w / 2, cx + w / 2, cz - d / 2, cz + d / 2); };
+    W2.push([-24, 3.6, -65.3, 32, 7, 0.6, DARK]); // brand wall behind customer service
+    // storage room (back-left corner) with a door
+    wl(-50, -56, -47.5, -56, 7, '#d6dbe4'); wl(-45.5, -56, -42, -56, 7, '#d6dbe4'); wl(-42, -56, -42, -66, 7, '#d6dbe4'); W2.push([-46.5, 6.25, -56, 2, 1.5, 0.5, '#d6dbe4']);
+    vox(W2, root, { block: true });
+    sign(textTex([['dream 2000', 110, '#ffffff'], ['خدمة العملاء', 64, LIME]], { w: 1024, h: 300, bg: DARK, r: 20 }), 9, 2.6, -27, 4.6, -64.95);
+    sign(textTex([['📦 المخزن', 60, '#ffffff']], { w: 300, h: 100, bg: DARK, border: LIME, r: 16 }), 2, 0.67, -46.5, 5.9, -55.7);
+    { const B = []; for (let i = 0; i < 9; i++) { const x = -49 + (i % 3) * 2.2, z = -64.6 + Math.floor(i / 3) * 2.6; for (let h = 0; h < 1 + (i % 3); h++) B.push([x, 0.45 + h * 0.9, z, 1.6, 0.85, 1.6, h % 2 ? '#c99a62' : '#b8854f']); B.push([x, 0.92 + (i % 3) * 0.9, z, 1.62, 0.06, 0.3, LIME]); } vox(B, root, { shadow: true }); solid(-50, -42.8, -66, -58.4); }
+    // ---- fixtures: display tables with lime strips, wall shelves, counters ----
+    const FX2 = [];
+    const dtable = (x, z, w, d) => { FX2.push([x, 0.45, z, w, 0.9, d, '#f4f6fb'], [x, 0.96, z, w + 0.2, 0.1, d + 0.2, '#ffffff'], [x, 0.18, z, w + 0.05, 0.1, d + 0.05, LIME]); solid(x - w / 2 - 0.1, x + w / 2 + 0.1, z - d / 2 - 0.1, z + d / 2 + 0.1); };
+    dtable(-43, -36, 4, 2); dtable(-43, -45, 4, 2); dtable(-15, -39, 5, 2.4); dtable(-15, -48, 5, 2.4); dtable(DX, -47, 4.5, 2.4);
+    // accessories wall shelf (east wall)
+    FX2.push([-9.1, 1.7, -55, 1.2, 3.4, 11, '#f4f6fb'], [-9.6, 0.92, -55, 1.1, 0.08, 10.8, '#ffffff'], [-9.6, 1.82, -55, 1.1, 0.08, 10.8, '#ffffff'], [-9.6, 2.72, -55, 1.1, 0.08, 10.8, '#ffffff'], [-9.7, 3.3, -55, 1.0, 0.12, 10.8, LIME]);
+    solid(-9.8, -8, -60.6, -49.4);
+    // charging-accessories wall rack (west wall, mobile department)
+    FX2.push([-49.3, 1.9, -40.5, 0.6, 3, 7, '#f4f6fb']); for (let y = 0; y < 3; y++) for (let k = 0; k < 6; k++) FX2.push([-48.95, 1.0 + y * 0.9, -43.4 + k * 1.15, 0.12, 0.5, 0.6, ['#18c95a', '#1fb8ff', '#ffffff', '#ff4fc8', '#2b2f37', '#ffc21a'][(k + y) % 6]]);
+    solid(-49.7, -48.9, -44, -37);
+    // customer service counter + cashier counter
+    FX2.push([DX, 0.6, -60.5, 8, 1.2, 1.6, '#ffffff'], [DX, 1.25, -60.5, 8.4, 0.12, 2, '#f4f6fb'], [DX, 0.35, -59.68, 8, 0.12, 0.05, LIME]); solid(DX - 4.2, DX + 4.2, -61.5, -59.5);
+    FX2.push([-14, 0.6, -30.6, 6, 1.2, 1.4, DARK], [-14, 1.25, -30.6, 6.4, 0.12, 1.8, '#ffffff'], [-14, 0.3, -29.88, 6, 0.1, 0.05, LIME], [-12.2, 1.8, -31, 0.8, 1, 0.1, DARK]); solid(-17.2, -10.8, -31.5, -29.7);
+    vox(FX2, root, { shadow: true });
+    sign(textTex([['💳 الكاشير', 60, '#ffffff']], { w: 300, h: 100, bg: DARK, border: LIME, r: 16 }), 2.4, 0.8, -14, 3.2, -31.5, Math.PI);
+    const dsign = (t, x, z, ry = 0) => sign(textTex([[t, 54, '#ffffff']], { w: 512, h: 110, bg: DARK, border: LIME, r: 18 }), 5.2, 1.12, x, 6.3, z, ry);
+    dsign('📱 الموبايلات', -43, -40.5); dsign('💻 اللابتوبات', -15, -43.5); dsign('🎧 الإكسسوارات', -11.5, -55, -Math.PI / 2); dsign('🎮 الألعاب', DX, -47); dsign('🙋 خدمة العملاء', DX, -57.5);
+    // ---- products (reusing the product models + inspection + cart systems) ----
+    const put = (id, x, y, z, ry, tag, spot, r) => {
+      const p = PBY[id], m = productModel(p, screenTex); m.position.set(x, y, z); m.rotation.y = ry || 0; root.add(m);
+      const tg = sign(textTex([[p.n, 40, '#ffffff'], ['🪙 ' + p.price, 52, '#ffd23f']], { w: 400, h: 170, bg: DARK, border: LIME, r: 16 }), 1.1, 0.47, tag[0], tag[1], tag[2], tag[3] || 0); tg.scale.setScalar(tag[4] || 0.75);
+      PL3.push({ p, m, x: spot[0], z: spot[1], r: r || 1.5, base: ry || 0 });
+    };
+    put('d1', -44.2, 1.02, -36, 0, [-44.2, 1.95, -34.8], [-44.2, -34.4]); put('d2', -41.8, 1.02, -36, 0, [-41.8, 1.95, -34.8], [-41.8, -34.4]);
+    put('d3', -44.2, 1.02, -45, 0, [-44.2, 1.95, -43.8], [-44.2, -43.4]); put('d4', -41.8, 1.02, -45, 0, [-41.8, 1.95, -43.8], [-41.8, -43.4]);
+    put('d5', -16.6, 1.02, -39, 0, [-16.6, 1.95, -37.6], [-16.6, -37.3]); put('d6', -13.4, 1.02, -39, 0, [-13.4, 1.95, -37.6], [-13.4, -37.3]);
+    put('d7', -15, 1.02, -48, 0, [-15, 2.2, -46.6], [-15, -46.2], 1.8);
+    put('d8', -9.5, 0.96, -51.5, -Math.PI / 2, [-10.2, 3.1, -51.5, -Math.PI / 2, 0.6], [-11.6, -51.5], 1.4); put('d9', -9.5, 0.96, -54, -Math.PI / 2, [-10.2, 3.1, -54, -Math.PI / 2, 0.6], [-11.6, -54], 1.4);
+    put('d10', -9.5, 0.96, -56.5, -Math.PI / 2, [-10.2, 3.1, -56.5, -Math.PI / 2, 0.6], [-11.6, -56.5], 1.4); put('d11', -9.5, 1.86, -55.3, -Math.PI / 2, [-10.2, 3.1, -55.3, -Math.PI / 2, 0.6], [-11.6, -55.25], 1.1);
+    put('d12', -9.5, 1.86, -58.6, -Math.PI / 2, [-10.2, 3.1, -58.6, -Math.PI / 2, 0.6], [-11.6, -58.6], 1.4);
+    put('d13', DX - 1.6, 1.02, -47, 0, [DX - 1.6, 1.95, -45.8], [DX - 1.6, -45.4]); put('d14', DX + 0.2, 1.02, -47, 0, [DX + 0.2, 1.95, -45.8], [DX + 0.2, -45.4]); put('d15', DX + 1.7, 1.02, -47, 0, [DX + 1.7, 1.95, -45.8], [DX + 1.7, -45.4]);
+    put('d16', DX + 5, 0.07, -47.5, -0.6, [DX + 5, 2.6, -46.4], [DX + 5, -45.2], 1.8); solid(DX + 4.2, DX + 5.8, -48.3, -46.7);
+    // ---- employees (black polo, grey trousers) ----
+    const dUni = (base, extra) => { const L = uniform(base, extra); L.c = Object.assign({}, L.c, { top: '#1d2030', bottom: '#5b6270', shoes: '#18c95a' }); return L; };
+    [
+      { id: 'd_greet', nm: 'عمرو', role: 'استقبال دريم 2000', av: '🧑‍💼', x: DX - 4.2, z: -30.4, yaw: 0.5, look: dUni(1, { hair: 'spiky', face: 'happy' }), hello: 'أهلاً بيك في دريم 2000! 👋' },
+      { id: 'd_phone', nm: 'ريم', role: 'قسم الموبايلات', av: '👩‍💼', x: -39.6, z: -40.5, yaw: -Math.PI / 2, look: dUni(0, { hair: 'long' }), hello: 'بتدور على موبايل جديد؟ 📱' },
+      { id: 'd_laptop', nm: 'يوسف', role: 'قسم اللابتوبات', av: '🧑‍💻', x: -18.6, z: -43.5, yaw: Math.PI / 2, look: dUni(3, { glasses: 'round' }), hello: 'تعالى شوف أحدث اللابتوبات عندنا 💻', walk: [[-18.6, -43.5], [-19, -35.5], [-24, -40], [-22, -52]], arrive: 'دي أحدث اللابتوبات، شوفهم براحتك 👌' },
+      { id: 'd_cs1', nm: 'هبة', role: 'خدمة العملاء', av: '🙋‍♀️', x: DX - 2, z: -62.3, yaw: 0, ix: DX - 2, iz: -58.6, look: dUni(2, {}), hello: 'ممكن أساعدك تقارن بين الأجهزة 😊' },
+      { id: 'd_cs2', nm: 'كريم', role: 'استفسارات المنتجات', av: '🧑‍💼', x: DX + 2, z: -62.3, yaw: 0, ix: DX + 2, iz: -58.6, look: dUni(1, { hair: 'curly' }), hello: 'عندك سؤال عن أي جهاز؟' },
+      { id: 'd_cash', nm: 'سلمى', role: 'الكاشير', av: '👩‍💻', x: -14, z: -32.4, yaw: 0, ix: -14, iz: -28.9, look: dUni(0, { hair: 'pony' }), hello: 'أهلاً! الدفع من هنا 💳' },
+      { id: 'd_stock', nm: 'مصطفى', role: 'المخزن', av: '📦', x: -46.5, z: -57.4, yaw: 0, look: dUni(3, { hat: 'cap' }), hello: 'بجيب بضاعة جديدة من المخزن 📦', walk: [[-46.5, -57.4], [-46.5, -53], [-12, -52], [-12, -58], [-40, -58.6]] },
+    ].forEach(addEmployee);
+    Object.assign(SPOTS, { dream: { x: DX, z: -24, n: 'دريم 2000' }, d_phones: { x: -43, z: -38.8, n: 'دريم 2000 · الموبايلات' }, d_laptops: { x: -15, z: -41.8, n: 'دريم 2000 · اللابتوبات' }, d_acc: { x: -12, z: -55, n: 'دريم 2000 · الإكسسوارات' }, d_gaming: { x: DX, z: -44.6, n: 'دريم 2000 · الألعاب' }, d_cs: { x: DX, z: -58, n: 'دريم 2000 · خدمة العملاء' }, d_cash: { x: -14, z: -28.8, n: 'دريم 2000 · الكاشير' } });
+    const nearest = (n) => { let b = null, bd = 1e9; for (const q of PL3) { if (q.p.store !== 'dream') continue; const d = Math.hypot(q.x - (n.k.position.x - OFF), q.z - n.k.position.z); if (d < bd) { bd = d; b = q; } } return b; };
+    Object.assign(SCRIPTS, {
+      d_greet: (n) => talk(n, 'أهلاً بيك في دريم 2000! تحب أوديك على أي قسم؟', [
+        ['📱 الموبايلات', () => { closeUI(); guideTo('d_phones'); }], ['💻 اللابتوبات', () => { closeUI(); guideTo('d_laptops'); }], ['🎧 الإكسسوارات', () => { closeUI(); guideTo('d_acc'); }],
+        ['🎮 الألعاب', () => { closeUI(); guideTo('d_gaming'); }], ['🙋 خدمة العملاء', () => { closeUI(); guideTo('d_cs'); }], ['👋 شكرًا', closeUI]]),
+      d_phone: (n) => talk(n, 'بتدور على موبايل جديد؟ عندنا أحدث الموديلات وشواحن لاسلكي كمان.', [
+        ['⭐ وريني أقوى موبايل', () => openProduct('d3')], ['⚖️ قارن بين ستار 12 وسكاي 7', () => { const m = st(); m.cmp = ['d1', 'd2']; C.save(); openCompare(); }],
+        ['🔌 عايز شاحن', () => openProduct('d4')], ['👋 شكرًا', closeUI]]),
+      d_laptop: (n) => talk(n, 'تعالى شوف أحدث اللابتوبات عندنا. للألعاب ولا للشغل والمذاكرة؟', [
+        ['🎮 للألعاب', () => { closeUI(); walkNPC(n, -16.6, -36.6); guideTo('d_laptops'); setTimeout(() => openProduct('d5'), 2600); }], ['📚 للشغل والمذاكرة', () => openProduct('d6')],
+        ['⚖️ إيه الفرق بينهم؟', () => { const m = st(); m.cmp = ['d5', 'd6']; C.save(); openCompare(); }], ['👋 شكرًا', closeUI]]),
+      d_cs1: (n) => talk(n, 'ممكن أساعدك تقارن بين الأجهزة. تحب تقارن إيه؟', [
+        ['📱 موبايلين', () => { const m = st(); m.cmp = ['d1', 'd3']; C.save(); openCompare(); }], ['🎧 سماعتين', () => { const m = st(); m.cmp = ['d8', 'd15']; C.save(); openCompare(); }],
+        ['⚖️ اللي اخترته أنا', () => (st().cmp.length === 2 ? openCompare() : talk(n, 'اختار جهازين بزرار «قارن» من أي منتج، وأنا أعرضلك الفرق 👍', [['تمام', closeUI]]))], ['👋 شكرًا', closeUI]]),
+      d_cs2: (n) => { const q = nearest(n); talk(n, 'عندك سؤال عن أي جهاز؟ أنا أعرف كل حاجة في المحل.', [
+        ['🔥 إيه الأكتر مبيعًا؟', () => talk(n, 'الساعة الذكية سبورت عليها طلب كبير الأيام دي! تحب تشوفها؟', [['🔍 أيوه', () => openProduct('d10')], ['👋 بعدين', closeUI]])],
+        ['🎮 عايز حاجة للألعاب', () => { closeUI(); guideTo('d_gaming'); }], ['🛍️ مشترياتي', () => openBag('inv')], ['👋 شكرًا', closeUI]]); },
+      d_cash: (n) => SCRIPTS.cash(n),
+      d_stock: (n) => talk(n, 'أنا بنقل البضاعة من المخزن للرفوف. لو محتاج حاجة اسأل زمايلي في الأقسام 😊', [['📍 وديني للإكسسوارات', () => { closeUI(); guideTo('d_acc'); }], ['👋 تمام', closeUI]]),
+    });
+  })();
+
   // ---------- ProductInspectionSystem (3D view rendered with the game's renderer) ----------
   const VIEW = { on: false, scene: null, cam: null, obj: null, yaw: 0.6, pitch: 0.25, zoom: 1, drag: null, pts: new Map(), pinch: 0, id: null };
   function viewInit() {
@@ -385,7 +501,7 @@ export function buildMall(C) {
     const wished = m.wish.includes(id), inCmp = m.cmp.includes(id), inCart = m.cart.filter((x) => x === id).length;
     openUI('insp', `<div class="hint">👆 اسحب لتلف الجهاز · قرّب بصباعين أو بالأزرار</div>
       <div class="zoom"><button data-mu="zin" aria-label="تقريب">＋</button><button data-mu="zout" aria-label="تبعيد">－</button></div>
-      <div class="mpan"><div class="mhd"><b>${esc(p.n)}<small>${DEPTS[p.d].i} ${DEPTS[p.d].n} · بي تك</small></b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div>
+      <div class="mpan"><div class="mhd"><b>${esc(p.n)}<small>${DEPTS[p.d].i} ${DEPTS[p.d].n} · ${STORES[p.store || 'btech']}</small></b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div>
       <div class="mbd"><div class="price">🪙 ${p.price}</div>
         <table><tr><th colspan="2">المواصفات</th></tr>${Object.entries(p.specs).map(([k, v]) => `<tr><td>${esc(k)}</td><td><b>${esc(v)}</b></td></tr>`).join('')}</table>
         <div class="feat">${p.f.map((x) => `<span>✨ ${esc(x)}</span>`).join('')}</div>
@@ -405,7 +521,7 @@ export function buildMall(C) {
   // ---------- ShoppingCartSystem ----------
   function openCart(confirm) {
     const m = st(), items = {}; m.cart.forEach((id) => { items[id] = (items[id] || 0) + 1; }); const total = m.cart.reduce((s, id) => s + (PBY[id] ? PBY[id].price : 0), 0), coins = C.S.coins || 0;
-    openUI('list', `<div class="mpan"><div class="mhd"><b>🛒 السلة<small>بي تك · مول العرب</small></b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div><div class="mbd">
+    openUI('list', `<div class="mpan"><div class="mhd"><b>🛒 السلة<small>مول العرب</small></b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div><div class="mbd">
       ${Object.keys(items).length ? Object.entries(items).map(([id, q]) => { const p = PBY[id]; return `<div class="row"><span class="ic">${DEPTS[p.d].i}</span><div class="t">${esc(p.n)}<small>🪙 ${p.price} × ${q}</small></div><button data-mu="dec" data-v="${id}" aria-label="شيل واحد">－</button><b>${q}</b><button data-mu="inc" data-v="${id}" aria-label="زوّد واحد">＋</button></div>`; }).join('') : '<div class="empty">🛒 السلة فاضية — قرّب من أي جهاز واضغط «أضف للسلة».</div>'}
       <div class="tot"><span>الإجمالي</span><span>🪙 ${total}</span></div><div class="tot" style="background:#efe6ff"><span>رصيدك</span><span>🪙 ${coins}</span></div>
       ${confirm ? `<div class="conf">متأكد إنك عايز تشتري بـ 🪙 ${total}؟<br><small>هيتخصم من عملات اللعبة.</small></div>` : ''}</div>
@@ -427,8 +543,8 @@ export function buildMall(C) {
   }
   // ---------- MallNavigationSystem: directory ----------
   function openDirectory() {
-    const rows = [['btech', '💻', 'بي تك — B.TECH', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
-    const soon = [['دريم 2000 — Dream 2000', '🚧'], ['راية — RAYA', '🚧'], ['الفين — ELFIN', '🚧'], ['السينما', '🎬'], ['سافوري لاند', '🎡'], ['مدينة التلج', '❄️']];
+    const rows = [['btech', '1️⃣', 'بي تك — B.TECH', 'مفتوح'], ['dream', '2️⃣', 'دريم 2000 — Dream 2000', 'مفتوح'], ['d_phones', '📱', 'دريم 2000 · الموبايلات', 'مفتوح'], ['d_laptops', '💻', 'دريم 2000 · اللابتوبات', 'مفتوح'], ['d_acc', '🎧', 'دريم 2000 · الإكسسوارات', 'مفتوح'], ['d_gaming', '🎮', 'دريم 2000 · الألعاب', 'مفتوح'], ['d_cs', '🙋', 'دريم 2000 · خدمة العملاء', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
+    const soon = [['راية — RAYA', '🚧'], ['الفين — ELFIN', '🚧'], ['السينما', '🎬'], ['سافوري لاند', '🎡'], ['مدينة التلج', '❄️']];
     openUI('list', `<div class="mpan"><div class="mhd"><b>🗺️ دليل مول العرب</b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div><div class="mbd">
       ${rows.map(([k, i, n, s]) => `<div class="row"><span class="ic">${i}</span><div class="t">${n}<small>✅ ${s}</small></div><button data-mu="go" data-v="${k}">📍 وديني</button></div>`).join('')}
       ${soon.map(([n, i]) => `<div class="row" style="opacity:.6"><span class="ic">${i}</span><div class="t">${n}<small>🚧 بيتجهز — قريبًا</small></div></div>`).join('')}</div></div>`);
@@ -472,11 +588,11 @@ export function buildMall(C) {
     for (const n of NPC) {
       const dx = C.PL.x - n.k.position.x, dz = C.PL.z - n.k.position.z, d = Math.hypot(dx, dz);
       let speed = 0;
-      if (n.go) { const gx = OFF + n.go[0] - n.k.position.x, gz = n.go[1] - n.k.position.z, gd = Math.hypot(gx, gz); if (gd < 0.4) { n.go = null; if (n.id === 'tv') say(n, 'اتفضل، شوف براحتك 👌'); } else { const s = Math.min(2.2, gd) * dt * 1.6; n.k.position.x += (gx / gd) * s; n.k.position.z += (gz / gd) * s; n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(gx, gz), dt * 8); speed = 2.2; } }
+      if (n.go) { const gx = OFF + n.go[0] - n.k.position.x, gz = n.go[1] - n.k.position.z, gd = Math.hypot(gx, gz); if (gd < 0.4) { n.go = null; if (n.id === 'tv' || n.arrive) say(n, n.arrive || 'اتفضل، شوف براحتك 👌'); } else { const s = Math.min(2.2, gd) * dt * 1.6; n.k.position.x += (gx / gd) * s; n.k.position.z += (gz / gd) * s; n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(gx, gz), dt * 8); speed = 2.2; } }
       else if (n.walk && d > 7) { const w = n.walk[n.wi], gx = OFF + w[0] - n.k.position.x, gz = w[1] - n.k.position.z, gd = Math.hypot(gx, gz); if (gd < 0.4) n.wi = (n.wi + 1) % n.walk.length; else { n.k.position.x += (gx / gd) * dt * 1.3; n.k.position.z += (gz / gd) * dt * 1.3; n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(gx, gz), dt * 6); speed = 1.3; } }
       if (d < 6.5 && !n.go) n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(dx, dz), dt * 5);
       else if (!n.walk && !n.go) n.k.rotation.y = angLerp(n.k.rotation.y, n.yaw, dt * 2);
-      if (d < 5 && !n.seen) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.id === 'greet' ? 'أهلاً بيك في بي تك! نورت المعرض 👋' : n.id === 'phone' ? 'أهلاً! محتاج مساعدة في الموبايلات؟' : n.id === 'tv' ? 'تعالى أوريك أحدث الأجهزة عندنا!' : 'أهلاً! الدفع من هنا 💳'); C.sfx.pop(); }
+      if (d < 5 && !n.seen) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello ? n.hello : n.id === 'greet' ? 'أهلاً بيك في بي تك! نورت المعرض 👋' : n.id === 'phone' ? 'أهلاً! محتاج مساعدة في الموبايلات؟' : n.id === 'tv' ? 'تعالى أوريك أحدث الأجهزة عندنا!' : 'أهلاً! الدفع من هنا 💳'); C.sfx.pop(); }
       if (d > 14) n.seen = false;
       if (n.ci) { n.ci.x = n.k.position.x; n.ci.z = n.k.position.z; }
       C.animKid(n.k, speed, dt, false);
@@ -487,7 +603,7 @@ export function buildMall(C) {
     // guide beacon
     if (GUIDE) { barrow.position.y = 3.2 + Math.sin(t * 4) * 0.3; barrow.rotation.y = t * 2; if (Math.hypot(C.PL.x - OFF - GUIDE.x, C.PL.z - GUIDE.z) < 3) { C.toast(`✅ وصلت: ${GUIDE.n}`); C.sfx.coin(); GUIDE = null; beacon.visible = false; } }
     // products gently turn on their tables (not TVs/appliances)
-    for (const q of PL3) if (['phones', 'computers', 'gaming'].includes(q.p.d) && q.p.k !== 'desktop') q.m.rotation.y = Math.sin(t * 0.8 + q.x) * 0.5;
+    for (const q of PL3) if (['phones', 'computers', 'gaming'].includes(q.p.d) && q.p.k !== 'desktop') q.m.rotation.y = (q.base || 0) + Math.sin(t * 0.8 + q.x) * 0.5;
   }
 
   function interactables() {
@@ -497,19 +613,19 @@ export function buildMall(C) {
     L.push({ x: o + 16.5, z: -20, r: 3, label: '🗺️ دليل المول', act: openDirectory });
     for (const n of NPC) L.push({ x: n.ix !== undefined ? o + n.ix : n.k.position.x, z: n.iz !== undefined ? n.iz : n.k.position.z, r: 2.6, label: `💬 كلّم ${n.nm}`, act: () => SCRIPTS[n.id](n) });
     for (const q of PL3) L.push({ x: o + q.x, z: q.z, r: q.r, label: `🔍 ${q.p.n}`, act: () => openProduct(q.p.id) });
-    for (const [x, z, n] of [[-29, -24, 'دريم 2000'], [-29, -16, 'راية'], [29, -16, 'الفين'], [0, -36, 'السينما']]) L.push({ x: o + x, z, r: 4, label: `🚧 ${n}`, act: () => C.toast(`🚧 ${n} بيتجهز — هيفتح قريب في مول العرب!`) });
+    for (const [x, z, n] of [[-29, -16, 'راية'], [29, -16, 'الفين'], [0, -36, 'السينما']]) L.push({ x: o + x, z, r: 4, label: `🚧 ${n}`, act: () => C.toast(`🚧 ${n} بيتجهز — هيفتح قريب في مول العرب!`) });
     L.push({ x: o - 34, z: -17.5, r: 3, label: '🍿 كشك الفشار', act: () => { C.sfx.pop(); C.toast('🍿 فشار سخن! (الكشك هيبيع قريب)'); } });
     L.push({ x: o + 34, z: -17.5, r: 3, label: '🍦 كشك الآيس كريم', act: () => { C.sfx.pop(); C.toast('🍦 آيس كريم بالفراولة! (الكشك هيبيع قريب)'); } });
     return L;
   }
-  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك وافحص الأجهزة'}</small>`; }
+  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك أو دريم 2000 وافحص الأجهزة'}</small>`; }
   function drawMap(g, s) {
     g.fillStyle = '#7fd36a'; g.fillRect(-B * s, -B * s, 2 * B * s, 2 * B * s);
     g.fillStyle = '#5b5f74'; g.fillRect(-103 * s, 97 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 14 * s, 218 * s); g.fillRect(89 * s, -107 * s, 14 * s, 218 * s);
     g.fillStyle = '#f1d6f2'; g.fillRect(-70 * s, 2 * s, 140 * s, 96 * s);
     g.fillStyle = '#e9ddff'; g.fillRect(-52 * s, -66 * s, 104 * s, 78 * s);
     g.fillStyle = '#14161f'; g.fillRect(8 * s, -66 * s, 42 * s, 39 * s);
-    g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
+    g.fillStyle = '#2b2f37'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillStyle = '#8be000'; g.fillRect(-35 * s, -28 * s, 12 * s, 2 * s); g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
     g.fillStyle = '#6fd6ff'; g.beginPath(); g.arc(0, -20 * s, 4 * s, 0, 7); g.arc(0, 42 * s, 4.5 * s, 0, 7); g.fill();
     if (GUIDE) { g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(GUIDE.x * s, GUIDE.z * s, 2.4 * s + 3, 0, 7); g.fill(); }
   }
@@ -566,6 +682,24 @@ function productModel(p, TX) {
     box(0.42, 0.08, 0.22, c, 0, 0.06, 0); for (const s of [-1, 1]) box(0.14, 0.08, 0.2, c, s * 0.2, 0.05, 0.08); for (const [x, col] of [[0.13, '#ff2d55'], [0.17, '#7cf04a'], [0.21, '#2fc4ff']]) box(0.03, 0.02, 0.03, col, x, 0.11, -0.02); box(0.06, 0.03, 0.06, '#1d2030', -0.14, 0.11, 0); box(0.06, 0.03, 0.06, '#1d2030', -0.06, 0.11, 0.05);
   } else if (p.k === 'headset') {
     const band = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.03, 8, 20, Math.PI), M(c)); band.position.y = 0.3; g.add(band); for (const s of [-1, 1]) { box(0.08, 0.2, 0.18, c, s * 0.23, 0.26, 0); box(0.02, 0.12, 0.12, '#2fc4ff', s * 0.275, 0.26, 0, M('#2fc4ff', { emissive: '#2fc4ff', emissiveIntensity: 0.9 })); } box(0.3, 0.04, 0.2, '#ffffff', 0, 0.02, 0);
+  } else if (p.k === 'charger') {
+    const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.22, 0.04, 24), M(c)); pad.position.y = 0.02; g.add(pad); const ring = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.012, 6, 24), M('#8be000', { emissive: '#8be000', emissiveIntensity: 1 })); ring.rotation.x = Math.PI / 2; ring.position.y = 0.045; g.add(ring);
+    const ph = box(0.18, 0.012, 0.34, '#2b2f37', 0, 0.05, 0); ph.rotation.y = 0.3; box(0.5, 0.02, 0.02, '#ffffff', 0.32, 0.01, 0.05);
+  } else if (p.k === 'speaker') {
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.42, 20), M(c)); b.rotation.z = Math.PI / 2; b.position.y = 0.14; g.add(b); for (const sx of [-1, 1]) { const e = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.04, 20), M('#2b2f37')); e.rotation.z = Math.PI / 2; e.position.set(sx * 0.22, 0.14, 0); g.add(e); }
+    box(0.3, 0.16, 0.01, '#1d2030', 0, 0.14, 0.13); box(0.2, 0.02, 0.012, '#8be000', 0, 0.24, 0.125, M('#8be000', { emissive: '#8be000', emissiveIntensity: 0.9 }));
+  } else if (p.k === 'watch') {
+    box(0.08, 0.02, 0.5, c, 0, 0.01, 0); box(0.2, 0.06, 0.24, '#1d2030', 0, 0.05, 0); const sc = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.2), new THREE.MeshBasicMaterial({ map: TX.phone, toneMapped: false })); sc.rotation.x = -Math.PI / 2; sc.position.y = 0.081; g.add(sc); box(0.03, 0.04, 0.04, '#8f96a8', 0.11, 0.05, 0.03);
+  } else if (p.k === 'case') {
+    box(0.42, 0.06, 0.3, '#ffffff', 0, 0.03, 0); const cs = box(0.24, 0.46, 0.035, c, 0, 0.32, 0); cs.rotation.x = -0.15; const ch = box(0.08, 0.1, 0.02, '#1d2030', -0.06, 0.48, -0.03); ch.rotation.x = -0.15; box(0.05, 0.05, 0.02, '#ffd23f', 0.05, 0.25, 0.012).rotation.x = -0.15;
+  } else if (p.k === 'powerbank') {
+    box(0.22, 0.06, 0.38, c, 0, 0.03, 0); for (let i = 0; i < 4; i++) box(0.025, 0.012, 0.025, '#8be000', -0.05 + i * 0.035, 0.065, 0.14, M('#8be000', { emissive: '#8be000', emissiveIntensity: 1 })); box(0.08, 0.02, 0.012, '#8f96a8', 0, 0.03, -0.19);
+  } else if (p.k === 'chair') {
+    for (let i = 0; i < 5; i++) { const a = (i / 5) * Math.PI * 2; const leg = box(0.5, 0.06, 0.08, '#1d2030', Math.cos(a) * 0.25, 0.1, Math.sin(a) * 0.25); leg.rotation.y = -a; box(0.08, 0.08, 0.08, '#2b2f37', Math.cos(a) * 0.48, 0.04, Math.sin(a) * 0.48); }
+    box(0.1, 0.5, 0.1, '#8f96a8', 0, 0.38, 0); box(0.75, 0.14, 0.7, '#1d2030', 0, 0.68, 0); box(0.6, 0.05, 0.55, c, 0, 0.76, 0.02);
+    const back = new THREE.Group(); back.position.set(0, 0.75, -0.32); back.rotation.x = -0.15; g.add(back);
+    for (const [w, h, y, z, col] of [[0.7, 1.15, 0.58, 0, '#1d2030'], [0.3, 0.95, 0.55, 0.06, c], [0.5, 0.16, 0.95, 0.08, '#2b2f37'], [0.36, 0.14, 0.25, 0.08, '#2b2f37']]) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.14), M(col)); m.position.set(0, y, z); m.castShadow = true; back.add(m); }
+    for (const sx of [-1, 1]) { box(0.08, 0.28, 0.08, '#2b2f37', sx * 0.38, 0.85, 0); box(0.12, 0.05, 0.4, '#1d2030', sx * 0.38, 1.0, 0.02); }
   }
   return g;
 }

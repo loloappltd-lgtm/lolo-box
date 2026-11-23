@@ -8,7 +8,7 @@ import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
-import { buildMall, MALL_OFF } from './mall.js?v=1';
+import { buildMall, MALL_OFF } from './mall.js?v=2';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
