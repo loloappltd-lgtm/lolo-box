@@ -258,7 +258,12 @@ export function buildMall(C) {
   vox(SW, root, { block: true });
   // shop signs, display windows and shutters
   const brand = (ar, en, bg, fg, x, z, ry, w = 14) => sign(textTex([[en, 92, fg], [ar, 64, fg]], { w: 1024, h: 300, bg, r: 26 }), w, w * 300 / 1024, x, 9.4, z, ry);
-  brand('بي تك', 'B.TECH', '#14161f', '#ffffff', 28, -26.5, 0, 16); // name only (official logo files can replace this sign)
+  // official store logos (files supplied by LOLO) drawn on a white panel; dimmed slightly so bloom doesn't wash them out
+  const logoSign = (src, cw, ch, w, x, y, z, ry = 0) => { const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch; const g2 = cv.getContext('2d'); const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace;
+    g2.fillStyle = '#ffffff'; g2.beginPath(); g2.roundRect(0, 0, cw, ch, 40); g2.fill();
+    const im = new Image(); im.onload = () => { const pad = 36, k = Math.min((cw - pad * 2) / im.width, (ch - pad * 2) / im.height), iw = im.width * k, ih = im.height * k; g2.drawImage(im, (cw - iw) / 2, (ch - ih) / 2, iw, ih); tx.needsUpdate = true; }; im.src = src;
+    const m = sign(tx, w, w * ch / cw, x, y, z, ry); m.material.color.set('#dedede'); return m; };
+  logoSign('assets/btech-logo.webp?v=1', 1024, 300, 13, 28, 9.4, -26.5); // official B.TECH logo
   brand('راية', 'RAYA', '#ffffff', '#1d3d8f', -29, -13.5, Math.PI);
   brand('الفين', 'ELFIN', '#ffffff', '#b0123b', 29, -13.5, Math.PI);
   sign(textTex([['🎬 السينما', 90, '#ffffff', '#b32466'], ['قريبًا', 60, '#ffd23f']], { w: 1024, h: 300, bg: '#2b1650', border: '#ffd23f', r: 26 }), 12, 3.5, 0, 6.5, -39.5);
@@ -375,7 +380,7 @@ export function buildMall(C) {
     const neon = (c) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
     // ---- exterior: dark brand band, sign, neon door frame, glass windows, promo screens ----
     vox([[DX, 9.4, -26.7, 22, 3.6, 0.5, DARK], [DX, 0.25, -26.6, 42, 0.5, 0.4, DARK]], root);
-    sign(textTex([['dream 2000', 120, '#ffffff'], ['دريم 2000', 70, LIME]], { w: 1024, h: 300, bg: DARK, r: 30 }), 16, 4.7, DX, 9.4, -26.4);
+    logoSign('assets/dream2000-logo.webp?v=1', 1024, 440, 7.6, DX, 9.4, -26.4); // official Dream 2000 logo (supplied by LOLO)
     { const g = new THREE.Group(); root.add(g);
       for (const [x, y, w, h, c] of [[DX - 6.2, 3.8, 0.25, 7.6, LIME], [DX + 6.2, 3.8, 0.25, 7.6, LIME], [DX, 7.6, 12.6, 0.25, LIME], [DX, 7.95, 12.6, 0.12, BLUE]]) { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.12), neon(c)); m.position.set(x, y, -26.35); g.add(m); } }
     const glass = new THREE.MeshToonMaterial({ color: '#9fe8ff', transparent: true, opacity: 0.45, emissive: '#3fa8ff', emissiveIntensity: 0.2 });
@@ -395,7 +400,8 @@ export function buildMall(C) {
     // storage room (back-left corner) with a door
     wl(-50, -56, -47.5, -56, 7, '#d6dbe4'); wl(-45.5, -56, -42, -56, 7, '#d6dbe4'); wl(-42, -56, -42, -66, 7, '#d6dbe4'); W2.push([-46.5, 6.25, -56, 2, 1.5, 0.5, '#d6dbe4']);
     vox(W2, root, { block: true });
-    sign(textTex([['dream 2000', 110, '#ffffff'], ['خدمة العملاء', 64, LIME]], { w: 1024, h: 300, bg: DARK, r: 20 }), 9, 2.6, -27, 4.6, -64.95);
+    logoSign('assets/dream2000-logo.webp?v=1', 1024, 440, 5.4, -27, 5.3, -64.95);
+    sign(textTex([['خدمة العملاء', 90, LIME]], { w: 768, h: 160, bg: DARK, r: 20 }), 4.8, 1, -27, 3.6, -64.95);
     sign(textTex([['📦 المخزن', 60, '#ffffff']], { w: 300, h: 100, bg: DARK, border: LIME, r: 16 }), 2, 0.67, -46.5, 5.9, -55.7);
     { const B = []; for (let i = 0; i < 9; i++) { const x = -49 + (i % 3) * 2.2, z = -64.6 + Math.floor(i / 3) * 2.6; for (let h = 0; h < 1 + (i % 3); h++) B.push([x, 0.45 + h * 0.9, z, 1.6, 0.85, 1.6, h % 2 ? '#c99a62' : '#b8854f']); B.push([x, 0.92 + (i % 3) * 0.9, z, 1.62, 0.06, 0.3, LIME]); } vox(B, root, { shadow: true }); solid(-50, -42.8, -66, -58.4); }
     // ---- fixtures: display tables with lime strips, wall shelves, counters ----
