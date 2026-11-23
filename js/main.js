@@ -5,7 +5,8 @@ import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
 import { buildPark, PARK_OFF } from './park.js?v=8';
 import { buildHome, HOME_OFF } from './home.js?v=1';
-import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=2';
+import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
+import { initCharSel } from './charsel.js?v=1';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -521,7 +522,7 @@ function makeCar(color, sport = true) {
 // ================= player =================
 const PL = { x: -30, y: 0, z: -8, vy: 0, yaw: Math.PI, spd: 0, ground: true, run: false, mode: 'walk' };
 let kid = null;
-function buildPlayer() { if (kid) scene.remove(kid); kid = AV.makeAvatar(curLook()); scene.add(kid); setTimeout(applyEquip, 0); $('#ph').style.backgroundImage = `url(assets/ui/sel${S.char + 1}.webp)`; }
+function buildPlayer() { if (kid) scene.remove(kid); kid = AV.makeAvatar(curLook()); scene.add(kid); setTimeout(applyEquip, 0); { const th = CS && CS.thumb(S.char); $('#ph').style.backgroundImage = th ? `url(${th})` : S.char < 10 ? `url(assets/ui/sel${S.char + 1}.webp)` : ''; } }
 const CAR = { x: 4, z: -22, yaw: Math.PI, v: 0, steer: 0, mesh: null };
 function buildCar() { if (CAR.mesh) scene.remove(CAR.mesh); CAR.mesh = makeCar(CAR_COLORS[S.car], 'conv'); scene.add(CAR.mesh); syncCar(0); }
 function syncCar(dt) { const m = CAR.mesh; m.position.set(CAR.x, 0, CAR.z); m.rotation.y = CAR.yaw; const spin = (CAR.v * dt) / 0.44; m.wheels.forEach((w, n) => { w.children.forEach((c) => (c.rotation.z -= spin)); if (n >= 2) w.rotation.y = CAR.steer * 0.5; }); m.inner.rotation.x = clamp(-CAR.steer * CAR.v * 0.004, -0.06, 0.06); }
@@ -1413,13 +1414,13 @@ function wdRender(dt, now) {
 function openWard() {
   wdInit(); WD.from = state.play ? 'play' : 'choose'; WD.on = true;
   if (WD.from === 'play') { state.panel = 'ward'; $('#hud').classList.remove('on'); $('#ctl').classList.remove('on'); ['pause', 'settings', 'prizes'].forEach((k) => $('#' + k).classList.remove('on')); }
-  else $('#choose').classList.remove('on');
+  else { $('#choose').classList.remove('on'); if (CS) CS.close(); }
   $('#ward').classList.add('on'); wdBuild(); renderWard();
 }
 function closeWard() {
   WD.on = false; $('#ward').classList.remove('on'); save(); buildPlayer();
   if (WD.from === 'play') { state.panel = null; $('#hud').classList.add('on'); $('#ctl').classList.add('on'); toast('✨ شكلك الجديد يجنّن!'); }
-  else { renderChoose(); showOnly('choose'); }
+  else { if (CS) CS.dropThumb(S.char); openCharSel(true); }
 }
 function renderWard() {
   const L = curLook(); L.c = L.c || {};
@@ -1451,11 +1452,30 @@ document.addEventListener('click', (e) => {
   save(); wdBuild(); renderWard();
 });
 
+// ================= character selection screen (LOLO_CHARSEL_2026) =================
+let CS = null;
+function openCharSel(refresh) {
+  if (!CS) CS = initCharSel({
+    renderer, toon, ctex, AV, WARD, sfx,
+    look: (i) => { if (!S.looks || typeof S.looks !== 'object') S.looks = {}; return S.looks[i] || cloneLook(PRESETS[i]); },
+    name: (i) => cleanName(nicks()[i]) || CHARS[i].name,
+    current: () => S.char, setCurrent: (i) => { S.char = i; save(); },
+    soundOn: () => !!S.sound, toggleSound: () => { S.sound = !S.sound; save(); if (eng) eng.g.gain.value = 0; },
+    openSettings: () => { $('#settings').classList.add('on'); renderSettings(); state.panel = 'settings'; },
+    openName: () => openName(), openWard: () => openWard(),
+    goHome: () => { CS.close(); showOnly('start'); },
+    onChoose: () => { buildPlayer(); kid.position.set(PL.x, 0.12, PL.z); CS.close(); MapSelectionManager.open(); },
+  });
+  ['start', 'choose', 'maps', 'mapPrev', 'hud', 'ctl'].forEach((k) => $('#' + k).classList.remove('on'));
+  if (refresh) CS.refresh();
+  CS.open();
+}
+
 // ================= UI =================
 const state = { play: false, talk: false, panel: null };
 function updPills() { $('#coinN').textContent = S.coins.toLocaleString('en'); $('#gemN').textContent = S.gems; $('#tkN').textContent = S.tickets || 0; }
 let toastT = 0; function toast(t) { const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2400); }
-function showOnly(id) { ['start', 'choose', 'maps', 'mapPrev', 'hud', 'ctl', 'missions', 'garage', 'bigmap', 'pause', 'settings', 'houseP', 'prizes', 'friends', 'vsres'].forEach((k) => $('#' + k).classList.toggle('on', k === id)); }
+function showOnly(id) { if (CS && CS.on && id !== 'csel') CS.close(); ['start', 'choose', 'maps', 'mapPrev', 'hud', 'ctl', 'missions', 'garage', 'bigmap', 'pause', 'settings', 'houseP', 'prizes', 'friends', 'vsres'].forEach((k) => $('#' + k).classList.toggle('on', k === id)); }
 let prevPanel = null;
 function openPanel(id) {
   if (id === 'missions') renderMissions(); if (id === 'garage') renderGarage(); if (id === 'bigmap') drawBig(); if (id === 'settings') renderSettings();
@@ -1493,7 +1513,7 @@ function saveName(v) {
   nicks()[S.char] = n; S.nick = n; save(); $('#nameP').classList.remove('on'); renderChoose(); if (WD.on) renderWard(); toast(`👋 أهلاً يا ${n}!`); sfx.win();
 }
 document.addEventListener('click', (e) => { const b = e.target.closest('[data-nm]'); if (b) saveName(b.dataset.nm); });
-function renderChoose() { $$('.chars .c').forEach((b) => { const on = +b.dataset.ch === S.char; b.classList.toggle('sel', on); if (on && b.scrollIntoView) b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); }); $('#charName').textContent = myName(); $('#nmBtn').textContent = cleanName(nicks()[S.char]) ? '✏️ غيّر الاسم' : '✏️ سمّي الشخصية'; }
+function renderChoose() { if (CS && CS.on) CS.open(); $$('.chars .c').forEach((b) => { const on = +b.dataset.ch === S.char; b.classList.toggle('sel', on); if (on && b.scrollIntoView) b.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }); }); $('#charName').textContent = myName(); $('#nmBtn').textContent = cleanName(nicks()[S.char]) ? '✏️ غيّر الاسم' : '✏️ سمّي الشخصية'; }
 const CARS_SHOP = [{ id: 'pink', name: 'البينك الرياضية', cost: 0 }, { id: 'yellow', name: 'الصفرا السريعة', cost: 300 }, { id: 'blue', name: 'الزرقا اللامعة', cost: 500 }, { id: 'orange', name: 'البرتقاني', cost: 800 }];
 let gSel = S.car;
 function renderGarage() {
@@ -1597,7 +1617,7 @@ document.addEventListener('click', (e) => {
   const mc = e.target.closest('[data-map]'); if (mc) { audioStart(); sfx.click(); MapSelectionManager.select(+mc.dataset.map); return; }
   const ch = e.target.closest('[data-ch]'); if (ch) { S.char = +ch.dataset.ch; save(); renderChoose(); sfx.click(); return; }
   const b = e.target.closest('[data-a]'); if (!b) return; const a = b.dataset.a; audioStart(); sfx.click();
-  if (a === 'choose') { renderChoose(); showOnly('choose'); }
+  if (a === 'choose') openCharSel();
   else if (a === 'prevChar') { S.char = (S.char + CHARS.length - 1) % CHARS.length; save(); renderChoose(); }
   else if (a === 'nextChar') { S.char = (S.char + 1) % CHARS.length; save(); renderChoose(); }
   else if (a === 'begin') begin();
@@ -1652,6 +1672,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (!ready) return;
   if (WD.on) { NET.tick(now); wdRender(dt, now); return; }
+  if (CS && CS.on) { NET.tick(now); CS.render(dt, now); return; }
   waterTex.offset.x = now / 60000; waterTex.offset.y = now / 90000;
   lolo.position.y = 3.6 + Math.sin(now / 600) * 0.4; loloGlow.material.opacity = 0.25 + Math.sin(now / 600) * 0.1;
   if (window.__wheel) { const { fw, cabins } = window.__wheel; wheelA += dt * (RIDE.on ? 0.45 : 0.11); fw.rotation.z = wheelA; cabins.forEach((c) => (c.rotation.z = -fw.rotation.z)); }

@@ -27,6 +27,7 @@ export const WARD = {
     { id: 'tiara', n: 'تاج أميرة', i: '💎', lock: { mi: 6, t: 'خلّص 6 مهام' } },
     { id: 'chef', n: 'طاقية شيف', i: '🍳' }, { id: 'ghutra', n: 'شماغ', i: '🟥' }, { id: 'safari', n: 'قبعة مستكشف', i: '🧭' }, { id: 'band', n: 'باند رياضة', i: '🏃' },
     { id: 'helmet', n: 'خوذة فضاء', i: '👨‍🚀', lock: { mi: 3, t: 'خلّص 3 مهام' } },
+    { id: 'explorer', n: 'نضارة مستكشف', i: '🥽' }, { id: 'starphones', n: 'سماعات نجمة', i: '🎧' }, { id: 'ninja', n: 'قناع نينجا', i: '🥷' },
   ],
   glasses: [{ id: 'none', n: 'من غير', i: '✖️' }, { id: 'round', n: 'نضارة', i: '👓' }, { id: 'sun', n: 'شمس', i: '🕶️' }, { id: 'heart', n: 'قلوب', i: '💗' }, { id: 'star', n: 'نجوم', i: '🌟', lock: { prize: 'glasses', t: 'من الجوايز 🎟️' } }, { id: 'goggles', n: 'نضارة معمل', i: '🥽' }],
   bag: [
@@ -52,6 +53,11 @@ export const NEW_CHARS = [
   { name: 'خالد', f: 0, role: 'ابن الخليج', look: { g: 'boy', skin: 2, face: 'smile', hair: 'short', top: 'thobe', print: 'none', bottom: 'pants', dress: 'none', shoes: 'sandals', hat: 'ghutra', glasses: 'none', bag: 'none', c: { hair: '#24160f', top: '#ffffff', bottom: '#ffffff', dress: '#ffffff', shoes: '#8a5a3b', hat: '#e0302a', bag: '#8a5a3b', glasses: '#2b2f48' } } },
   { name: 'نور', f: 1, role: 'البطلة الرياضية', look: { g: 'girl', skin: 4, face: 'happy', hair: 'pony', top: 'jersey', print: 'none', bottom: 'shorts', dress: 'none', shoes: 'sneakers', hat: 'band', glasses: 'none', bag: 'none', c: { hair: '#24160f', top: '#18c95a', bottom: '#ffffff', dress: '#18c95a', shoes: '#ffc21a', hat: '#ffc21a', bag: '#ffc21a', glasses: '#2b2f48' } } },
   { name: 'زين', f: 0, role: 'المستكشف', look: { g: 'boy', skin: 5, face: 'cool', hair: 'quiff', top: 'jacket', print: 'none', bottom: 'shorts', dress: 'none', shoes: 'boots', hat: 'safari', glasses: 'none', bag: 'backpack', c: { hair: '#24160f', top: '#c9a24e', bottom: '#5b6b3a', dress: '#c9a24e', shoes: '#8a5a3b', hat: '#e9d6a4', bag: '#18c95a', glasses: '#2b2f48' } } },
+  // LOLO_CHARSEL_2026: the character-selection collection
+  { name: 'كريم', f: 0, role: 'المستكشف الشجاع', look: { g: 'boy', skin: 1, face: 'happy', hair: 'spiky', top: 'jacket', print: 'star', bottom: 'pants', dress: 'none', shoes: 'sneakers', hat: 'explorer', glasses: 'none', bag: 'backpack', c: { hair: '#55301a', top: '#2f6bff', bottom: '#2b2f48', dress: '#2f6bff', shoes: '#1fb8ff', hat: '#1fb8ff', bag: '#2b2f48', glasses: '#2b2f48' } } },
+  { name: 'لولو', f: 1, role: 'المستكشفة المبدعة', look: { g: 'girl', skin: 1, face: 'happy', hair: 'long', top: 'hoodie', print: 'star', bottom: 'skirt', dress: 'none', shoes: 'boots', hat: 'starphones', glasses: 'none', bag: 'backpack', c: { hair: '#55301a', top: '#ff4fc8', bottom: '#7a4dff', dress: '#ff4fc8', shoes: '#ff4fc8', hat: '#c05cff', bag: '#2b2f48', glasses: '#2b2f48' } } },
+  { name: 'ياسمين', f: 1, role: 'الأميرة', look: { g: 'girl', skin: 0, face: 'smile', hair: 'long', top: 'tee', print: 'none', bottom: 'skirt', dress: 'princess', shoes: 'gold', hat: 'tiara', glasses: 'none', bag: 'none', c: { hair: '#8a5528', top: '#ffa3d6', bottom: '#ffa3d6', dress: '#ffa3d6', shoes: '#ffc21a', hat: '#ffc21a', bag: '#ff4fc8', glasses: '#2b2f48' } } },
+  { name: 'سيف', f: 0, role: 'النينجا', look: { g: 'boy', skin: 2, face: 'cool', hair: 'short', top: 'long', print: 'none', bottom: 'pants', dress: 'none', shoes: 'boots', hat: 'ninja', glasses: 'none', bag: 'none', c: { hair: '#24160f', top: '#2b2f48', bottom: '#2b2f48', dress: '#2b2f48', shoes: '#1d2030', hat: '#1d2030', bag: '#ff2d55', glasses: '#2b2f48' } } },
 ];
 PRESETS.push(...NEW_CHARS.map((c) => c.look));
 export const cloneLook = (l) => JSON.parse(JSON.stringify(l));
@@ -183,7 +189,7 @@ export function initAvatar({ THREE, toon, ctex, bake }) {
     const head = new THREE.Group(); head.position.y = 0.74; body.add(head); P.head = head;
     add(head, rbox(0.56, 0.52, 0.5, 0.15), M(skin), 0, 0.27, 0);
     add(head, GC.fp || (GC.fp = new THREE.PlaneGeometry(0.46, 0.4)), basic(faceTex(L.face || 'smile', L.g === 'girl')), 0, 0.23, 0.252);
-    hair(head, L, M(C.hair), add);
+    if (L.hat !== 'ninja') hair(head, L, M(C.hair), add);
     hat(head, L, C, M, add);
     glasses(head, L, C, M, add);
     bag(body, L, C, M, add);
@@ -236,6 +242,24 @@ export function initAvatar({ THREE, toon, ctex, bake }) {
     if (s === 'safari') { add(head, cyl(0.46, 0.46, 0.03, 24), m, 0, 0.6, 0); add(head, cyl(0.25, 0.3, 0.2, 20), m, 0, 0.7, 0); add(head, cyl(0.305, 0.305, 0.05, 20), M('#5b3a1e'), 0, 0.63, 0); }
     if (s === 'band') { add(head, rbox(0.6, 0.08, 0.53, 0.03), m, 0, 0.47, 0); add(head, rbox(0.04, 0.09, 0.02, 0.01), M('#ffffff'), 0.1, 0.47, 0.268); }
     if (s === 'helmet') { add(head, sph(0.48, 22, 16), new THREE.MeshToonMaterial({ color: C.hat || '#bfe6ff', transparent: true, opacity: 0.32, depthWrite: false }), 0, 0.3, 0.02); add(head, cyl(0.36, 0.38, 0.1, 22), M('#c7cede'), 0, -0.05, 0); add(head, rbox(0.08, 0.14, 0.06, 0.02), M('#ff7a1a'), 0.3, 0.55, 0.12); }
+    if (s === 'explorer') { // adventure goggles pushed up on the forehead
+      add(head, rbox(0.62, 0.07, 0.56, 0.03), M('#2b2f48'), 0, 0.5, -0.01);
+      const lens = new THREE.MeshToonMaterial({ color: '#bff0ff', emissive: '#1fb8ff', emissiveIntensity: 0.35, transparent: true, opacity: 0.85 });
+      for (const x of [-1, 1]) { add(head, cyl(0.13, 0.13, 0.08, 18), m, x * 0.14, 0.6, 0.27, Math.PI / 2 - 0.5, 0, 0); add(head, cyl(0.095, 0.095, 0.085, 18), lens, x * 0.14, 0.61, 0.285, Math.PI / 2 - 0.5, 0, 0); add(head, rbox(0.06, 0.03, 0.02, 0.01), M('#ffffff'), x * 0.14 - 0.03, 0.66, 0.33, -0.5, 0, 0); }
+      add(head, rbox(0.06, 0.06, 0.06, 0.02), M('#2b2f48'), 0, 0.6, 0.28, -0.5, 0, 0);
+    }
+    if (s === 'starphones') { // headphones + a star hair clip
+      add(head, rbox(0.06, 0.08, 0.5, 0.03), m, 0, 0.68, 0, 0, Math.PI / 2, 0); add(head, rbox(0.66, 0.06, 0.08, 0.03), m, 0, 0.64, 0);
+      for (const x of [-1, 1]) { add(head, cyl(0.11, 0.11, 0.09, 16), m, x * 0.32, 0.3, 0, 0, 0, Math.PI / 2); add(head, cyl(0.065, 0.065, 0.1, 14), M('#ffffff'), x * 0.33, 0.3, 0, 0, 0, Math.PI / 2); add(head, starGeo(0.05), gold(), x * 0.38, 0.3, 0, 0, x * Math.PI / 2, 0); }
+      add(head, starGeo(0.08), M('#ff4fc8'), 0.18, 0.6, 0.22, -0.3, 0, 0.3);
+    }
+    if (s === 'ninja') { // hood + mask: only the eyes show
+      add(head, rbox(0.6, 0.2, 0.55, 0.08), m, 0, 0.5, -0.01); add(head, rbox(0.6, 0.6, 0.1, 0.05), m, 0, 0.27, -0.24);
+      for (const x of [-1, 1]) add(head, rbox(0.06, 0.56, 0.54, 0.03), m, x * 0.29, 0.27, -0.01);
+      add(head, rbox(0.6, 0.12, 0.06, 0.03), m, 0, 0.4, 0.25); add(head, rbox(0.6, 0.2, 0.06, 0.03), m, 0, 0.08, 0.25);
+      add(head, rbox(0.62, 0.06, 0.07, 0.02), M('#ff2d55'), 0, 0.44, 0.255);
+      for (const k of [-1, 1]) add(head, rbox(0.06, 0.24, 0.03, 0.015), M('#ff2d55'), k * 0.06, 0.32, -0.3, 0.3, 0, k * 0.4);
+    }
     if (s === 'tiara') { const gm = gold(); add(head, rbox(0.5, 0.05, 0.06, 0.02), gm, 0, 0.64, 0.14, -0.4, 0, 0); add(head, starGeo(0.08), gm, 0, 0.73, 0.16); add(head, sph(0.035), M('#2fb8ff'), 0, 0.73, 0.19); for (const x of [-1, 1]) add(head, starGeo(0.045), gm, x * 0.15, 0.69, 0.15); }
   }
   function glasses(head, L, C, M, add) {
