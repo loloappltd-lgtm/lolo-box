@@ -3,10 +3,11 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
-import { buildPark, PARK_OFF } from './park.js?v=8';
+import { buildPark, PARK_OFF } from './park.js?v=9';
 import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
-import { initCharSel } from './charsel.js?v=1';
+import { initCharSel } from './charsel.js?v=2';
+import { makeLoloMascot } from './mascot.js?v=1';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -522,7 +523,7 @@ function makeCar(color, sport = true) {
 // ================= player =================
 const PL = { x: -30, y: 0, z: -8, vy: 0, yaw: Math.PI, spd: 0, ground: true, run: false, mode: 'walk' };
 let kid = null;
-function buildPlayer() { if (kid) scene.remove(kid); kid = AV.makeAvatar(curLook()); scene.add(kid); setTimeout(applyEquip, 0); { const th = CS && CS.thumb(S.char); $('#ph').style.backgroundImage = th ? `url(${th})` : S.char < 10 ? `url(assets/ui/sel${S.char + 1}.webp)` : ''; } }
+function buildPlayer() { if (kid) scene.remove(kid); kid = AV.makeAvatar(curLook()); scene.add(kid); setTimeout(applyEquip, 0); { const th = CS && CS.thumb(S.char); $('#ph').style.backgroundImage = th ? `url(${th})` : S.char < 10 ? `url(assets/ui/sel${S.char + 1}.webp?v=vx1)` : ''; } }
 const CAR = { x: 4, z: -22, yaw: Math.PI, v: 0, steer: 0, mesh: null };
 function buildCar() { if (CAR.mesh) scene.remove(CAR.mesh); CAR.mesh = makeCar(CAR_COLORS[S.car], 'conv'); scene.add(CAR.mesh); syncCar(0); }
 function syncCar(dt) { const m = CAR.mesh; m.position.set(CAR.x, 0, CAR.z); m.rotation.y = CAR.yaw; const spin = (CAR.v * dt) / 0.44; m.wheels.forEach((w, n) => { w.children.forEach((c) => (c.rotation.z -= spin)); if (n >= 2) w.rotation.y = CAR.steer * 0.5; }); m.inner.rotation.x = clamp(-CAR.steer * CAR.v * 0.004, -0.06, 0.06); }
@@ -552,8 +553,7 @@ const traffic = [];
 
 // ================= Lolo (real 2D art as a floating sprite) =================
 const loader = new THREE.TextureLoader();
-const loloTex = loader.load('assets/ui/fish.webp'); loloTex.colorSpace = THREE.SRGBColorSpace;
-const lolo = new THREE.Sprite(new THREE.SpriteMaterial({ map: loloTex, toneMapped: false })); lolo.scale.set(3.2, 2.85, 1); lolo.position.set(-30, 4, -20); scene.add(lolo);
+const lolo = makeLoloMascot({ toon }); lolo.scale.setScalar(2.1); lolo.position.set(-30, 4, -20); scene.add(lolo); // voxel Lolo (LOLO_MASCOT_VOXEL_2026)
 const loloGlow = new THREE.Mesh(new THREE.CircleGeometry(1.8, 24), new THREE.MeshBasicMaterial({ color: '#7fd8ff', transparent: true, opacity: 0.35 })); loloGlow.rotation.x = -Math.PI / 2; loloGlow.position.set(-30, 0.15, -20); scene.add(loloGlow);
 
 // ================= collectibles =================
@@ -774,7 +774,7 @@ function showDialog(lines, done) { dlgQ = lines.slice(); dlgDone = done; nextLin
 function nextLine() {
   if (!dlgQ.length) { $('#dlg').classList.remove('on'); state.talk = false; const d = dlgDone; dlgDone = null; d && d(); return; }
   const l = dlgQ.shift(); $('#dlgNm').textContent = l.nm; $('#dlgTx').textContent = l.tx;
-  const av = $('#dlgAv'); if (l.av === 'fish') { av.style.backgroundImage = 'url(assets/ui/fish.webp)'; av.textContent = ''; } else { av.style.backgroundImage = 'none'; av.textContent = l.av; av.style.display = 'grid'; av.style.placeItems = 'center'; av.style.fontSize = '54px'; }
+  const av = $('#dlgAv'); if (l.av === 'fish') { av.style.backgroundImage = 'url(assets/ui/fish.webp?v=vx1)'; av.textContent = ''; } else { av.style.backgroundImage = 'none'; av.textContent = l.av; av.style.display = 'grid'; av.style.placeItems = 'center'; av.style.fontSize = '54px'; }
   sfx.pop();
 }
 
@@ -1674,7 +1674,7 @@ function frame(now) {
   if (WD.on) { NET.tick(now); wdRender(dt, now); return; }
   if (CS && CS.on) { NET.tick(now); CS.render(dt, now); return; }
   waterTex.offset.x = now / 60000; waterTex.offset.y = now / 90000;
-  lolo.position.y = 3.6 + Math.sin(now / 600) * 0.4; loloGlow.material.opacity = 0.25 + Math.sin(now / 600) * 0.1;
+  lolo.position.y = 3.6 + Math.sin(now / 600) * 0.4; lolo.update(now / 1000); if (kid) lolo.rotation.y = angLerp(lolo.rotation.y, Math.atan2(kid.position.x - lolo.position.x, kid.position.z - lolo.position.z), 0.04); loloGlow.material.opacity = 0.25 + Math.sin(now / 600) * 0.1;
   if (window.__wheel) { const { fw, cabins } = window.__wheel; wheelA += dt * (RIDE.on ? 0.45 : 0.11); fw.rotation.z = wheelA; cabins.forEach((c) => (c.rotation.z = -fw.rotation.z)); }
   updPlats(dt, now); HOUSES.forEach((h) => { if (h.swingSeat) h.swingSeat.rotation.x = Math.sin(now / 700) * 0.5; });
   if (window.__boat) { const a = now / 40000; window.__boat.position.set(Math.cos(a) * 260, -0.5, Math.sin(a) * 260); window.__boat.rotation.y = -a; }

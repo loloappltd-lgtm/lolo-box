@@ -108,7 +108,7 @@ export function initCharSel(o) {
   const root = document.createElement('div'); root.id = 'csel'; root.setAttribute('dir', 'rtl');
   root.innerHTML = `
     <div class="cs-stage" aria-hidden="true"></div>
-    <div class="cs-logo">${cubeSVG()}<div class="cs-title"><b>لولو بوكس</b><i>LOLO BOX</i></div><img src="assets/ui/fish.webp" alt=""></div>
+    <div class="cs-logo">${cubeSVG()}<div class="cs-title"><b>لولو بوكس</b><i>LOLO BOX</i></div><img src="assets/ui/fish.webp?v=vx1" alt=""></div>
     <div class="cs-tools"><button class="cs-rb" data-cs="home" title="الرئيسية" aria-label="الرئيسية">🏠</button><button class="cs-rb" data-cs="settings" title="الإعدادات" aria-label="الإعدادات">⚙️</button><button class="cs-rb" data-cs="sound" title="الصوت" aria-label="الصوت">🔊</button></div>
     <aside class="cs-list" aria-label="الشخصيات"><button class="cs-ar up" data-cs="up" aria-label="لأعلى">▲</button><div class="cs-grid" role="listbox"></div><button class="cs-ar dn" data-cs="dn" aria-label="لأسفل">▼</button></aside>
     <aside class="cs-card" aria-live="polite">

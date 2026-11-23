@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"><title>LOLO BOX art renderer</title>
+<script type="importmap">{"imports":{"three":"../js/three.module.js"}}</script></head>
+<body style="margin:0;background:#5b23b7">
+<!-- Renders the voxel mascot and characters to transparent PNGs with the game's look (used to make the UI images). -->
+<script type="module">
+import * as THREE from 'three';
+import { makeLoloMascot } from '../js/mascot.js';
+import { initAvatar, PRESETS } from '../js/avatar.js?v=3';
+THREE.ShaderChunk.tonemapping_fragment = `
+{ vec3 c = gl_FragColor.rgb; float l = dot(c, vec3(0.2126, 0.7152, 0.0722)); float mx = max(c.r, max(c.g, c.b)), mn = min(c.r, min(c.g, c.b));
+  float sat = (mx - mn) / max(mx, 1e-4); c = mix(vec3(l), c, 1.0 + 0.75 * (1.0 - sat) * step(0.02, mx - mn) + 0.18);
+  gl_FragColor.rgb = max(c, 0.0); }
+` + THREE.ShaderChunk.tonemapping_fragment;
+const grad = (() => { const d = new Uint8Array([90, 170, 255]); const t = new THREE.DataTexture(d, 3, 1, THREE.RedFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true; return t; })();
+const MC = {}; const toon = (c, extra) => { const k = c + (extra ? JSON.stringify(extra) : ''); return MC[k] || (MC[k] = new THREE.MeshToonMaterial(Object.assign({ color: c, gradientMap: grad }, extra || {}))); };
+function ctex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+const AV = initAvatar({ THREE, toon, ctex, bake: () => {} });
+const R = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+R.outputColorSpace = THREE.SRGBColorSpace; R.toneMapping = THREE.NeutralToneMapping; R.toneMappingExposure = 1.05; R.setClearColor(0, 0);
+document.body.appendChild(R.domElement);
+function stage() { const s = new THREE.Scene(); s.add(new THREE.HemisphereLight('#ffffff', '#b48cff', 1.7)); const d = new THREE.DirectionalLight('#fff4e0', 2.3); d.position.set(2.5, 4, 5); s.add(d); const r = new THREE.DirectionalLight('#9fd8ff', 1.0); r.position.set(-3, 2, -4); s.add(r); return s; }
+function shot(obj, w, h, camPos, look, fov = 30) {
+  R.setSize(w, h, false); const s = stage(); s.add(obj); const c = new THREE.PerspectiveCamera(fov, w / h, 0.1, 50); c.position.set(...camPos); c.lookAt(...look);
+  R.render(s, c); return R.domElement.toDataURL('image/png');
+}
+function pose(k, kind) { const P = k.P; P.body.position.y = 0.62;
+  if (kind === 'wave') { P.arms[1].rotation.set(0, 0, 2.6); P.arms[0].rotation.set(-0.2, 0, -0.25); P.head.rotation.set(0, 0.15, 0.05); }
+  if (kind === 'fist') { P.arms[0].rotation.set(0, 0, -2.5); P.arms[1].rotation.set(-0.3, 0, 0.25); P.head.rotation.set(0, -0.15, -0.04); }
+}
+window.renderAll = () => {
+  const out = {};
+  const m = makeLoloMascot({ toon }); m.rotation.y = -0.62; m.update(0.35);
+  out.fish = shot(m, 520, 460, [0.4, 0.25, 4.1], [0, 0.05, 0], 30);
+  const m2 = makeLoloMascot({ toon }); m2.rotation.y = 0; m2.update(0.35);
+  out.icon = shot(m2, 512, 512, [0, 0.12, 3.6], [0, 0.05, 0], 30);
+  const girl = AV.makeAvatar(PRESETS[11]); girl.rotation.y = -0.45; pose(girl, 'wave');
+  out.girl = shot(girl, 460, 600, [0.2, 1.25, 6.3], [0, 1.12, 0], 26);
+  const boy = AV.makeAvatar(PRESETS[10]); boy.rotation.y = 0.45; pose(boy, 'fist');
+  out.boy = shot(boy, 380, 600, [-0.2, 1.25, 6.3], [0, 1.12, 0], 26);
+  out.sel = PRESETS.map((L) => { const k = AV.makeAvatar(L); k.rotation.y = -0.35; pose(k, ''); return shot(k, 200, 300, [0.35, 1.2, 6.6], [0, 1.05, 0], 22); });
+  return out;
+};
+window.ready = true;
+</script></body></html>

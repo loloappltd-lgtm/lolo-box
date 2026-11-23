@@ -6,6 +6,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#6a2fd6">
+<link rel="icon" type="image/png" href="assets/ui/icon-64.png"><link rel="apple-touch-icon" href="assets/ui/icon-180.png">
 <title>لولو بوكس — LOLO BOX</title>
 <style>
 @font-face{font-family:Lolo;src:local('Cairo'),local('Tajawal'),local('Segoe UI')}
@@ -386,13 +387,13 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
 <body>
 <canvas id="c"></canvas>
 
-<div id="load"><img src="assets/ui/logo-box.webp" alt=""><div>جاري تجهيز المدينة…</div></div>
+<div id="load"><img src="assets/ui/logo-box.webp?v=vx1" alt=""><div>جاري تجهيز المدينة…</div></div>
 
 <!-- start -->
 <div class="ov on" id="start">
-  <img class="logo" src="assets/ui/logo-box.webp" alt="LOLO BOX">
-  <img class="girl" src="assets/ui/girl.webp" alt="">
-  <img class="fish" src="assets/ui/fish.webp" alt="">
+  <img class="logo" src="assets/ui/logo-box.webp?v=vx1" alt="LOLO BOX">
+  <img class="girl" src="assets/ui/girl.webp?v=vx1" alt="">
+  <img class="fish" src="assets/ui/fish.webp?v=vx1" alt="">
   <div class="menu">
     <button class="ib play" data-a="choose"><img src="assets/ui/play.webp" alt="ابدأ اللعب"></button>
     <div class="row">
@@ -407,7 +408,7 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
   <h2>اختار شخصيتك</h2>
   <div class="chars">
     <button class="ib" data-a="prevChar" style="width:40px"><img src="assets/ui/arrowR.webp" alt=""></button>
-    <div class="clist"><button class="c ib" data-ch="0"><img src="assets/ui/sel1.webp?v=2" alt=""></button><button class="c ib" data-ch="1"><img src="assets/ui/sel2.webp?v=2" alt=""></button><button class="c ib" data-ch="2"><img src="assets/ui/sel3.webp?v=2" alt=""></button><button class="c ib" data-ch="3"><img src="assets/ui/sel4.webp?v=2" alt=""></button><button class="c ib" data-ch="4"><img src="assets/ui/sel5.webp?v=2" alt=""></button><button class="c ib" data-ch="5"><img src="assets/ui/sel6.webp?v=2" alt=""></button><button class="c ib" data-ch="6"><img src="assets/ui/sel7.webp?v=2" alt=""></button><button class="c ib" data-ch="7"><img src="assets/ui/sel8.webp?v=2" alt=""></button><button class="c ib" data-ch="8"><img src="assets/ui/sel9.webp?v=2" alt=""></button><button class="c ib" data-ch="9"><img src="assets/ui/sel10.webp?v=2" alt=""></button></div>
+    <div class="clist"><button class="c ib" data-ch="0"><img src="assets/ui/sel1.webp?v=vx1" alt=""></button><button class="c ib" data-ch="1"><img src="assets/ui/sel2.webp?v=vx1" alt=""></button><button class="c ib" data-ch="2"><img src="assets/ui/sel3.webp?v=vx1" alt=""></button><button class="c ib" data-ch="3"><img src="assets/ui/sel4.webp?v=vx1" alt=""></button><button class="c ib" data-ch="4"><img src="assets/ui/sel5.webp?v=vx1" alt=""></button><button class="c ib" data-ch="5"><img src="assets/ui/sel6.webp?v=vx1" alt=""></button><button class="c ib" data-ch="6"><img src="assets/ui/sel7.webp?v=vx1" alt=""></button><button class="c ib" data-ch="7"><img src="assets/ui/sel8.webp?v=vx1" alt=""></button><button class="c ib" data-ch="8"><img src="assets/ui/sel9.webp?v=vx1" alt=""></button><button class="c ib" data-ch="9"><img src="assets/ui/sel10.webp?v=vx1" alt=""></button></div>
     <button class="ib" data-a="nextChar" style="width:40px"><img src="assets/ui/arrowL.webp" alt=""></button>
   </div>
   <div class="charName" id="charName"></div>
@@ -435,9 +436,9 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
   <button class="cbtn home ib" data-a="exit" title="الرئيسية">🏠</button>
   <button class="cbtn set ib" data-a="settings" title="الإعدادات">⚙️</button>
   <div class="mhead">
-    <img class="g" src="assets/ui/girl.webp" alt=""><img class="f" src="assets/ui/fish.webp" alt="">
-    <div class="mtitle"><img src="assets/ui/logo-box.webp" alt="LOLO BOX"><div class="pill">📍 اختر الخريطة</div></div>
-    <img class="b" src="assets/ui/boy.webp" alt="">
+    <img class="g" src="assets/ui/girl.webp?v=vx1" alt=""><img class="f" src="assets/ui/fish.webp?v=vx1" alt="">
+    <div class="mtitle"><img src="assets/ui/logo-box.webp?v=vx1" alt="LOLO BOX"><div class="pill">📍 اختر الخريطة</div></div>
+    <img class="b" src="assets/ui/boy.webp?v=vx1" alt="">
   </div>
   <div class="mgrid" id="mgrid"></div>
 </div>
@@ -446,7 +447,7 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
   <div class="pdesc" id="pDesc"></div>
   <button class="ib play" id="pPlay" data-a="playMap"><img src="assets/ui/play.webp" alt="العب"></button>
 </div></div>
-<div id="fade"><img src="assets/ui/logo-box.webp" alt=""><div id="fadeTx">جاري التحميل…</div></div>
+<div id="fade"><img src="assets/ui/logo-box.webp?v=vx1" alt=""><div id="fadeTx">جاري التحميل…</div></div>
 
 <!-- HUD -->
 <div class="ov" id="hud">
@@ -544,7 +545,7 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
   </div>
 </div></div>
 
-<div id="rot"><img src="assets/ui/fish.webp" alt=""><div>لِف الموبايل بالعرض علشان تلعب 🔄</div></div>
-<script type="module" src="./js/main.js?v=19"></script>
+<div id="rot"><img src="assets/ui/fish.webp?v=vx1" alt=""><div>لِف الموبايل بالعرض علشان تلعب 🔄</div></div>
+<script type="module" src="./js/main.js?v=20"></script>
 </body>
 </html>

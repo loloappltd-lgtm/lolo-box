@@ -5,6 +5,8 @@
 
 export const PARK_OFF = 3000;
 
+import { makeLoloMascot } from './mascot.js?v=1';
+
 export function buildPark(C) {
   const { THREE, scene, toon, ctex, signTex, plane, bake, makeKid, solids, circles, PL, sfx, toast, S, save, updPills, platform } = C;
   const OFF = PARK_OFF, B = 98; // half-size of the walkable park
@@ -53,12 +55,12 @@ export function buildPark(C) {
     wsign('🎟️ تذاكر', '#a35cff', s * 22, 5, ENT.z + 0.3, 0, 3.6, 1); solid(s * 22, ENT.z - 2, 4, 3.4);
   }
   box(30, 3, 2.4, '#8b4fe0', 0, 15.5, ENT.z); box(31, 0.6, 3, '#ffd23f', 0, 13.8, ENT.z); box(31, 0.6, 3, '#ffd23f', 0, 17.2, ENT.z);
-  { const lt = new THREE.TextureLoader().load('assets/ui/logo-box.webp'); lt.colorSpace = THREE.SRGBColorSpace; for (const r of [0, Math.PI]) { const lg = new THREE.Mesh(new THREE.PlaneGeometry(13, 11), new THREE.MeshBasicMaterial({ map: lt, transparent: true, toneMapped: false })); lg.position.set(0, 21, ENT.z + (r ? -1.3 : 1.3)); lg.rotation.y = r; root.add(lg); } }
+  { const lt = new THREE.TextureLoader().load('assets/ui/logo-box.webp?v=vx1'); lt.colorSpace = THREE.SRGBColorSpace; for (const r of [0, Math.PI]) { const lg = new THREE.Mesh(new THREE.PlaneGeometry(15, 8.95), new THREE.MeshBasicMaterial({ map: lt, transparent: true, toneMapped: false })); lg.position.set(0, 20, ENT.z + (r ? -1.3 : 1.3)); lg.rotation.y = r; root.add(lg); } }
   for (let k = -6; k <= 6; k++) sph(0.32, ['#ff6fb5', '#ffe680', '#7fd8ff'][(k + 9) % 3], k * 2.2, 14.1, ENT.z + 1.3, stat, 0.9);
   wsign('مدينة الملاهي', '#ff4fae', 0, 11.6, ENT.z + 1.4, 0, 12, 2.4);
   // mascot statue: Lolo on a pedestal in the plaza
   cyl(3.4, 3.8, 1.6, '#ffffff', 0, 0.8, 72, 20); cyl(2.4, 2.8, 1.4, '#ffd23f', 0, 2.3, 72, 20); circ(0, 72, 4);
-  { const lt = new THREE.TextureLoader().load('assets/ui/fish.webp'); lt.colorSpace = THREE.SRGBColorSpace; const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: lt, toneMapped: false })); sp.scale.set(7, 6.2, 1); sp.position.set(0, 7, 72); root.add(sp); dyn.push({ m: sp, bob: 6.8 }); }
+  { const lm = makeLoloMascot({ toon }); lm.scale.setScalar(4.2); lm.position.set(0, 7, 72); lm.rotation.y = Math.PI; root.add(lm); dyn.push({ m: lm, bob: 7.4, mascot: true }); } // voxel Lolo (LOLO_MASCOT_VOXEL_2026)
   // fountains on the plaza
   for (const s of [-1, 1]) { const fx = s * 11, fz = 66; cyl(3, 3.3, 0.8, '#e8dcc8', fx, 0.4, fz, 20); const w = new THREE.Mesh(new THREE.CylinderGeometry(2.7, 2.7, 0.15, 20), new THREE.MeshPhongMaterial({ color: '#5fd0ff', shininess: 90 })); add(w, fx, 0.75, fz); cyl(0.3, 0.4, 2, '#e8dcc8', fx, 1.4, fz, 8); const jet = new THREE.Mesh(new THREE.ConeGeometry(0.9, 2.4, 12, 1, true), new THREE.MeshBasicMaterial({ color: '#bff0ff', transparent: true, opacity: 0.55, side: THREE.DoubleSide })); jet.rotation.x = Math.PI; add(jet, fx, 3, fz, root); dyn.push({ m: jet, pulse: 1 }); circ(fx, fz, 3.4); }
   // return-to-city portal (glowing ring) next to the gate
@@ -341,7 +343,7 @@ export function buildPark(C) {
     const inPool = Math.abs(lx - WP.x) < WP.w / 2 && Math.abs(lz - WP.z) < WP.d / 2;
     if (inPool && !C.inAct() && (splashT -= dt) < 0 && PL.spd > 1) { splash(lx, lz, 3); splashT = 0.25; }
     // decorations
-    for (const d of dyn) { if (d.spin) d.m.rotation.y += dt * d.spin; if (d.spinZ) d.m.rotation.z += dt * d.spinZ; if (d.bob) d.m.position.y = d.bob + Math.sin(now / 600) * 0.4; if (d.pulse) d.m.scale.y = 1 + Math.sin(now / 200 * d.pulse) * 0.15; if (d.sway !== undefined) d.m.rotation.z = Math.sin(now / 900 + d.sway) * 0.08; }
+    for (const d of dyn) { if (d.mascot) d.m.update(now / 1000); if (d.spin) d.m.rotation.y += dt * d.spin; if (d.spinZ) d.m.rotation.z += dt * d.spinZ; if (d.bob) d.m.position.y = d.bob + Math.sin(now / 600) * 0.4; if (d.pulse) d.m.scale.y = 1 + Math.sin(now / 200 * d.pulse) * 0.15; if (d.sway !== undefined) d.m.rotation.z = Math.sin(now / 900 + d.sway) * 0.08; }
     updFlags(now);
     // collectible stars
     for (let n = STARS.length - 1; n >= 0; n--) { const s = STARS[n]; s.m.rotation.y += dt * 2; if (Math.hypot(lx - s.x, lz - s.z) < 1.8 && Math.abs(PL.y + 1 - s.y) < 2.6) { root.remove(s.m); STARS.splice(n, 1); S.pstars = [...(S.pstars || []), s.id]; S.tickets = (S.tickets || 0) + 3; save(); updPills(); C.sfx.coin(); toast(`⭐ نجمة ${S.pstars.length} من 10  +3🎟️`); } }
