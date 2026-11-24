@@ -237,7 +237,7 @@ export function buildMall(C) {
     L.push(...bench(-46, -14.6, false), ...bench(46, -14.6, false), ...bench(-46, -25.4, false), ...bench(46, -25.4, false));
     vox(L, root, { shadow: true });
     sign(textTex([['الاستعلامات', 64, '#ffffff', '#4a14b0'], ['Information', 40, '#ffd23f']], { w: 512, h: 200 }), 4, 1.6, -18, 3.2, -20, Math.PI / 2);
-    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000 ✅', 40, '#ffd23f'], ['راية  ·  الفين  ·  سينما', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
+    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000 ✅', 40, '#ffd23f'], ['سينما لولو ✅  ·  راية  ·  الفين', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
     sign(dir, 4, 3.1, 17.7, 2.3, -20, -Math.PI / 2);
     sign(textTex([['🍿 فشار', 64, '#ffffff', '#b32466']], { w: 256, h: 96 }), 3, 1.1, -34, 4.2, -18.15); sign(textTex([['🍦 آيس كريم', 56, '#ffffff', '#1f64b8']], { w: 256, h: 96 }), 3, 1.1, 34, 4.2, -18.15);
   }
@@ -250,8 +250,8 @@ export function buildMall(C) {
   front(8, 50, -27, 22, 34); wall(8, -27, 8, -66, H, '#e4daf6', true, SW); wall(50, -27, 50, -66, H, '#e4daf6', true, SW);
   // Dream 2000 (north-west, store 2) — door x -35..-23
   front(-50, -8, -27, -35, -23); wall(-8, -27, -8, -66, H, '#e4daf6', true, SW);
-  // atrium niche north wall (cinema teaser)
-  wall(-8, -40, 8, -40, H, '#e4daf6', true, SW);
+  // LOLO CINEMA front (between the two stores), door x -2.6..2.6
+  front(-8, 8, -40, -2.6, 2.6);
   // RAYA (south-west) and ELFIN (south-east), closed for now
   front(-50, -8, -13); wall(-8, -13, -8, 12, H, '#e4daf6', true, SW);
   front(8, 50, -13); wall(8, -13, 8, 12, H, '#e4daf6', true, SW);
@@ -266,7 +266,6 @@ export function buildMall(C) {
   logoSign('assets/btech-logo.webp?v=1', 1024, 300, 13, 28, 9.4, -26.5); // official B.TECH logo
   brand('راية', 'RAYA', '#ffffff', '#1d3d8f', -29, -13.5, Math.PI);
   brand('الفين', 'ELFIN', '#ffffff', '#b0123b', 29, -13.5, Math.PI);
-  sign(textTex([['🎬 السينما', 90, '#ffffff', '#b32466'], ['قريبًا', 60, '#ffd23f']], { w: 1024, h: 300, bg: '#2b1650', border: '#ffd23f', r: 26 }), 12, 3.5, 0, 6.5, -39.5);
   const shutterT = ctex(64, 64, (g) => { for (let y = 0; y < 64; y += 4) { g.fillStyle = y % 8 ? '#b9b3cc' : '#cfc9e0'; g.fillRect(0, y, 64, 4); } }); shutterT.wrapS = shutterT.wrapT = THREE.RepeatWrapping; shutterT.repeat.set(1, 6);
   const shutterM = new THREE.MeshToonMaterial({ map: shutterT });
   const soon = textTex([['🚧 بيفتح قريبًا', 64, '#4a14b0'], ['Opening soon', 40, '#7a3cf0']], { w: 512, h: 180, bg: '#ffd23f', r: 20 });
@@ -470,6 +469,160 @@ export function buildMall(C) {
     });
   })();
 
+  // ======================= LOLO CINEMA (LOLO_MALL_CINEMA_2026) =======================
+  // Between B.TECH and Dream 2000: x -8..8. Lobby z -40..-47 (box office, snack bar, usher), hall z -47..-66
+  // (big screen, 5 rows of seats, seated audience). The films are Lolo cartoons listed in cinema.json next to the game
+  // ({ "list": [{ "t": title, "src": video url, "poster": image url }] }); they play on the 3D screen when the video host
+  // allows it, otherwise on a screen-shaped overlay in front of the hall.
+  const CINE = (function buildCinema() {
+    const PRICE = 20, SNACK = { popcorn: ['🍿 فشار', 10], juice: ['🧃 عصير', 5] };
+    const NAVY = '#1a1030', WINE = '#7a1238', RED = '#c8203c', GOLDC = '#ffc21a';
+    const neon = (c) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
+    // ---- outside: marquee, bulbs and "now showing" posters on the corridor wall ----
+    sign(textTex([['سينما لولو', 110, '#ffffff', '#7a1238'], ['LOLO CINEMA', 56, GOLDC]], { w: 1024, h: 300, bg: '#2b1650', border: GOLDC, r: 26 }), 12, 3.5, 0, 9.3, -39.5);
+    { const bm = neon('#fff3b0'); for (let i = 0; i < 26; i++) { const a = i / 26, x = -6.4 + (i < 13 ? a * 2 * 12.8 : 12.8 - (a - 0.5) * 2 * 12.8); const top = i < 13; const b = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 6), bm); b.position.set(x, top ? 11.15 : 7.45, -39.4); root.add(b); } }
+    const poster = (title, sub, x) => sign(textTex([['🎬', 120, '#ffffff'], [title, 54, '#ffffff'], [sub, 38, GOLDC]], { w: 360, h: 560, bg: '#4a14b0', border: GOLDC, r: 22 }), 2.4, 3.7, x, 3.6, -39.5);
+    poster('كرتون لولو', 'يعرض الآن', -5.2); poster('سينما لولو', 'التذكرة 🪙 ' + PRICE, 5.2);
+    // ---- lobby floor, ceiling, box office, snack bar, partition with the hall door ----
+    const carpet = pixTex('#3a1450', ['#4a1a66', '#2f103f', '#5a2080'], 40, 16, (g, s) => { g.fillStyle = '#ffc21a'; g.fillRect(7, 7, 2, 2); });
+    tiledPlane(carpet, 15.6, 25.6, 0, -53, 0.08, 2);
+    { const c = new THREE.Mesh(new THREE.BoxGeometry(16, 0.3, 26), toon('#140b26')); c.position.set(0, 9.8, -53); root.add(c);
+      const sm = neon('#fff6c8'); for (let i = 0; i < 40; i++) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.08), sm); s.position.set(((i * 37) % 150) / 10 - 7.5, 9.63, -41 - ((i * 53) % 240) / 10); root.add(s); } }
+    const L = [];
+    // box office (west) and snack bar (east)
+    L.push([-6.6, 0.6, -43.8, 1.6, 1.2, 4.2, WINE], [-6.6, 1.25, -43.8, 1.9, 0.15, 4.5, GOLDC]); solid(-7.6, -5.6, -46, -41.6);
+    L.push([6.6, 0.6, -43.8, 1.6, 1.2, 4.2, WINE], [6.6, 1.25, -43.8, 1.9, 0.15, 4.5, GOLDC]); solid(5.6, 7.6, -46, -41.6);
+    L.push([7.3, 1.9, -45.3, 0.8, 1.2, 0.8, '#ff4f6a'], [7.3, 2.6, -45.3, 0.84, 0.2, 0.84, '#ffffff'], [7.3, 2.2, -45.3, 0.7, 0.5, 0.7, '#fff3b0']); // popcorn machine
+    // partition between lobby and hall, door x -1.8..1.8
+    const PW = [];
+    wall(-8, -47, -1.8, -47, 9.8, NAVY, true, PW); wall(1.8, -47, 8, -47, 9.8, NAVY, true, PW); PW.push([0, 8.65, -47, 3.6, 2.3, WT, NAVY]);
+    // hall: dark side panels, back wall, screen frame, curtains, stage
+    PW.push([-7.55, 4.9, -56.5, 0.12, 9.8, 19, NAVY], [7.55, 4.9, -56.5, 0.12, 9.8, 19, NAVY], [0, 4.9, -65.55, 15, 9.8, 0.2, '#0e0820']);
+    vox(PW, root, { block: true });
+    L.push([0, 0.35, -64.2, 15, 0.7, 2.4, WINE]); solid(-7.5, 7.5, -65.6, -63);
+    for (const s of [-1, 1]) L.push([s * 6.85, 4.6, -64.9, 1.3, 9.2, 0.5, RED], [s * 6.3, 4.6, -64.7, 0.4, 9.2, 0.4, '#9c1530']);
+    L.push([0, 9.0, -64.9, 15, 1.0, 0.5, RED]);
+    vox(L, root, { shadow: true });
+    sign(textTex([['🎟️ شباك التذاكر', 56, '#ffffff']], { w: 512, h: 110, bg: '#2b1650', border: GOLDC, r: 18 }), 3.6, 0.78, -7.4, 3.4, -43.8, Math.PI / 2);
+    sign(textTex([['🍿 فشار وعصير', 56, '#ffffff']], { w: 512, h: 110, bg: '#2b1650', border: GOLDC, r: 18 }), 3.6, 0.78, 7.4, 3.4, -43.8, -Math.PI / 2);
+    sign(textTex([['🎬 قاعة 1', 60, '#ffffff']], { w: 400, h: 110, bg: '#7a1238', border: GOLDC, r: 18 }), 2.8, 0.77, 0, 8.2, -46.55);
+    // rope gate in the hall door (opens with a ticket)
+    const rope = new THREE.Group(); root.add(rope);
+    vox([[-1.6, 0.55, -46.6, 0.18, 1.1, 0.18, GOLDC], [1.6, 0.55, -46.6, 0.18, 1.1, 0.18, GOLDC], [0, 0.95, -46.6, 3.2, 0.1, 0.1, RED]], rope);
+    const gate = { x0: OFF - 1.8, x1: OFF + 1.8, z0: -47.2, z1: -46.3 }; C.solids.push(gate);
+    let entry = false;
+    const setGate = (open) => { entry = open; rope.visible = !open; gate.x0 = open ? OFF + 9000 : OFF - 1.8; gate.x1 = open ? OFF + 9001 : OFF + 1.8; };
+    // ---- the screen ----
+    const SW_ = 12.8, SH_ = 7.2, SY = 5.0, SZ = -65.4;
+    const idle = ctex(512, 288, (g) => { const gr = g.createLinearGradient(0, 0, 512, 288); gr.addColorStop(0, '#2b1650'); gr.addColorStop(1, '#7a1238'); g.fillStyle = gr; g.fillRect(0, 0, 512, 288); g.textAlign = 'center'; g.textBaseline = 'middle'; g.direction = 'rtl'; g.fillStyle = '#ffffff'; g.font = '900 54px Cairo, Tajawal, sans-serif'; g.fillText('سينما لولو', 256, 120); g.fillStyle = '#ffd23f'; g.font = '900 30px Cairo, Tajawal, sans-serif'; g.fillText('اقعد على أي كرسي واتفرج 🍿', 256, 190); });
+    const screenMat = new THREE.MeshBasicMaterial({ map: idle, toneMapped: false });
+    const screen = new THREE.Mesh(new THREE.PlaneGeometry(SW_, SH_), screenMat); screen.position.set(0, SY, SZ); root.add(screen);
+    { const fr = new THREE.Mesh(new THREE.PlaneGeometry(SW_ + 0.5, SH_ + 0.5), toon('#05030c')); fr.position.set(0, SY, SZ - 0.02); root.add(fr); }
+    // ---- seats: 5 rows, centre aisle ----
+    const ROWS = [-51, -53.3, -55.6, -57.9, -60.2], COLS = [-6, -4.8, -3.6, -2.4, 2.4, 3.6, 4.8, 6];
+    { const S = []; for (const z of ROWS) { for (const x of COLS) S.push([x, 0.3, z, 1.05, 0.6, 0.9, RED], [x, 0.95, z + 0.4, 1.05, 1.1, 0.22, RED], [x, 0.62, z, 0.12, 0.5, 0.9, '#5a0c22']); for (const s of [-1, 1]) solid(s * 2.0, s * 6.6, z - 0.5, z + 0.55); }
+      for (const z of ROWS) for (const s of [-1, 1]) S.push([s * 1.75, 0.12, z, 0.16, 0.08, 0.16, GOLDC]);
+      vox(S, root, { shadow: true }); }
+    // seated audience
+    const sitPose = (k) => { const P = k.P; P.legs[0].rotation.x = P.legs[1].rotation.x = -1.45; P.arms[0].rotation.x = P.arms[1].rotation.x = -0.4; P.body.position.y = 0.62; };
+    const AUD = [];
+    [[-6, 0], [-3.6, 0], [4.8, 0], [-4.8, 2], [2.4, 2], [6, 2], [-2.4, 3], [3.6, 4], [-6, 4]].forEach(([x, r], i) => { const k = C.makeAvatar(C.randomLook(i % 2 ? 'girl' : 'boy')); k.scale.setScalar(0.9); k.position.set(OFF + x, 0.2, ROWS[r] + 0.05); k.rotation.y = Math.PI; sitPose(k); C.scene.add(k); AUD.push(k); });
+    // ---- staff ----
+    const cUni = (base, extra) => { const Lk = uniform(base, extra); Lk.c = Object.assign({}, Lk.c, { top: '#7a1238', bottom: '#1d2030', shoes: '#ffc21a' }); return Lk; };
+    [
+      { id: 'c_ticket', nm: 'ياسمين', role: 'شباك التذاكر', av: '🎟️', x: -7.3, z: -43.8, yaw: Math.PI / 2, ix: -4.6, iz: -43.8, look: cUni(0, { hair: 'long' }), hello: 'أهلاً بيك في سينما لولو! 🎬' },
+      { id: 'c_snack', nm: 'زياد', role: 'الفشار والعصير', av: '🍿', x: 7.3, z: -43.2, yaw: -Math.PI / 2, ix: 4.6, iz: -43.6, look: cUni(1, { hair: 'curly' }), hello: 'فشار سخن يا بطل! 🍿' },
+      { id: 'c_usher', nm: 'عم صابر', role: 'باب القاعة', av: '🎫', x: 2.9, z: -45.6, yaw: 0, look: cUni(3, { hat: 'cap' }), hello: 'التذاكر من فضلك 🎫' },
+    ].forEach(addEmployee);
+    // ---- films ----
+    let LIST = null, loading = null;
+    function loadList() { if (LIST) return Promise.resolve(LIST); if (!loading) loading = fetch('cinema.json?t=' + Math.floor(Date.now() / 60000)).then((r) => (r.ok ? r.json() : { list: [] })).then((j) => (LIST = (j && Array.isArray(j.list) ? j.list : []).filter((f) => f && f.src))).catch(() => (LIST = [])); return loading; }
+    const titles = () => (LIST && LIST.length ? LIST.slice(0, 4).map((f) => '«' + f.t + '»').join('، ') : 'كرتون لولو');
+    Object.assign(SPOTS, { cinema: { x: 0, z: -36, n: 'سينما لولو' }, c_ticket: { x: -4.4, z: -43.8, n: 'شباك تذاكر السينما' } });
+    Object.assign(SCRIPTS, {
+      c_ticket: (n) => { loadList(); talk(n, entry ? 'معاك تذكرة خلاص! ادخل القاعة واختار أي كرسي 🎬' : `أهلاً بيك في سينما لولو! النهارده بنعرض كرتون لولو. التذكرة بـ ${PRICE} عملة 🪙`, [
+        ...(entry ? [] : [[`🎟️ اشتري تذكرة (🪙 ${PRICE})`, () => { if ((C.S.coins || 0) < PRICE) { talk(n, `محتاج ${PRICE - (C.S.coins || 0)} عملة كمان 🪙 — لِم عملات في الجولة الحرة والمهام وتعالى.`, [['تمام', closeUI]]); return; } C.S.coins -= PRICE; C.save(); C.updPills(); C.sfx.coin(); setGate(true); talk(n, 'اتفضل التذكرة 🎟️ عم صابر هيدخلك القاعة. فرجة ممتعة!', [['🍿 أجيب فشار الأول', () => { closeUI(); guideTo('c_snack'); }], ['🎬 يلا على القاعة', () => { closeUI(); guideTo('c_hall'); }]]); }]]),
+        ['🎬 إيه اللي بيتعرض؟', () => loadList().then(() => talk(n, LIST.length ? `بنعرض: ${titles()}. وتقدر تختار الحلقة وإنت قاعد جوه.` : 'الأفلام بتتجهز دلوقتي، تعالى كمان شوية 🎬', [['👍 تمام', closeUI]]))], ['👋 شكرًا', closeUI]]); },
+      c_snack: (n) => talk(n, 'فشار سخن وعصير ساقع للفيلم! تحب إيه؟', [
+        ...Object.entries(SNACK).map(([k, [nm, pr]]) => [`${nm} (🪙 ${pr})`, () => { if ((C.S.coins || 0) < pr) { C.toast(`🪙 محتاج ${pr - (C.S.coins || 0)} عملة كمان`); return; } C.S.coins -= pr; C.save(); C.updPills(); C.sfx.pop(); snackOn(k); closeUI(); C.toast(`${nm} في إيدك! بالهنا 😋`); }]), ['👋 شكرًا', closeUI]]),
+      c_usher: (n) => entry ? talk(n, 'اتفضل يا بطل، القاعة جوه. اقعد على أي كرسي والفيلم هيشتغل 🎬', [['👍 شكرًا', closeUI]]) : talk(n, 'التذكرة من فضلك! تقدر تشتريها من شباك التذاكر اللي على الشمال.', [['🎟️ وديني للشباك', () => { closeUI(); guideTo('c_ticket'); }], ['👋 ماشي', closeUI]]),
+    });
+    Object.assign(SPOTS, { c_snack: { x: 4.4, z: -43.6, n: 'الفشار والعصير' }, c_hall: { x: 0, z: -49, n: 'قاعة السينما' } });
+    // snack in the kid's hand
+    let snackMesh = null;
+    function snackOn(k) { const kid = C.getKid(); if (!kid || !kid.P) return; if (snackMesh && snackMesh.parent) snackMesh.parent.remove(snackMesh); snackMesh = new THREE.Group(); if (k === 'popcorn') vox([[0, -0.72, 0.12, 0.3, 0.36, 0.3, '#ff2d55'], [0, -0.52, 0.12, 0.32, 0.1, 0.32, '#fff3c4'], [0.05, -0.47, 0.1, 0.12, 0.08, 0.12, '#ffe27a']], snackMesh); else vox([[0, -0.72, 0.12, 0.2, 0.34, 0.2, '#2fc4ff'], [0.04, -0.5, 0.12, 0.03, 0.14, 0.03, '#ffffff']], snackMesh); kid.P.arms[0].add(snackMesh); }
+    // ---- watching: camera at the seat, video on the screen (or an overlay when the host blocks textures) ----
+    const ov = document.createElement('div'); ov.id = 'cineUI'; ov.setAttribute('dir', 'rtl'); document.body.appendChild(ov);
+    const cs = document.createElement('style'); cs.textContent = `#cineUI{position:fixed;inset:0;z-index:26;display:none;font-family:Cairo,Tajawal,"Segoe UI",sans-serif;pointer-events:none}
+#cineUI.on{display:block}#cineUI .vbox{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:min(82vw,calc(68vh*16/9));aspect-ratio:16/9;background:#000;border-radius:10px;box-shadow:0 0 0 6px #05030c,0 0 60px rgba(255,210,120,.25);display:none;pointer-events:auto}
+#cineUI.ovl .vbox{display:block}#cineUI video{width:100%;height:100%;border-radius:10px;background:#000}
+#cineUI .ttl{position:absolute;top:calc(10px + env(safe-area-inset-top));right:50%;transform:translateX(50%);background:rgba(26,16,48,.85);color:#fff;font-weight:900;font-size:clamp(14px,2.6vh,19px);padding:6px 18px;border-radius:999px;border:2px solid #ffc21a;max-width:80vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cineUI .bar{position:absolute;bottom:calc(12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);display:flex;gap:8px;pointer-events:auto;background:rgba(26,16,48,.85);padding:8px;border-radius:999px;border:2px solid #ffc21a}
+#cineUI .bar button{min-width:48px;height:48px;border-radius:999px;background:linear-gradient(#b277ff,#7d3cf0);color:#fff;font-size:20px;font-weight:900;border:2px solid #fff;padding:0 12px;font-family:inherit}
+#cineUI .bar button.x{background:linear-gradient(#ff7ab8,#e33d8c)}
+#cineUI .lst{position:absolute;bottom:calc(84px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(440px,90vw);max-height:52vh;overflow:auto;background:linear-gradient(#f7f2ff,#e8dcff);border:4px solid #a46cf5;border-radius:20px;padding:8px;display:none;pointer-events:auto;flex-direction:column;gap:6px}
+#cineUI .lst.on{display:flex}#cineUI .lst button{display:flex;align-items:center;gap:10px;text-align:right;background:#fff;border-radius:14px;padding:6px;font-weight:800;color:#3b1d78;font-size:15px;border:2px solid transparent;font-family:inherit}
+#cineUI .lst button.on{border-color:#7a32e6}#cineUI .lst img{width:72px;height:44px;object-fit:cover;border-radius:8px;background:#2b1650;flex:none}
+#cineUI .msg{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:900;font-size:20px;background:rgba(26,16,48,.85);padding:10px 20px;border-radius:16px;display:none}`;
+    document.head.appendChild(cs);
+    ov.innerHTML = '<div class="ttl"></div><div class="vbox"></div><div class="msg"></div><div class="lst"></div><div class="bar"><button data-cv="prev" aria-label="الحلقة اللي قبل">⏮</button><button data-cv="play" aria-label="تشغيل أو إيقاف">⏯</button><button data-cv="next" aria-label="الحلقة اللي بعد">⏭</button><button data-cv="list" aria-label="اختار الكرتون">📃 الكرتون</button><button data-cv="full" aria-label="شاشة كاملة">⛶</button><button class="x" data-cv="exit" aria-label="قوم من الكرسي">🚪 قوم</button></div>';
+    const vbox = ov.querySelector('.vbox'), ttl = ov.querySelector('.ttl'), lst = ov.querySelector('.lst'), msg = ov.querySelector('.msg');
+    let vid = null, vtex = null, cur = 0, watching = null, mode = 'tex';
+    const say2 = (t) => { msg.textContent = t; msg.style.display = t ? 'block' : 'none'; };
+    function makeVideo(f, cors) {
+      if (vid) { vid.pause(); vid.removeAttribute('src'); vid.load(); vid.remove(); }
+      if (vtex) { vtex.dispose(); vtex = null; }
+      vid = document.createElement('video'); vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.setAttribute('webkit-playsinline', ''); vid.preload = 'auto'; vid.controls = false;
+      if (cors) vid.crossOrigin = 'anonymous'; if (f.poster) vid.poster = f.poster;
+      vid.src = f.src; vbox.appendChild(vid);
+      vid.addEventListener('ended', () => step(1));
+      vid.addEventListener('playing', () => say2(''));
+      vid.addEventListener('waiting', () => say2('⏳ بيحمّل…'));
+      vid.addEventListener('error', () => { if (cors) { mode = 'ovl'; ov.classList.add('ovl'); screenMat.map = idle; screenMat.needsUpdate = true; makeVideo(f, false); vid.play().catch(() => {}); } else say2('الحلقة دي مش راضية تشتغل دلوقتي — جرّب حلقة تانية 📃'); });
+      if (cors) { vtex = new THREE.VideoTexture(vid); vtex.colorSpace = THREE.SRGBColorSpace; screenMat.map = vtex; screenMat.needsUpdate = true; }
+      return vid;
+    }
+    function playIdx(i) {
+      if (!LIST || !LIST.length) { say2('الأفلام بتتجهز دلوقتي، تعالى كمان شوية 🎬'); return; }
+      cur = (i + LIST.length) % LIST.length; const f = LIST[cur]; ttl.textContent = '🎬 ' + f.t; renderList();
+      makeVideo(f, mode === 'tex'); say2('⏳ بيحمّل…'); vid.play().catch(() => say2('اضغط ⏯ عشان يشتغل'));
+    }
+    const step = (d) => playIdx(cur + d);
+    function renderList() { lst.innerHTML = (LIST || []).map((f, i) => `<button class="${i === cur ? 'on' : ''}" data-cv="pick" data-i="${i}">${f.poster ? `<img src="${esc(f.poster)}" alt="">` : '<img alt="">'}<span>${esc(f.t)}</span></button>`).join(''); }
+    ov.addEventListener('click', (e) => { const b = e.target.closest('[data-cv]'); if (!b) return; C.sfx.click(); const a = b.dataset.cv;
+      if (a === 'exit') stand(); else if (a === 'play') { if (vid) { if (vid.paused) vid.play().catch(() => {}); else vid.pause(); } else playIdx(cur); }
+      else if (a === 'next') step(1); else if (a === 'prev') step(-1); else if (a === 'list') lst.classList.toggle('on');
+      else if (a === 'pick') { lst.classList.remove('on'); playIdx(+b.dataset.i); }
+      else if (a === 'full' && vid) { try { if (vid.requestFullscreen) vid.requestFullscreen(); else if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen(); } catch (err) {} } });
+    function sit(x, z) {
+      closeUI(); watching = { x, z }; C.setPanel('cine'); hud.classList.remove('on'); document.body.classList.add('mallFocus');
+      C.PL.x = OFF + x; C.PL.z = z; C.PL.yaw = Math.PI; const kid = C.getKid(); if (kid) kid.visible = false;
+      ov.className = 'on' + (mode === 'ovl' ? ' ovl' : ''); ttl.textContent = '🎬 سينما لولو'; say2('⏳ بيحمّل…');
+      loadList().then(() => { if (!watching) return; renderList(); playIdx(cur); });
+    }
+    function stand() {
+      if (!watching) return; const w = watching; watching = null;
+      if (vid) { vid.pause(); } if (vtex) { screenMat.map = idle; screenMat.needsUpdate = true; }
+      ov.className = ''; lst.classList.remove('on'); document.body.classList.remove('mallFocus'); C.setPanel(null);
+      const kid = C.getKid(); if (kid) kid.visible = true; C.PL.x = OFF + (w.x < 0 ? -1 : 1) * 0.9; C.PL.z = w.z;
+    }
+    return {
+      interact(Lst) {
+        Lst.push({ x: OFF, z: -36, r: 3.2, label: '🎬 سينما لولو', act: () => { loadList(); C.toast(entry ? '🎟️ معاك تذكرة — ادخل القاعة!' : '🎟️ اشتري التذكرة من الشباك اللي جوه على الشمال'); } });
+        if (C.PL.z < -47) for (const z of ROWS) for (const s of [-1, 1]) Lst.push({ x: OFF + s * 1.0, z: z + 0.2, r: 1.1, label: '🎬 اقعد واتفرج', act: () => sit(s * 2.4, z) });
+      },
+      update(dt) {
+        if (watching) { C.PL.x = OFF + watching.x; C.PL.z = watching.z; }
+        // leaving the hall uses up the ticket
+        if (entry && C.PL.z > -45 && C.PL.z < -40 && rope.__inside) { setGate(false); rope.__inside = false; C.toast('🎟️ التذكرة خلصت — نورتنا في سينما لولو!'); }
+        if (C.PL.z < -48) rope.__inside = true;
+      },
+      get cam() { return watching ? { p: [OFF + watching.x * 0.35, 2.35, watching.z - 0.2], l: [OFF + watching.x * 0.1, SY - 0.2, SZ] } : null; },
+      stop() { stand(); setGate(false); rope.__inside = false; if (snackMesh && snackMesh.parent) snackMesh.parent.remove(snackMesh); snackMesh = null; },
+      get watching() { return !!watching; },
+    };
+  })();
+
   // ---------- ProductInspectionSystem (3D view rendered with the game's renderer) ----------
   const VIEW = { on: false, scene: null, cam: null, obj: null, yaw: 0.6, pitch: 0.25, zoom: 1, drag: null, pts: new Map(), pinch: 0, id: null };
   function viewInit() {
@@ -549,8 +702,8 @@ export function buildMall(C) {
   }
   // ---------- MallNavigationSystem: directory ----------
   function openDirectory() {
-    const rows = [['btech', '1️⃣', 'بي تك — B.TECH', 'مفتوح'], ['dream', '2️⃣', 'دريم 2000 — Dream 2000', 'مفتوح'], ['d_phones', '📱', 'دريم 2000 · الموبايلات', 'مفتوح'], ['d_laptops', '💻', 'دريم 2000 · اللابتوبات', 'مفتوح'], ['d_acc', '🎧', 'دريم 2000 · الإكسسوارات', 'مفتوح'], ['d_gaming', '🎮', 'دريم 2000 · الألعاب', 'مفتوح'], ['d_cs', '🙋', 'دريم 2000 · خدمة العملاء', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
-    const soon = [['راية — RAYA', '🚧'], ['الفين — ELFIN', '🚧'], ['السينما', '🎬'], ['سافوري لاند', '🎡'], ['مدينة التلج', '❄️']];
+    const rows = [['btech', '1️⃣', 'بي تك — B.TECH', 'مفتوح'], ['dream', '2️⃣', 'دريم 2000 — Dream 2000', 'مفتوح'], ['d_phones', '📱', 'دريم 2000 · الموبايلات', 'مفتوح'], ['d_laptops', '💻', 'دريم 2000 · اللابتوبات', 'مفتوح'], ['d_acc', '🎧', 'دريم 2000 · الإكسسوارات', 'مفتوح'], ['d_gaming', '🎮', 'دريم 2000 · الألعاب', 'مفتوح'], ['d_cs', '🙋', 'دريم 2000 · خدمة العملاء', 'مفتوح'], ['cinema', '🎬', 'سينما لولو — كرتون لولو', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
+    const soon = [['راية — RAYA', '🚧'], ['الفين — ELFIN', '🚧'], ['سافوري لاند', '🎡'], ['مدينة التلج', '❄️']];
     openUI('list', `<div class="mpan"><div class="mhd"><b>🗺️ دليل مول العرب</b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div><div class="mbd">
       ${rows.map(([k, i, n, s]) => `<div class="row"><span class="ic">${i}</span><div class="t">${n}<small>✅ ${s}</small></div><button data-mu="go" data-v="${k}">📍 وديني</button></div>`).join('')}
       ${soon.map(([n, i]) => `<div class="row" style="opacity:.6"><span class="ic">${i}</span><div class="t">${n}<small>🚧 بيتجهز — قريبًا</small></div></div>`).join('')}</div></div>`);
@@ -606,6 +759,7 @@ export function buildMall(C) {
     }
     for (const v of VIS) { const a = v.loop[v.seg], b = v.loop[(v.seg + 1) % v.loop.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); v.t += (v.sp * dt) / L; if (v.t >= 1) { v.t = 0; v.seg = (v.seg + 1) % v.loop.length; } const x = a[0] + (b[0] - a[0]) * v.t, z = a[1] + (b[1] - a[1]) * v.t; v.k.position.set(OFF + x, 0.12, z); v.k.rotation.y = Math.atan2(b[0] - a[0], b[1] - a[1]); C.animKid(v.k, v.sp, dt, false); }
     C.animKid(guard, 0, dt, false); if (Math.hypot(C.PL.x - OFF - 9, C.PL.z - 19) < 6) guard.rotation.y = angLerp(guard.rotation.y, Math.atan2(C.PL.x - guard.position.x, C.PL.z - guard.position.z), dt * 4); else guard.rotation.y = angLerp(guard.rotation.y, 0, dt * 2);
+    CINE.update(dt);
     // guide beacon
     if (GUIDE) { barrow.position.y = 3.2 + Math.sin(t * 4) * 0.3; barrow.rotation.y = t * 2; if (Math.hypot(C.PL.x - OFF - GUIDE.x, C.PL.z - GUIDE.z) < 3) { C.toast(`✅ وصلت: ${GUIDE.n}`); C.sfx.coin(); GUIDE = null; beacon.visible = false; } }
     // products gently turn on their tables (not TVs/appliances)
@@ -619,25 +773,26 @@ export function buildMall(C) {
     L.push({ x: o + 16.5, z: -20, r: 3, label: '🗺️ دليل المول', act: openDirectory });
     for (const n of NPC) L.push({ x: n.ix !== undefined ? o + n.ix : n.k.position.x, z: n.iz !== undefined ? n.iz : n.k.position.z, r: 2.6, label: `💬 كلّم ${n.nm}`, act: () => SCRIPTS[n.id](n) });
     for (const q of PL3) L.push({ x: o + q.x, z: q.z, r: q.r, label: `🔍 ${q.p.n}`, act: () => openProduct(q.p.id) });
-    for (const [x, z, n] of [[-29, -16, 'راية'], [29, -16, 'الفين'], [0, -36, 'السينما']]) L.push({ x: o + x, z, r: 4, label: `🚧 ${n}`, act: () => C.toast(`🚧 ${n} بيتجهز — هيفتح قريب في مول العرب!`) });
+    for (const [x, z, n] of [[-29, -16, 'راية'], [29, -16, 'الفين']]) L.push({ x: o + x, z, r: 4, label: `🚧 ${n}`, act: () => C.toast(`🚧 ${n} بيتجهز — هيفتح قريب في مول العرب!`) });
+    CINE.interact(L);
     L.push({ x: o - 34, z: -17.5, r: 3, label: '🍿 كشك الفشار', act: () => { C.sfx.pop(); C.toast('🍿 فشار سخن! (الكشك هيبيع قريب)'); } });
     L.push({ x: o + 34, z: -17.5, r: 3, label: '🍦 كشك الآيس كريم', act: () => { C.sfx.pop(); C.toast('🍦 آيس كريم بالفراولة! (الكشك هيبيع قريب)'); } });
     return L;
   }
-  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك أو دريم 2000 وافحص الأجهزة'}</small>`; }
+  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك أو دريم 2000، أو اتفرج على كرتون في السينما 🎬'}</small>`; }
   function drawMap(g, s) {
     g.fillStyle = '#7fd36a'; g.fillRect(-B * s, -B * s, 2 * B * s, 2 * B * s);
     g.fillStyle = '#5b5f74'; g.fillRect(-103 * s, 97 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 14 * s, 218 * s); g.fillRect(89 * s, -107 * s, 14 * s, 218 * s);
     g.fillStyle = '#f1d6f2'; g.fillRect(-70 * s, 2 * s, 140 * s, 96 * s);
     g.fillStyle = '#e9ddff'; g.fillRect(-52 * s, -66 * s, 104 * s, 78 * s);
     g.fillStyle = '#14161f'; g.fillRect(8 * s, -66 * s, 42 * s, 39 * s);
-    g.fillStyle = '#2b2f37'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillStyle = '#8be000'; g.fillRect(-35 * s, -28 * s, 12 * s, 2 * s); g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
+    g.fillStyle = '#2b2f37'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillStyle = '#8be000'; g.fillRect(-35 * s, -28 * s, 12 * s, 2 * s); g.fillStyle = '#2b1650'; g.fillRect(-8 * s, -66 * s, 16 * s, 26 * s); g.fillStyle = '#ffc21a'; g.fillRect(-2.6 * s, -41 * s, 5.2 * s, 2 * s); g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
     g.fillStyle = '#6fd6ff'; g.beginPath(); g.arc(0, -20 * s, 4 * s, 0, 7); g.arc(0, 42 * s, 4.5 * s, 0, 7); g.fill();
     if (GUIDE) { g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(GUIDE.x * s, GUIDE.z * s, 2.4 * s + 3, 0, 7); g.fill(); }
   }
   function onEnter() { welcomed = false; }
-  function onLeave() { closeUI(); hud.classList.remove('on'); bagOff(); const k = C.getKid(); if (k) k.__mallBag = false; GUIDE = null; beacon.visible = false; }
-  return { root, update, interactables, goal, drawMap, renderView, onEnter, onLeave, camBlock, get viewOn() { return VIEW.on; }, SPAWN: { x: OFF, z: 90, yaw: Math.PI }, B, OFF, PRODUCTS, openProduct, openCart, openDirectory };
+  function onLeave() { CINE.stop(); closeUI(); hud.classList.remove('on'); bagOff(); const k = C.getKid(); if (k) k.__mallBag = false; GUIDE = null; beacon.visible = false; }
+  return { root, update, interactables, goal, drawMap, renderView, onEnter, onLeave, camBlock, get viewOn() { return VIEW.on; }, get camOverride() { return CINE.cam; }, SPAWN: { x: OFF, z: 90, yaw: Math.PI }, B, OFF, PRODUCTS, openProduct, openCart, openDirectory };
 }
 
 // ---------------- 3D product models (voxel style, ~real proportions, 1 unit ≈ 0.65 m) ----------------

@@ -8,7 +8,7 @@ import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
-import { buildMall, MALL_OFF } from './mall.js?v=4';
+import { buildMall, MALL_OFF } from './mall.js?v=5';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -984,6 +984,7 @@ function updCam(dt, snap) {
   if (snap) camera.position.copy(camW); else camera.position.lerp(camW, 1 - Math.exp(-dt * 12));
   camera.lookAt(camT);
   if (window.__cam) { camera.position.set(...window.__cam[0]); camera.lookAt(...window.__cam[1]); }
+  if (WORLD === 'mall' && MALL && MALL.camOverride) { const o = MALL.camOverride; camera.position.set(o.p[0], o.p[1], o.p[2]); camera.lookAt(o.l[0], o.l[1], o.l[2]); }
   if (shake > 0) { camera.position.x += (Math.random() - 0.5) * shake; camera.position.y += (Math.random() - 0.5) * shake; shake = Math.max(0, shake - dt * 1.4); }
   camera.fov = lerp(camera.fov, drive ? 62 + Math.abs(CAR.v) * 0.45 : 60, dt * 3); camera.updateProjectionMatrix();
   sun.position.set(PL.x + 50, 90, PL.z + 30); sun.target.position.set(PL.x, 0, PL.z);
