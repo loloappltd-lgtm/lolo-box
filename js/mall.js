@@ -11,6 +11,8 @@ import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
 
 export const MALL_OFF = 6000;
+// computer players shown in the mall and in the friends list until real friends are online
+export const BOT_NAMES = ['عمر_77', 'مريم_09', 'يوسف2015', 'نور_21', 'حمزة_88', 'جنى_14', 'زياد_303', 'ملك_12'];
 
 // ---------------- product catalogue (fictional models, virtual prices in coins) ----------------
 export const DEPTS = {
@@ -775,7 +777,7 @@ export function buildMall(C) {
   // Until the game has many real players, computer players with nicknames + a number walk around the mall and the
   // plaza, chat, and accept or offer 1-v-1 challenges: a race to a flag, or a 30-second coin rush. Rewards are game coins.
   const BOTS = (function buildBots() {
-    const NAMES = ['عمر_77', 'مريم_09', 'يوسف2015', 'نور_21', 'حمزة_88', 'جنى_14', 'زياد_303', 'ملك_12'];
+    const NAMES = BOT_NAMES;
     const CHAT = ['حد يسابقني؟ 🏃', 'المول ده تحفة 😍', 'جبت آيس كريم لولو 🍦', 'مين جاي السينما؟ 🎬', 'GG 😎', 'يلا نلعب! 🎮', 'أنا الأسرع هنا 😎', 'مين عايز تحدي؟ ⚔️'];
     const ZONES = [[-38, 38, -24, -16], [-30, 30, 20, 86]]; // corridor, plaza (local x0,x1,z0,z1)
     const inZone = (x, z) => ZONES.findIndex(([a, b, c, d]) => x >= a - 4 && x <= b + 4 && z >= c - 3 && z <= d + 3);
@@ -873,6 +875,9 @@ export function buildMall(C) {
     }
     return {
       update,
+      list() { return B.map((b) => ({ nm: b.nm, x: b.x, z: b.z, busy: !!(G && G.b === b) })); },
+      pos(nm) { const b = B.find((q) => q.nm === nm); return b ? { x: b.x, z: b.z } : null; },
+      challenge(nm, kind) { const b = B.find((q) => q.nm === nm); if (!b) return; if (G) { C.toast('⚔️ فيه تحدي شغال دلوقتي'); return; } start(b, kind); },
       interact(L) { if (G) return; for (const b of B) L.push({ x: OFF + b.x, z: b.z, r: 2.4, label: b.offer ? `⚔️ تحدي 🤖 ${b.nm}` : `💬 🤖 ${b.nm}`, act: () => menu(b) }); },
       stop() { if (G) { G.coins.forEach((m) => root.remove(m)); G = null; } if (flag) flag.visible = false; ch.className = ''; ch.innerHTML = ''; },
     };
@@ -1047,7 +1052,7 @@ export function buildMall(C) {
   }
   function onEnter() { welcomed = false; }
   function onLeave() { CINE.stop(); BOTS.stop(); closeUI(); hud.classList.remove('on'); bagOff(); const k = C.getKid(); if (k) k.__mallBag = false; GUIDE = null; beacon.visible = false; }
-  return { root, update, interactables, goal, drawMap, renderView, onEnter, onLeave, camBlock, get viewOn() { return VIEW.on; }, get camOverride() { return CINE.cam; }, SPAWN: { x: OFF, z: 90, yaw: Math.PI }, B, OFF, PRODUCTS, openProduct, openCart, openDirectory };
+  return { root, update, interactables, goal, drawMap, renderView, onEnter, onLeave, camBlock, get viewOn() { return VIEW.on; }, get camOverride() { return CINE.cam; }, bots: BOTS, SPAWN: { x: OFF, z: 90, yaw: Math.PI }, B, OFF, PRODUCTS, openProduct, openCart, openDirectory };
 }
 
 // ---------------- 3D product models (voxel style, ~real proportions, 1 unit ≈ 0.65 m) ----------------

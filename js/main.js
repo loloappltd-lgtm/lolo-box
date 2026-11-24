@@ -8,7 +8,7 @@ import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
-import { buildMall, MALL_OFF } from './mall.js?v=7';
+import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -1165,8 +1165,23 @@ function renderFriends() {
   $('#frList').innerHTML = list.length ? list.map(([id, o]) => `<div class="fcard"><div class="fhead"><b>🧒 ${o.name}</b><span>${friendWhere(o)} · ${Math.round(Math.hypot(o.x - me.x, o.z - me.z))} متر</span></div>
       <div class="frow"><button class="big3d v" data-fgo="${id}">📍 روحله</button><button class="big3d g" data-ftp="${id}">🚀 روح عنده</button></div>
       <div class="frow">${Object.entries(VSK).map(([k, v]) => `<button class="big3d" data-fvs="${k}" data-to="${id}">${v.i} ${v.n}</button>`).join('')}</div></div>`).join('')
-    : `<div class="fempty">مفيش أصحاب أونلاين دلوقتي 🙂<br>أول ما حد يدخل لولو بوكس هيظهر هنا وعلى الخريطة بلون بينك</div>`;
+    : botFriends();
 }
+// until a real friend is online, the mall's computer players show here as "robot friends"
+function botFriends() {
+  const bl = MALL ? MALL.bots.list() : BOT_NAMES.map((nm) => ({ nm }));
+  return `<div class="fempty" style="margin-bottom:8px">مفيش أصحاب حقيقيين أونلاين دلوقتي 🙂 — أول ما صاحب حقيقي يدخل هيظهر هنا مكانهم</div><h3 style="margin:6px 0;text-align:center">🤖 أصحابك روبوت</h3>` +
+    bl.map((b) => `<div class="fcard"><div class="fhead"><b>🤖 ${b.nm}</b><span>🛍️ في مول العرب${WORLD === 'mall' && b.x !== undefined ? ' · ' + Math.round(Math.hypot(b.x + MALL_OFF - PL.x, b.z - PL.z)) + ' متر' : ''}</span></div>
+      <div class="frow"><button class="big3d g" data-fbot="${b.nm}" data-fk="go">🚀 روح عنده</button><button class="big3d v" data-fbot="${b.nm}" data-fk="race">🏃 سباق</button><button class="big3d" data-fbot="${b.nm}" data-fk="coins">🪙 جمع عملات</button></div></div>`).join('');
+}
+function goBot(nm, kind) {
+  closePanel();
+  const arrive = () => { const p = MALL && MALL.bots.pos(nm); if (!p) return; if (PL.mode === 'drive') exitCarForce(); PL.x = MALL_OFF + p.x + 1.6; PL.z = p.z + 1.2; PL.y = 0.12; PL.vy = 0; camYaw = PL.yaw; updCam(0, true); toast(`🤖 وصلت عند ${nm}!`); bubble(kid, 'wave'); if (kind !== 'go') setTimeout(() => MALL.bots.challenge(nm, kind), 600); };
+  if (WORLD === 'mall' && MALL) { arrive(); return; }
+  teleport('mall', MALL_OFF, 90, Math.PI, 'رايحين لصاحبك الروبوت…');
+  const t0 = Date.now(), iv = setInterval(() => { if (WORLD === 'mall' && MALL && !$('#fade').classList.contains('on')) { clearInterval(iv); setTimeout(arrive, 400); } else if (Date.now() - t0 > 30000) clearInterval(iv); }, 300);
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-fbot]'); if (!b) return; sfx.click(); goBot(b.dataset.fbot, b.dataset.fk); });
 document.addEventListener('click', (e) => {
   const b = e.target.closest('[data-fgo],[data-ftp],[data-fvs],[data-emo]'); if (!b) return; sfx.click();
   if (b.dataset.emo) return doEmote(b.dataset.emo);
