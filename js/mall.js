@@ -9,6 +9,7 @@
 // ShoppingCartSystem / InventorySystem.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
+import { voLoad, voPlay, voStop } from './vo.js?v=1';
 
 export const MALL_OFF = 6000;
 // computer players shown in the mall and in the friends list until real friends are online
@@ -397,11 +398,14 @@ export function buildMall(C) {
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   let uiMode = null;
   function openUI(cls, html) { ui.className = 'mallUI on ' + cls; ui.innerHTML = html; uiMode = cls; document.body.classList.toggle('mallFocus', cls !== 'dlg'); C.setPanel('mallP'); hud.classList.remove('on'); }
-  function closeUI() { ui.className = 'mallUI'; ui.innerHTML = ''; uiMode = null; document.body.classList.remove('mallFocus'); VIEW.on = false; C.setPanel(null); }
+  function closeUI() { voStop(); ui.className = 'mallUI'; ui.innerHTML = ''; uiMode = null; document.body.classList.remove('mallFocus'); VIEW.on = false; C.setPanel(null); }
   ui.addEventListener('click', (e) => { const t = e.target.closest('[data-mu]'); if (!t) return; C.sfx.click(); onUI(t.dataset.mu, t.dataset.v, t); });
 
   // ---------- NPCDialogueSystem: lines + choices ----------
+  voLoad('mall');
+  const mSpeak = (tx) => { if (C.S.sound === false) return; voStop(); voPlay('mall', tx); };
   function talk(n, tx, choices) {
+    setTimeout(() => mSpeak(tx), 60);
     openUI('dlg', `<div class="dbox"><div class="dav">${n.av}</div><div style="flex:1"><div class="dnm">${esc(n.nm)} · <small>${esc(n.role)}</small></div><div class="dtx">${esc(tx)}</div><div class="dch">${choices.map((c, i) => `<button data-mu="ch" data-v="${i}">${esc(c[0])}</button>`).join('')}</div></div></div>`);
     talk.ch = choices; talk.n = n; n.k.emo = { k: 'wave', t: 1.2 }; C.sfx.pop();
   }
@@ -418,7 +422,7 @@ export function buildMall(C) {
     cash: (n) => talk(n, st().cart.length ? `عندك ${st().cart.length} حاجة في السلة. تحب تدفع؟` : 'أهلاً بيك! السلة لسه فاضية — اختار اللي يعجبك من المعرض وتعالى ادفع هنا.', [
       ['🛒 افتح السلة', openCart], ['🛍️ مشترياتي', () => openBag('inv')], ['👋 شكرًا', closeUI]]),
   };
-  function say(n, tx) { if (n.bub) n.k.remove(n.bub); n.bub = bubbleSprite(tx); n.bub.position.set(0, 3.1, 0); n.k.add(n.bub); n.bubT = 3.2; }
+  function say(n, tx) { n.lastSay = tx; if (n.bub) n.k.remove(n.bub); n.bub = bubbleSprite(tx); n.bub.position.set(0, 3.1, 0); n.k.add(n.bub); n.bubT = 3.2; }
   function walkNPC(n, x, z) { n.go = [x, z]; }
 
   // ======================= STORE 2: DREAM 2000 (LOLO_MALL_DREAM_2026) =======================
@@ -1011,7 +1015,7 @@ export function buildMall(C) {
       else if (n.walk && d > 7) { const w = n.walk[n.wi], gx = OFF + w[0] - n.k.position.x, gz = w[1] - n.k.position.z, gd = Math.hypot(gx, gz); if (gd < 0.4) n.wi = (n.wi + 1) % n.walk.length; else { n.k.position.x += (gx / gd) * dt * 1.3; n.k.position.z += (gz / gd) * dt * 1.3; n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(gx, gz), dt * 6); speed = 1.3; } }
       if (d < 6.5 && !n.go) n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(dx, dz), dt * 5);
       else if (!n.walk && !n.go) n.k.rotation.y = angLerp(n.k.rotation.y, n.yaw, dt * 2);
-      if (d < 5 && !n.seen) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello ? n.hello : n.id === 'greet' ? 'أهلاً بيك في بي تك! نورت المعرض 👋' : n.id === 'phone' ? 'أهلاً! محتاج مساعدة في الموبايلات؟' : n.id === 'tv' ? 'تعالى أوريك أحدث الأجهزة عندنا!' : 'أهلاً! الدفع من هنا 💳'); C.sfx.pop(); }
+      if (d < 5 && !n.seen) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello ? n.hello : n.id === 'greet' ? 'أهلاً بيك في بي تك! نورت المعرض 👋' : n.id === 'phone' ? 'أهلاً! محتاج مساعدة في الموبايلات؟' : n.id === 'tv' ? 'تعالى أوريك أحدث الأجهزة عندنا!' : 'أهلاً! الدفع من هنا 💳'); C.sfx.pop(); if (!document.body.classList.contains('mallFocus')) mSpeak(n.lastSay); }
       if (d > 14) n.seen = false;
       if (n.ci) { n.ci.x = n.k.position.x; n.ci.z = n.k.position.z; }
       C.animKid(n.k, speed, dt, false);

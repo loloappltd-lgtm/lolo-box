@@ -8,7 +8,7 @@ import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
-import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
+import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=9';
 import { buildEgypt, EGY_OFF } from './egypt.js?v=5';
 import { buildSaudi, SA_OFF } from './saudi.js?v=3';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
