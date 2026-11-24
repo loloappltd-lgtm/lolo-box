@@ -782,9 +782,9 @@ export function buildMall(C) {
     const rndIn = (zi) => { const [a, b, c, d] = ZONES[zi]; return [a + Math.random() * (b - a), c + Math.random() * (d - c)]; };
     const B = NAMES.map((nm, i) => {
       const k = C.makeAvatar(C.randomLook(i % 2 ? 'girl' : 'boy')); k.scale.setScalar(0.95 + (i % 3) * 0.05); C.scene.add(k);
-      const tag = nameTag(nm); tag.position.set(0, 2.55, 0); k.add(tag);
+      const tag = nameTag('🤖 ' + nm); tag.position.set(0, 2.55, 0); k.add(tag);
       const zi = i % 2, [x, z] = rndIn(zi);
-      const b = { k, nm, role: 'لاعب', av: '🧒', x, z, zi, tgt: rndIn(zi), st: 'wander', t: Math.random() * 3, stuck: 0, lx: x, lz: z, sp: 2.6 + Math.random() * 0.8, bub: null, bubT: 0, chatT: 4 + Math.random() * 10, skill: 0.55 + Math.random() * 0.25, offer: 0 };
+      const b = { k, nm, role: 'لاعب كمبيوتر 🤖', av: '🤖', x, z, zi, tgt: rndIn(zi), st: 'wander', t: Math.random() * 3, stuck: 0, lx: x, lz: z, sp: 2.6 + Math.random() * 0.8, bub: null, bubT: 0, chatT: 4 + Math.random() * 10, skill: 0.55 + Math.random() * 0.25, offer: 0 };
       k.position.set(OFF + x, 0.12, z); return b;
     });
     const step = (b, tx, tz, sp, dt) => {
@@ -860,7 +860,7 @@ export function buildMall(C) {
       for (const b of B) {
         if (G && G.b === b) continue;
         let sp = 0;
-        if (b.st === 'approach') { const d = step(b, px + 1.4, pz + 1.4, 3.2, dt); sp = 3.2; if (d < 1.6) { b.st = 'wait'; b.t = 12; b.offer = 1; say(b, 'تتحداني؟ ⚔️'); C.toast(`⚔️ ${b.nm} بيتحداك! كلّمه وابدأ التحدي`); C.sfx.pop(); } if (pz0 < 0) b.st = 'wander'; }
+        if (b.st === 'approach') { const d = step(b, px + 1.4, pz + 1.4, 3.2, dt); sp = 3.2; if (d < 1.6) { b.st = 'wait'; b.t = 12; b.offer = 1; say(b, 'تتحداني؟ ⚔️'); C.toast(`⚔️ 🤖 ${b.nm} بيتحداك! كلّمه وابدأ التحدي`); C.sfx.pop(); } if (pz0 < 0) b.st = 'wander'; }
         else if (b.st === 'wait') { sp = 0; b.k.rotation.y = angLerp(b.k.rotation.y, Math.atan2(px - b.x, pz - b.z), dt * 5); b.t -= dt; if (b.t <= 0 || Math.hypot(px - b.x, pz - b.z) > 14) { b.st = 'wander'; b.offer = 0; cool = 20; } }
         else if (b.st === 'idle') { b.t -= dt; if (b.t <= 0) { b.st = 'wander'; b.tgt = rndIn(b.zi); } }
         else { const d = step(b, b.tgt[0], b.tgt[1], b.sp, dt); sp = b.sp; b.t += dt; if (b.t > 1.2) { if (Math.hypot(b.x - b.lx, b.z - b.lz) < 0.3) b.tgt = rndIn(b.zi); b.lx = b.x; b.lz = b.z; b.t = 0; } if (d < 0.8) { b.st = 'idle'; b.t = 1 + Math.random() * 3; if (Math.random() < 0.3) b.k.emo = { k: 'wave', t: 1.2 }; } }
@@ -873,7 +873,7 @@ export function buildMall(C) {
     }
     return {
       update,
-      interact(L) { if (G) return; for (const b of B) L.push({ x: OFF + b.x, z: b.z, r: 2.4, label: b.offer ? `⚔️ تحدي ${b.nm}` : `💬 ${b.nm}`, act: () => menu(b) }); },
+      interact(L) { if (G) return; for (const b of B) L.push({ x: OFF + b.x, z: b.z, r: 2.4, label: b.offer ? `⚔️ تحدي 🤖 ${b.nm}` : `💬 🤖 ${b.nm}`, act: () => menu(b) }); },
       stop() { if (G) { G.coins.forEach((m) => root.remove(m)); G = null; } if (flag) flag.visible = false; ch.className = ''; ch.innerHTML = ''; },
     };
   })();
