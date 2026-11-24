@@ -7,6 +7,7 @@
 // Makkah and Madinah are shown with respect: viewed from outside, no coins, chests, bots, races or jumping there.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
+import { voLoad, voPlay, voStop, voPlaying, voReady, voClean } from './vo.js?v=1';
 
 export const SA_OFF = 12000;
 
@@ -366,15 +367,17 @@ export function buildSaudi(C) {
   const TTS = window.speechSynthesis || null; let arVoice = null;
   const pickVoice = () => { if (!TTS) return; const vs = TTS.getVoices() || []; arVoice = vs.find((v) => /^ar[-_]SA/i.test(v.lang)) || vs.find((v) => /^ar/i.test(v.lang)) || null; };
   if (TTS) { pickVoice(); try { TTS.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
-  const canSpeak = () => !!(TTS && arVoice);
-  function speak(text) { if (!canSpeak()) return; try { TTS.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = arVoice; u.lang = arVoice.lang; u.rate = 0.95; TTS.speak(u); } catch (e) {} }
-  function hush() { try { if (TTS) TTS.cancel(); } catch (e) {} }
+  voLoad('sa');
+  const canSpeak = () => voReady('sa') || !!(TTS && arVoice);
+  function speak(text, voOnly) { text = voClean(text); if (!text) return; hush(); if (voPlay('sa', text)) return; if (voOnly || !(TTS && arVoice)) return; try { const u = new SpeechSynthesisUtterance(text); u.voice = arVoice; u.lang = arVoice.lang; u.rate = 0.95; TTS.speak(u); } catch (e) {} }
+  function hush() { voStop(); try { if (TTS) TTS.cancel(); } catch (e) {} }
+  let CAP = null;
   function reward(n, msg) { C.S.coins = (C.S.coins || 0) + n; C.save(); C.updPills(); if (msg) C.toast(msg); }
   function checkAch() { const m = st(); for (const a of ACH) if (!m.ach.includes(a.id) && a.ok(m)) { m.ach.push(a.id); reward(a.r, `🏆 إنجاز جديد: ${a.n}! + 🪙 ${a.r}`); C.sfx.win(); } }
   function regionOf(x, z) { let best = null, bd = 1e9; for (const k in REG) { const d = Math.hypot(REG[k].c[0] - x, REG[k].c[1] - z); if (d < bd) { bd = d; best = k; } } return bd < 70 ? best : null; }
   function stamp(k) { const m = st(); if (m.stamps.includes(k)) return; m.stamps.push(k); reward(15, `🛂 ختم جديد في جوازك: ${REG[k].n}! + 🪙 15`); C.sfx.coin(); checkAch(); }
   function regionDone(k) { const m = st(); if (m.done.includes(k)) return; const ss = SITES.filter((s) => s.r === k); if (ss.every((s) => m.seen.includes(s.id) && m.right.includes(s.id))) { m.done.push(k); reward(50, `🎉 خلّصت منطقة ${REG[k].n}! + 🪙 50`); C.sfx.win(); checkAch(); } }
-  function talk(n, tx, choices) { CH = choices; openUI('dlg', `<div class="dbox"><div class="dav">${n.av}</div><div style="flex:1"><div class="dnm">${esc(n.nm)} · <small>${esc(n.role)}</small></div><div class="dtx">${esc(tx)}</div><div class="dch">${choices.map((c, i) => `<button data-sa="ch" data-v="${i}">${esc(c[0])}</button>`).join('')}</div></div></div>`); n.k.emo = { k: 'wave', t: 1.2 }; C.sfx.pop(); }
+  function talk(n, tx, choices) { if (CAP) { CAP.push(tx); return; } CH = choices; if (st().voice) setTimeout(() => speak(tx, true), 60); openUI('dlg', `<div class="dbox"><div class="dav">${n.av}</div><div style="flex:1"><div class="dnm">${esc(n.nm)} · <small>${esc(n.role)}</small></div><div class="dtx">${esc(tx)}</div><div class="dch">${choices.map((c, i) => `<button data-sa="ch" data-v="${i}">${esc(c[0])}</button>`).join('')}</div></div></div>`); n.k.emo = { k: 'wave', t: 1.2 }; C.sfx.pop(); }
   function say(n, tx) { if (n.bub) n.k.remove(n.bub); n.bub = bubbleSprite(tx); n.bub.position.set(0, 3.1, 0); n.k.add(n.bub); n.bubT = 3.2; }
   function openSite(id) {
     const s = SBY[id], m = st(), first = !m.seen.includes(id); curSite = s;
@@ -420,7 +423,7 @@ export function buildSaudi(C) {
   function place(x, z) { C.PL.x = OFF + x; C.PL.z = z; C.PL.y = 0.12; C.PL.vy = 0; }
   ui.addEventListener('click', (e) => { const b = e.target.closest('[data-sa]'); if (!b) return; C.sfx.click(); const a = b.dataset.sa, v = b.dataset.v;
     if (a === 'close') closeUI(); else if (a === 'ch') { const c = CH[+v]; if (c) c[1](); } else if (a === 'go') travel(v); else if (a === 'ans') answer(+v, b);
-    else if (a === 'voice') { const m = st(); if (m.voice && TTS && TTS.speaking) { hush(); m.voice = 0; } else { m.voice = 1; if (curSite) speak(`${curSite.n}. ${curSite.f.join(' ')}`); } C.save(); b.classList.toggle('on', !!m.voice); b.textContent = m.voice ? '🔊 يشرح الحين' : '🔊 اسمع الشرح'; } });
+    else if (a === 'voice') { const m = st(); if (m.voice && ((TTS && TTS.speaking) || voPlaying())) { hush(); m.voice = 0; } else { m.voice = 1; if (curSite) speak(`${curSite.n}. ${curSite.f.join(' ')}`); } C.save(); b.classList.toggle('on', !!m.voice); b.textContent = m.voice ? '🔊 يشرح الحين' : '🔊 اسمع الشرح'; } });
   hud.addEventListener('click', (e) => { const b = e.target.closest('[data-sa]'); if (!b || RIDE) return; C.sfx.click(); const a = b.dataset.sa; if (a === 'map') openMap(); else if (a === 'pass') openPass(); else if (a === 'ach') openAch(); });
   ride.addEventListener('click', (e) => { if (e.target.closest('[data-sa="skip"]') && RIDE) { C.sfx.click(); endRide(); } });
   const guideTalk = (n) => { const k = n.r, ss = SITES.filter((s) => s.r === k), m = st(); talk(n, REG[k].holy ? `حياك الله في ${REG[k].n}. هذا مكان مقدس عند المسلمين، نشوفه من برا ونتعلم عنه بهدوء واحترام.` : `هلا والله! حياك في ${REG[k].n}. فيها ${ss.length} معالم تقدر تكتشفها، وفيه كنوز مخفية وعملات على الطريق. وش تبي تعرف؟`, [...ss.slice(0, 3).map((s) => [`${s.i} ${s.n}`, () => openSite(s.id)]), ['🗺️ خريطة السعودية', openMap], ['👋 شكرًا', closeUI]]); };
@@ -465,7 +468,7 @@ export function buildSaudi(C) {
     for (const n of NPC) {
       const dx = C.PL.x - n.k.position.x, dz = C.PL.z - n.k.position.z, d = Math.hypot(dx, dz);
       if (d < 6.5) n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(dx, dz), dt * 5); else n.k.rotation.y = angLerp(n.k.rotation.y, n.yaw, dt * 2);
-      if (d < 5 && !n.seen && !RIDE) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello); C.sfx.pop(); } if (d > 14) n.seen = false;
+      if (d < 5 && !n.seen && !RIDE) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello); C.sfx.pop(); if (st().voice && !document.body.classList.contains('mallFocus')) speak(n.hello, true); } if (d > 14) n.seen = false;
       C.animKid(n.k, 0, dt, false); if (n.bub) { n.bubT -= dt; n.bub.material.opacity = Math.min(1, n.bubT); if (n.bubT <= 0) { n.k.remove(n.bub); n.bub = null; } }
     }
     for (const v of VIS) { const a = v.loop[v.seg], b = v.loop[(v.seg + 1) % v.loop.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; v.t += (v.sp * dt) / L; if (v.t >= 1) { v.t = 0; v.seg = (v.seg + 1) % v.loop.length; } const x = a[0] + (b[0] - a[0]) * v.t, z = a[1] + (b[1] - a[1]) * v.t; v.k.position.set(OFF + x, 0.12, z); v.k.rotation.y = Math.atan2(b[0] - a[0], b[1] - a[1]); C.animKid(v.k, v.sp, dt, false); }
@@ -480,6 +483,7 @@ export function buildSaudi(C) {
   function onEnter() { welcomed = false; lastReg = null; }
   function onLeave() { if (RIDE) { RIDE = null; ride.className = 'saRide'; bus.visible = false; const kid = C.getKid(); if (kid) kid.visible = true; } closeUI(); hud.classList.remove('on'); }
   return {
+    voiceLines() { const out = new Set(); SITES.forEach((s) => out.add(`${s.n}. ${s.f.join(' ')}`)); ROAD_FACTS.forEach((f) => out.add(f.replace(/^\S+\s/, ''))); NPC.forEach((n) => out.add(n.hello)); CAP = []; try { NPC.forEach((n) => { try { guideTalk(n); } catch (e) {} }); } finally { CAP.forEach((t) => out.add(t)); CAP = null; } return [...out].map(voClean).filter(Boolean); },
     _t: { SITE_PTS, REG, SITES, travel, openSite, openMap, openPass, openAch, CHESTS, endRide, get ride() { return RIDE; } },
     root, update, interactables, goal, drawMap, onEnter, onLeave, camBlock, B, OFF, MAPW: 900, SPAWN: { x: OFF + REG.riyadh.c[0], z: REG.riyadh.c[1] + 52, yaw: Math.PI }, viewOn: false, clamp, noJump,
     get camOverride() { if (!RIDE) return null; const yaw = bus.rotation.y, bx = bus.position.x, bz = bus.position.z; return { p: [OFF + bx - Math.sin(yaw) * 22, 16, bz - Math.cos(yaw) * 22], l: [OFF + bx + Math.sin(yaw) * 6, 2, bz + Math.cos(yaw) * 6] }; },

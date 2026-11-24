@@ -10,7 +10,7 @@ import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
 import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
 import { buildEgypt, EGY_OFF } from './egypt.js?v=5';
-import { buildSaudi, SA_OFF } from './saudi.js?v=2';
+import { buildSaudi, SA_OFF } from './saudi.js?v=3';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
