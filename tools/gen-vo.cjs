@@ -4,9 +4,10 @@
 // Existing mp3 files are skipped, so the script can be re-run safely; it rewrites <outDir>/index.json at the end.
 const fs = require('fs'), path = require('path'), https = require('https');
 const [linesFile, voice, outDir, model = 'eleven_multilingual_v2'] = process.argv.slice(2);
-const KEY = process.env.XI_KEY;
+const KEY = (process.env.XI_KEY || '').trim();
 if (!linesFile || !voice || !outDir) { console.log('usage: XI_KEY=... node tools/gen-vo.cjs <lines.json> <voiceId> <outDir>'); process.exit(1); }
 if (!KEY) { console.log('XI_KEY is empty'); process.exit(1); }
+if (!/^sk_/.test(KEY.trim())) { console.log('STOP: this is not the secret API key. The real key starts with sk_ (ElevenLabs > Developers > API Keys > Create key, copy it once when shown).'); process.exit(1); }
 // must match js/vo.js exactly
 const voClean = (text) => String(text).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\u{20E3}]/gu, '').replace(/\s+/g, ' ').trim();
 const voHash = (text) => { const t = voClean(text); let h = 0x811c9dc5; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0') + t.length.toString(16); };
@@ -31,7 +32,7 @@ function tts(text) {
     let ok = false;
     for (let a = 0; a < 3 && !ok; a++) {
       try { const buf = await tts(t); fs.writeFileSync(path.join(outDir, voHash(t) + '.mp3'), buf); ok = true; }
-      catch (e) { if (e.status === 401 || e.status === 402 || e.status === 403 || e.status === 422) { console.log('STOP: ' + e.message); a = 9; fail = -1; break; } await new Promise((r) => setTimeout(r, 2000 * (a + 1))); if (a === 2) console.log('failed: ' + e.message); }
+      catch (e) { if (e.status === 401 || e.status === 402 || e.status === 403 || e.status === 422 || /authentication|quota|payment/i.test(e.message)) { console.log('STOP: ' + e.message); a = 9; fail = -1; break; } await new Promise((r) => setTimeout(r, 2000 * (a + 1))); if (a === 2) console.log('failed: ' + e.message); }
     }
     if (fail === -1) break;
     if (ok) done++; else fail++;
