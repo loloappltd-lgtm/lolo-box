@@ -10,10 +10,12 @@
 // (name, date, story) that can also be read aloud; visiting stamps the "Egypt passport" and gives coins.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
+import { buildCoast, COAST_REG, COAST_SITES } from './egyptcoast.js?v=2';
 
 export const EGY_OFF = 9000;
 
 const REG = { cairo: 'القاهرة والجيزة', luxor: 'الأقصر', aswan: 'أسوان' };
+const NILE_REG = Object.keys(REG);
 const SITES = [
   // ---- pharaohs timeline (grand hall wall) ----
   { id: 'e1', r: 'cairo', g: 'timeline', i: '🌅', n: 'بداية الحضارة وتوحيد مصر', d: 'حوالي سنة 3100 قبل الميلاد', f: ['الملك مينا (نارمر) وحّد الشمال والجنوب وبقت مصر دولة واحدة.', 'في الوقت ده بدأت الكتابة الهيروغليفية.'] },
@@ -59,6 +61,7 @@ const SITES = [
   { id: 'nubian', r: 'aswan', i: '🏡', n: 'القرية النوبية', d: 'النوبة', f: ['بيوت ملونة بألوان مبهجة ورسومات على الحيطان.', 'أهل النوبة مشهورين بالكرم والترحيب بالضيوف.'] },
   { id: 'felucca', r: 'aswan', i: '⛵', n: 'الفلوكة', d: 'من زمان لحد النهارده', f: ['مركب خشب بشراع أبيض، بيمشي بالهوا في النيل.', 'ركوب الفلوكة في أسوان وقت الغروب من أحلى الحاجات.'] },
 ];
+SITES.push(...COAST_SITES); Object.assign(REG, COAST_REG);
 const SBY = Object.fromEntries(SITES.map((s) => [s.id, s]));
 const DOCK = { cairo: [222, 150], luxor: [222, 520], aswan: [222, 950] };
 const NILE_FACTS = ['🌊 النيل من أطول أنهار العالم، طوله حوالي 6650 كيلو.', '🪨 الفراعنة كانوا بينقلوا الحجارة على مراكب في النيل عشان يبنوا المعابد والأهرامات.', '🌾 على ضفاف النيل الأرض خضرا وفيها نخل وزراعة، ووراها الصحرا.', '🏛️ الأقصر زمان كان اسمها طيبة، وكانت عاصمة مصر في الدولة الحديثة.', '🪨 أسوان مشهورة بالجرانيت الأحمر اللي اتعملت منه المسلات والتماثيل.', '⛵ الصعيد هو جنوب مصر، وفيه معابد كتير جدًا على النيل.'];
@@ -143,7 +146,7 @@ export function buildEgypt(C) {
   const water = new THREE.Mesh(new THREE.PlaneGeometry(70, 1540), new THREE.MeshToonMaterial({ color: '#2f9ee8', emissive: '#1460a8', emissiveIntensity: 0.25 })); water.rotation.x = -Math.PI / 2; water.position.set(266, 0.06, 480); root.add(water);
   plane(T.field, 14, 1520, 223, 480, 0.03, 4); plane(T.field, 30, 1520, 316, 480, 0.03, 4); plane(T.sand, 200, 1520, 431, 480, 0.01, 6);
   vox([[231.5, 0.35, 480, 1, 0.7, 1520, '#c49c5c']]);
-  solid(231, 1300, -900, 2000); // the river: you cannot walk into it
+  solid(231, 390, -900, 2000); // the river: you cannot walk into it
   for (const [z0, z1] of [[-230, 220], [360, 660], [820, 1080]]) { solid(-1300, -210, z0 - 10, z1 + 10); solid(-1300, 231, z0 - 20, z0); solid(-1300, 231, z1, z1 + 20); }
   { const L = []; for (let z = -200; z < 1160; z += 9) { if (Math.sin(z * 0.37) > -0.2) L.push([226, 2.5, z, 0.5, 5, 0.5, '#8a5a2b'], [226, 5.2, z, 2.8, 0.45, 0.8, '#3ea83a'], [226, 5.2, z, 0.8, 0.45, 2.8, '#3ea83a']); if (Math.cos(z * 0.21) > 0) L.push([306, 2.5, z + 4, 0.5, 5, 0.5, '#8a5a2b'], [306, 5.2, z + 4, 2.8, 0.45, 0.8, '#3ea83a'], [306, 5.2, z + 4, 0.8, 0.45, 2.8, '#3ea83a']); if (((z + 200) / 9) % 7 === 3) { const c = ['#f1e6c8', '#ffd7a0', '#cfe8ff', '#ffc2d6'][((z + 200) / 9 | 0) % 4]; L.push([322, 2, z, 7, 4, 6, c], [322, 4.2, z, 7.4, 0.4, 6.4, '#ffffff'], [318.4, 1.3, z, 0.12, 2.6, 1.4, '#6b3a07']); } } vox(L, root, { shadow: true }); }
 
@@ -334,9 +337,10 @@ export function buildEgypt(C) {
   }
   // ---- regions, fast travel, the Nile cruise ----
   const SPOTS = { gem: { x: 0, z: 74, n: 'المتحف المصري الكبير', r: 'cairo' }, giza: { x: 20, z: -84, n: 'أهرامات الجيزة', r: 'cairo' }, plaza: { x: 0, z: 182, n: 'ميدان آثار مصر', r: 'cairo' }, cdock: { x: 208, z: 150, n: 'مرسى الباخرة', r: 'cairo' }, luxor: { x: 208, z: 520, n: 'الأقصر', r: 'luxor' }, aswan: { x: 208, z: 950, n: 'أسوان', r: 'aswan' } };
-  const regionOf = (z) => (z < 300 ? 'cairo' : z < 750 ? 'luxor' : 'aswan');
+  const regionOf = (z, x = C.PL.x - OFF) => (COAST && COAST.regionAt(x, z)) || (z < 300 ? 'cairo' : z < 750 ? 'luxor' : 'aswan');
+  let COAST = null;
   function place(x, z) { C.PL.x = OFF + x; C.PL.z = z; C.PL.y = 0.12; C.PL.vy = 0; }
-  function goSpot(k) { closeUI(); const s = SPOTS[k], here = regionOf(C.PL.z); if (s.r !== here) { cruise(here, s.r); return; } place(s.x, s.z); C.toast(`📍 ${s.n}`); C.sfx.coin(); }
+  function goSpot(k) { closeUI(); const s = SPOTS[k], here = regionOf(C.PL.z); if (!NILE_REG.includes(here)) { COAST.fly('cairo'); return; } if (s.r !== here) { cruise(here, s.r); return; } place(s.x, s.z); C.toast(`📍 ${s.n}`); C.sfx.coin(); }
   function cruise(from, to) {
     closeUI(); if (from === to) return;
     const z0 = DOCK[from][1], z1 = DOCK[to][1], dur = Math.min(24, 8 + Math.abs(z1 - z0) / 60);
@@ -350,20 +354,25 @@ export function buildEgypt(C) {
     const d = DOCK[r.to]; ship.position.set(255, 0.15, d[1]); place(d[0] - 14, d[1]); C.PL.yaw = -Math.PI / 2;
     C.toast(`🎉 وصلنا ${REG[r.to]}!`); C.sfx.win();
   }
-  function cruiseMenu(n) { const here = regionOf(C.PL.z); talk(n, 'أهلاً يا بطل! باخرة لولو بتطلع رحلات على النيل، وهتشوف الصعيد والنخل والفلايك في السكة. عايز تروح فين؟', [...Object.keys(REG).filter((k) => k !== here).map((k) => [`🚢 ${REG[k]}`, () => cruise(here, k)]), ['👋 بعدين', closeUI]]); }
+  function cruiseMenu(n) { const here = regionOf(C.PL.z); talk(n, 'أهلاً يا بطل! باخرة لولو بتطلع رحلات على النيل، وهتشوف الصعيد والنخل والفلايك في السكة. عايز تروح فين؟', [...NILE_REG.filter((k) => k !== here).map((k) => [`🚢 ${REG[k]}`, () => cruise(here, k)]), ['✈️ طيارة لولو للبحر', () => COAST.fly('hurghada')], ['👋 بعدين', closeUI]]); }
   function openMap() {
     const m = st(); const cnt = (r) => SITES.filter((s) => s.r === r && m.stamps.includes(s.id)).length + '/' + SITES.filter((s) => s.r === r).length;
-    openUI('card', `<div class="pan"><div class="hd"><b>🗺️ خريطة آثار مصر<small>جواز سفر الآثار: ${m.stamps.length}/${SITES.length} ختم</small></b><button class="x" data-eg="close" aria-label="إغلاق">✕</button></div><div class="bd">
+    openUI('card', `<div class="pan"><div class="hd"><b>🗺️ خريطة مصر<small>جواز سفر الآثار: ${m.stamps.length}/${SITES.length} ختم</small></b><button class="x" data-eg="close" aria-label="إغلاق">✕</button></div><div class="bd">
       <div class="row"><span class="ic">🏛️</span><div class="t">المتحف المصري الكبير<small>القاهرة والجيزة · الأختام ${cnt('cairo')}</small></div><button data-eg="go" data-v="gem">🚀 روح</button></div>
       <div class="row"><span class="ic">🔺</span><div class="t">أهرامات الجيزة وأبو الهول<small>ورا المتحف</small></div><button data-eg="go" data-v="giza">🚀 روح</button></div>
       <div class="row"><span class="ic">🚢</span><div class="t">مرسى الباخرة<small>رحلات على النيل للأقصر وأسوان</small></div><button data-eg="go" data-v="cdock">🚀 روح</button></div>
       <div class="row"><span class="ic">🏯</span><div class="t">الأقصر<small>بالباخرة · الأختام ${cnt('luxor')}</small></div><button data-eg="go" data-v="luxor">🚢 سافر</button></div>
       <div class="row"><span class="ic">⛵</span><div class="t">أسوان<small>بالباخرة · الأختام ${cnt('aswan')}</small></div><button data-eg="go" data-v="aswan">🚢 سافر</button></div>
       <div class="row"><span class="ic">⛲</span><div class="t">ميدان آثار مصر</div><button data-eg="go" data-v="plaza">🚀 روح</button></div>
+      <div class="row"><span class="ic">🐠</span><div class="t">الغردقة<small>الأكواريوم · الغواصة · عرض الدولفين · الأختام ${cnt('hurghada')}</small></div><button data-eg="fly" data-v="hurghada">✈️ طير</button></div>
+      <div class="row"><span class="ic">🔵</span><div class="t">دهب<small>البلو هول · خيمة البدو</small></div><button data-eg="fly" data-v="dahab">✈️ طير</button></div>
+      <div class="row"><span class="ic">🕊️</span><div class="t">شرم الشيخ<small>خليج نعمة · رأس محمد · الأختام ${cnt('sinai')}</small></div><button data-eg="fly" data-v="sharm">✈️ طير</button></div>
+      <div class="row"><span class="ic">🌆</span><div class="t">العلمين<small>البحر المتوسط · الأبراج · الأختام ${cnt('alamein')}</small></div><button data-eg="fly" data-v="alamein">✈️ طير</button></div>
+      <div class="row"><span class="ic">🏙️</span><div class="t">القاهرة<small>المتحف الكبير والأهرامات</small></div><button data-eg="fly" data-v="cairo">✈️ طير</button></div>
       <div class="fact">💡 قرّب من أي أثر واضغط عليه: هتعرف اسمه وتاريخه وحكايته، وتاخد ختم + 🪙 10. اجمع ${SITES.length} ختم وخد 🪙 100!</div></div></div>`);
   }
   ui.addEventListener('click', (e) => { const b = e.target.closest('[data-eg]'); if (!b) return; C.sfx.click(); const a = b.dataset.eg, v = b.dataset.v;
-    if (a === 'close') closeUI(); else if (a === 'ch') { const c = CH[+v]; if (c) c[1](); } else if (a === 'go') goSpot(v);
+    if (a === 'close') closeUI(); else if (a === 'ch') { const c = CH[+v]; if (c) c[1](); } else if (a === 'go') goSpot(v); else if (a === 'fly') COAST.fly(v);
     else if (a === 'voice') { const m = st(); if (m.voice && TTS && TTS.speaking) { hush(); m.voice = 0; } else { m.voice = 1; if (curSite) speak(siteText(curSite)); } C.save(); b.classList.toggle('on', !!m.voice); b.textContent = m.voice ? '🔊 بيشرح دلوقتي' : '🔊 اسمع الشرح'; } });
   ride.addEventListener('click', (e) => { if (e.target.closest('[data-eg="skip"]') && RIDE) { C.sfx.click(); endRide(); } });
   const SCRIPTS = {
@@ -374,6 +383,7 @@ export function buildEgypt(C) {
     mona: (n) => talk(n, 'أهلاً بيك في الأقصر، طيبة القديمة! هنا معبد الأقصر وطريق الكباش ومعابد الكرنك، وفي البر الغربي معبد حتشبسوت ووادي الملوك وتمثالا ممنون.', [['🏯 معبد الأقصر', () => openSite('luxortemple')], ['🏛️ الكرنك', () => openSite('karnak')], ['⛰️ وادي الملوك', () => openSite('valley')], ['👋 شكرًا', closeUI]]),
     fatma: (n) => talk(n, 'مرحب بيك في النوبة يا حبيبي! شوف بيوتنا الملونة، وروح شوف أبو سمبل ونفرتاري ومعبد فيلة والسد العالي.', [['🏡 احكيلي عن النوبة', () => openSite('nubian')], ['🗿 أبو سمبل', () => openSite('abusimbel')], ['🌊 السد العالي', () => openSite('dam')], ['👋 شكرًا', closeUI]]),
   };
+  COAST = buildCoast(C, { root, OFF, vox, sign, label, textTex, palm, plane, T, solid, circ, place, st, addNPC, NPC, SCRIPTS, SBY, talk, closeUI, openSite, speak, hush });
   const SITE_PTS = [
     ...ERAS.map((s, i) => [s.id, -56.6, 54 - i * 5.4, 2.4]),
     ['hobelisk', 0, 105, 3], ['ramses', 0, 44.2, 3], ['stairs', 0, 20.5, 3], ['window', 0, -36.5, 4], ['mask', -36, -1.6, 2], ['throne', -48, -1.4, 2], ['shrine', -26, -16.6, 2.4], ['anubis', -46, -16.8, 2.2], ['chariot', -36, -28.8, 2.4], ['coffin', 22, -26.6, 2.2], ['canopic', 50, -27.8, 2.2], ['hiero', 57.4, -10, 3], ['boat', 36, 9.4, 3],
@@ -382,17 +392,18 @@ export function buildEgypt(C) {
     ['abusimbel', 12, 930, 4.5], ['nefertari', 8, 990, 4], ['philae', 226, 900, 3.5], ['unfinished', 100, 861, 4], ['dam', 110, 1053, 4], ['nubian', 142, 922, 3], ['felucca', 210, 940, 3],
   ];
   function interactables() {
-    if (RIDE) return [];
+    if (RIDE || COAST.busy) return [];
     const L = [], o = OFF;
     L.push({ x: o + 16, z: 161.8, r: 3, label: '🗺️ خريطة آثار مصر', act: openMap });
     L.push({ x: o, z: 212, r: 3.5, label: '🏙️ ارجع للمدينة', act: C.goCity });
     for (const n of NPC) L.push({ x: n.k.position.x, z: n.k.position.z, r: 2.6, label: `💬 كلّم ${n.nm}`, act: () => SCRIPTS[n.id](n) });
     const m = st();
+    if (COAST.regionAt(C.PL.x - OFF, C.PL.z)) L.push(...COAST.interactables());
     for (const [id, x, z, r] of SITE_PTS) L.push({ x: o + x, z, r, label: `${m.stamps.includes(id) ? '✅' : '🔎'} ${SBY[id].n}`, act: () => openSite(id) });
     return L;
   }
   function update(dt, now, active) {
-    if (!active) return; const t = now / 1000;
+    COAST.update(dt, now, active); if (!active) return; const t = now / 1000;
     if (RIDE) {
       RIDE.t += dt; const k = Math.min(1, RIDE.t / RIDE.dur), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, z = RIDE.z0 + (RIDE.z1 - RIDE.z0) * e;
       ship.position.set(255 + Math.sin(t * 0.6) * 0.4, 0.15 + Math.sin(t * 1.3) * 0.08, z); C.PL.x = OFF + 255; C.PL.z = z;
@@ -409,8 +420,9 @@ export function buildEgypt(C) {
     }
     for (const v of VIS) { const a = v.loop[v.seg], b = v.loop[(v.seg + 1) % v.loop.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); v.t += (v.sp * dt) / L; if (v.t >= 1) { v.t = 0; v.seg = (v.seg + 1) % v.loop.length; } const x = a[0] + (b[0] - a[0]) * v.t, z = a[1] + (b[1] - a[1]) * v.t; v.k.position.set(OFF + x, 0.12, z); v.k.rotation.y = Math.atan2(b[0] - a[0], b[1] - a[1]); C.animKid(v.k, v.sp, dt, false); }
   }
-  function goal() { const m = st(); return `🇪🇬 آثار مصر · ${REG[regionOf(C.PL.z)]}<small>جواز سفر الآثار: ${m.stamps.length}/${SITES.length} ختم — قرّب من أي أثر واعرف اسمه وتاريخه</small>`; }
+  function goal() { const m = st(), cr = COAST.regionAt(C.PL.x - OFF, C.PL.z); if (cr) return COAST.goal(cr); return `🇪🇬 مصر · ${REG[regionOf(C.PL.z)]}<small>جواز سفر الآثار: ${m.stamps.length}/${SITES.length} ختم — قرّب من أي أثر واعرف اسمه وتاريخه</small>`; }
   function drawMap(g, s) {
+    { const cr = COAST.regionAt(C.PL.x - OFF, C.PL.z); if (cr) return COAST.drawMap(g, s, cr); }
     const r = regionOf(C.PL.z), z0 = r === 'cairo' ? -230 : r === 'luxor' ? 360 : 820, z1 = r === 'cairo' ? 220 : r === 'luxor' ? 660 : 1080;
     g.fillStyle = '#e8d2a4'; g.fillRect(-260 * s, z0 * s, 600 * s, (z1 - z0) * s);
     g.fillStyle = '#6cbf4a'; g.fillRect(216 * s, z0 * s, 15 * s, (z1 - z0) * s); g.fillStyle = '#2f9ee8'; g.fillRect(231 * s, z0 * s, 70 * s, (z1 - z0) * s);
@@ -420,11 +432,11 @@ export function buildEgypt(C) {
     else { g.fillRect(96 * s, 850 * s, 8 * s, 200 * s); g.fillStyle = '#d8b071'; g.fillRect(-12 * s, 904 * s, 13 * s, 52 * s); g.fillRect(-10 * s, 978 * s, 11 * s, 24 * s); g.fillStyle = '#9aa3b5'; g.fillRect(10 * s, 1057 * s, 220 * s, 6 * s); g.fillStyle = '#ff8fb8'; g.fillRect(126 * s, 926 * s, 32 * s, 28 * s); g.fillStyle = '#d8b071'; g.beginPath(); g.arc(266 * s, 900 * s, 13 * s, 0, 7); g.fill(); }
   }
   function onEnter() {}
-  function onLeave() { if (RIDE) { RIDE = null; ride.className = 'egyRide'; const kid = C.getKid(); if (kid) kid.visible = true; } closeUI(); }
+  function onLeave() { COAST.leave(); if (RIDE) { RIDE = null; ride.className = 'egyRide'; const kid = C.getKid(); if (kid) kid.visible = true; } closeUI(); }
   return {
     root, update, interactables, goal, drawMap, onEnter, onLeave, camBlock, B, OFF, MAPW: 520, SPAWN: { x: OFF, z: 208, yaw: Math.PI }, viewOn: false,
-    get camOverride() { if (!RIDE) return null; const z = ship.position.z, dir = RIDE.z1 > RIDE.z0 ? 1 : -1; return { p: [OFF + 234, 15, z - dir * 30], l: [OFF + 262, 4, z + dir * 16] }; },
-    get riding() { return !!RIDE; },
+    get camOverride() { if (COAST.cam) return COAST.cam; if (!RIDE) return null; const z = ship.position.z, dir = RIDE.z1 > RIDE.z0 ? 1 : -1; return { p: [OFF + 234, 15, z - dir * 30], l: [OFF + 262, 4, z + dir * 16] }; },
+    get riding() { return !!RIDE || COAST.busy; }, get coast() { return COAST; },
   };
 }
 

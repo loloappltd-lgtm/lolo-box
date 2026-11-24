@@ -189,6 +189,7 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
 #mapPrev .pst{display:inline-block;font-weight:900;border-radius:999px;padding:3px 14px;font-size:15px}
 .pst.ok{background:#eafff0;color:#1d7f31;border:2px solid #34c759}.pst.lock{background:#f1ecfa;color:#6b5a8c;border:2px solid #c9bfe0}.pst.soon{background:#fff8e1;color:#b06f00;border:2px solid #ffb300}
 #mapPrev .play{display:block;margin:12px auto 0;width:min(60%,300px)}
+#mapPrev .pbuy{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:8px 4px 0}#mapPrev .pbuy:empty{display:none}#mapPrev .pbuy .pbt{font-weight:900;color:#6b5a8c}#mapPrev .pbuy button{border:0;border-radius:14px;padding:8px 18px;font-weight:900;font-size:18px;font-family:inherit;background:linear-gradient(#ffd34d,#ffad0f);color:#6b3a00;box-shadow:0 4px 0 #c77800;cursor:pointer}#mapPrev .pbuy .pbh{width:100%;text-align:center;font-weight:800;font-size:13px;color:#8a62c9}
 #mapPrev .play[disabled]{filter:grayscale(1) opacity(.5);pointer-events:none}
 #fade{position:fixed;inset:0;z-index:80;background:linear-gradient(#8a4cf0,#5b23b7);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;font-weight:900;font-size:24px;opacity:0;pointer-events:none;transition:opacity .35s}
 #fade.on{opacity:1;pointer-events:auto}
@@ -446,6 +447,7 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
 <div class="ov dim" id="mapPrev"><div class="panel" style="width:min(92vw,560px)"><button class="x" data-a="closePrev">✕</button>
   <img class="pimg" id="pImg" alt=""><div class="pmeta"><div><h3 id="pName"></h3><small id="pEn"></small></div><span class="pst" id="pSt"></span></div>
   <div class="pdesc" id="pDesc"></div>
+  <div class="pbuy" id="pBuy"></div>
   <button class="ib play" id="pPlay" data-a="playMap"><img src="assets/ui/play.webp" alt="العب"></button>
 </div></div>
 <div id="fade"><img src="assets/ui/logo-box.webp?v=vx1" alt=""><div id="fadeTx">جاري التحميل…</div></div>
@@ -547,6 +549,6 @@ button{font-family:inherit;border:0;background:none;padding:0;cursor:pointer;col
 </div></div>
 
 <div id="rot"><img src="assets/ui/fish.webp?v=vx1" alt=""><div>لِف الموبايل بالعرض علشان تلعب 🔄</div></div>
-<script type="module" src="./js/main.js?v=31"></script>
+<script type="module" src="./js/main.js?v=32"></script>
 </body>
 </html>

@@ -9,8 +9,8 @@ import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } fro
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
 import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
-import { buildEgypt, EGY_OFF } from './egypt.js?v=3';
-import { buildSaudi, SA_OFF } from './saudi.js?v=1';
+import { buildEgypt, EGY_OFF } from './egypt.js?v=4';
+import { buildSaudi, SA_OFF } from './saudi.js?v=2';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -303,6 +303,9 @@ for (const [x, z, r, h] of [[-70, -178, 34, 52], [-25, -188, 26, 40], [40, -182,
 // nature outside the grid
 for (let k = 0; k < 140; k++) { const a = sr(0, 6.28), r = sr(EXT + 12, 200); const x = Math.cos(a) * r, z = Math.sin(a) * r; if (r > Rg(a) - 6) continue; if (Math.abs(x) < 8 || Math.abs(z) < 8) continue; if (circles.some((c) => Math.hypot(c.x - x, c.z - z) < c.r + 4)) continue; treeSpots.push([x, z]); }
 for (let k = 0; k < 18; k++) { const a = sr(-0.7, 0.7) + (k % 2 ? 0 : Math.PI), r = sr(EXT + 16, 190); if (r > Rg(a) - 6) continue; palmSpots.push([Math.cos(a) * r, Math.sin(a) * r]); }
+// Lolo Airport (west side): keep the area clear of trees
+const AIRPORT = { x: -160, z: 36 };
+for (const arr of [treeSpots, palmSpots, bushSpots]) for (let i = arr.length - 1; i >= 0; i--) if (arr[i][0] < -134 && arr[i][1] > -12 && arr[i][1] < 86) arr.splice(i, 1);
 // instanced nature & props
 {
   const tc = ['#3fae4a', '#55c25a', '#2f9a48', '#ff9fd0'];
@@ -795,6 +798,7 @@ function interactables() {
     L.push({ x: officer.x, z: officer.z, r: 3.5, label: '💬 كلّم الظابط', act: talkOfficer });
     L.push({ x: teacher.x, z: teacher.z, r: 3.5, label: '💬 كلّم أبلة نور', act: talkTeacher });
     L.push({ x: LAND.mall.x - 4, z: LAND.mall.z, r: 4.5, label: '🛍️ ادخل المول', act: goMall });
+    L.push({ x: AIRPORT.x + 18.5, z: AIRPORT.z, r: 4, label: '✈️ مطار لولو — سافر', act: openAirport });
     if (!RIDE.on) L.push({ x: 90, z: 83, r: 5, label: '🎡 اركب العجلة', act: startRide });
     for (const h of HOUSES) { const mine = S.house && S.house.id === h.id; L.push({ x: h.x + 3.2, z: h.z + h.dir * 7.4, r: 3.5, label: mine ? '🏠 زيّن بيتي' : '🏡 شوف البيت', act: () => openHouse(h) }); L.push({ x: h.x, z: h.z + h.dir * 5.6, r: 2.2, label: mine ? '🚪 ادخل بيتي' : '🚪 اتفرج على البيت من جوه', act: () => enterHouse(h) }); }
   }
@@ -1339,7 +1343,7 @@ async function ensureMall() {
 let EGY = null;
 async function ensureEgypt() {
   if (EGY) return EGY;
-  EGY = buildEgypt({ scene, toon, ctex, solids, circles, PL, sfx, toast, get S() { return S; }, save, updPills, renderer, PRESETS, cloneLook, animKid,
+  EGY = buildEgypt({ setYaw: (y) => { PL.yaw = y; camYaw = y; }, scene, toon, ctex, solids, circles, PL, sfx, toast, get S() { return S; }, save, updPills, renderer, PRESETS, cloneLook, animKid,
     makeAvatar: (L) => AV.makeAvatar(L), randomLook: (g) => AV.randomLook(g), getKid: () => kid, goCity, platform: (x, z, w, d, top, color, opt) => platform(x, z, w, d, top, color, opt),
     setPanel: (p) => { state.panel = p; }, isPlaying: () => state.play && !state.panel && !state.talk });
   try { await renderer.compileAsync(scene, camera); } catch (e) {}
@@ -1355,6 +1359,31 @@ async function ensureSaudi() {
     setPanel: (p) => { state.panel = p; }, isPlaying: () => state.play && !state.panel && !state.talk });
   try { await renderer.compileAsync(scene, camera); } catch (e) {}
   return SAU;
+}
+// ---- Lolo Airport: fly from free roam to every country / big world; the first visit unlocks its map ----
+{ const { x, z } = AIRPORT, add = (geo, col, px, py, pz, ry = 0) => { const m = new THREE.Mesh(geo, toon(col)); m.position.set(px, py, pz); m.rotation.y = ry; m.castShadow = m.receiveShadow = true; scene.add(m); return m; };
+  const rw = add(new THREE.BoxGeometry(12, 0.08, 84), '#4a4f63', x - 14, 0.16, z); rw.castShadow = false;
+  for (let i = 0; i < 9; i++) add(new THREE.BoxGeometry(0.6, 0.02, 4), '#ffffff', x - 14, 0.21, z - 36 + i * 9);
+  const tm = add(new THREE.BoxGeometry(12, 7, 18), '#e9f6ff', x + 10, 3.6, z); camBlock.push(tm); add(new THREE.BoxGeometry(12.6, 0.6, 18.6), '#2fa6e8', x + 10, 7.4, z);
+  add(new THREE.BoxGeometry(0.2, 4, 14), '#7fd0ff', x + 16.05, 3, z); solids.push({ x0: x + 4, x1: x + 16, z0: z - 9, z1: z + 9 });
+  add(new THREE.CylinderGeometry(1.2, 1.6, 16, 10), '#ffffff', x + 8, 8, z - 14); add(new THREE.CylinderGeometry(2.6, 2.2, 2.4, 10), '#7fd0ff', x + 8, 17, z - 14); circles.push({ x: x + 8, z: z - 14, r: 1.8 });
+  const pl = new THREE.Group(); const pm = (geo, col, px, py, pz) => { const m = new THREE.Mesh(geo, toon(col)); m.position.set(px, py, pz); m.castShadow = true; pl.add(m); return m; };
+  pm(new THREE.CapsuleGeometry(1.5, 12, 6, 12), '#ffffff', 0, 2.4, 0).rotation.x = Math.PI / 2; pm(new THREE.BoxGeometry(16, 0.3, 3), '#ffffff', 0, 2.1, 0.5); pm(new THREE.BoxGeometry(6, 0.25, 1.6), '#ffffff', 0, 2.8, -6.4); pm(new THREE.BoxGeometry(0.3, 3.2, 2.2), '#ff4fae', 0, 4.4, -6.6);
+  pm(new THREE.BoxGeometry(3.06, 0.5, 13), '#ff4fae', 0, 2.4, 0); for (let i = 0; i < 6; i++) { pm(new THREE.BoxGeometry(3.1, 0.5, 0.7), '#5fd0ff', 0, 3.0, -4 + i * 1.6); }
+  for (const sx of [-4, 4]) pm(new THREE.CylinderGeometry(0.7, 0.7, 2, 10), '#c9d4e0', sx, 1.6, 1.2).rotation.x = Math.PI / 2;
+  pl.position.set(x - 14, 0.2, z + 18); scene.add(pl); solids.push({ x0: x - 22, x1: x - 6, z0: z + 10, z1: z + 26 });
+  const sg = sign('✈️ مطار لولو', '#2fa6e8', '#ffffff', x + 16.2, 9.4, z, Math.PI / 2, 12, 2.6); }
+const AIR_DEST = [
+  { w: 'egypt', id: 17, i: '🇪🇬', n: 'مصر', d: 'الأهرامات والأقصر وأسوان والغردقة ودهب وشرم والعلمين', go: () => teleport('egypt', EGY_OFF + 41, 194, Math.PI, '✈️ طايرين على مصر…') },
+  { w: 'saudi', id: 18, i: '🇸🇦', n: 'السعودية', d: 'الرياض وجدة والعُلا ومكة والمدينة وعسير وتبوك والشرقية', go: () => teleport('saudi', SA_OFF + 60, 82, Math.PI, '✈️ طايرين على السعودية…') },
+  { w: 'mall', id: 16, i: '🛍️', n: 'مول العرب', d: 'المحلات والسينما والهايبر ماركت', go: goMall },
+  { w: 'park', id: 2, i: '🎡', n: 'مدينة الملاهي', d: 'عجلة وقطار ملاهي وحديقة مائية', go: goPark },
+];
+function openAirport() {
+  let el = document.getElementById('airP'); if (!el) { el = document.createElement('div'); el.id = 'airP'; el.setAttribute('dir', 'rtl'); document.body.appendChild(el); const st = document.createElement('style'); st.textContent = '#airP{position:fixed;inset:0;z-index:25;display:none;background:rgba(10,40,80,.45);font-family:Cairo,Tajawal,sans-serif}#airP.on{display:grid;place-items:center}#airP .pn{width:min(94vw,560px);max-height:92vh;overflow:auto;background:linear-gradient(#f2fbff,#d8f1ff);border:4px solid #2fa6e8;border-radius:24px;box-shadow:0 8px 0 #1a6fa8;padding:12px}#airP h3{margin:0 0 8px;color:#0d4f80;font-size:22px;display:flex;justify-content:space-between;align-items:center}#airP .x{width:40px;height:40px;border-radius:50%;border:0;background:linear-gradient(#ff7ab8,#e33d8c);color:#fff;font-size:20px;font-weight:900}#airP .r{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #b8e4ff;border-radius:16px;padding:8px 10px;margin:6px 0}#airP .r b{font-size:30px}#airP .r div{flex:1;font-weight:900;color:#0d4f80}#airP .r small{display:block;font-weight:700;color:#3b7fb0;font-size:12px}#airP .r button{border:0;border-radius:14px;padding:8px 14px;font-weight:900;font-family:inherit;font-size:15px;background:linear-gradient(#ffd34d,#ffad0f);color:#6b3a00;box-shadow:0 3px 0 #c77800}'; document.head.appendChild(st);
+    el.addEventListener('click', (e) => { const b = e.target.closest('[data-air]'); if (!b) return; sfx.click(); const v = b.dataset.air; el.classList.remove('on'); state.panel = null; if (v === 'x') return; const d = AIR_DEST[+v]; if (d) d.go(); }); }
+  el.innerHTML = `<div class="pn"><h3>✈️ مطار لولو — اختار رحلتك<button class="x" data-air="x">✕</button></h3>${AIR_DEST.map((d, n) => { const m = MAP_DATA.find((x) => x.mapId === d.id), ok = m && m.IsUnlocked(); return `<div class="r"><b>${d.i}</b><div>${d.n}<small>${d.d}</small><small>${ok ? '✅ مفتوحة في الخرايط' : '🔓 أول ما توصل هتتفتح لك في الخرايط'}</small></div><button data-air="${n}">✈️ يلا</button></div>`; }).join('')}</div>`;
+  el.classList.add('on'); state.panel = 'air'; sfx.pop();
 }
 function goMall() { teleport('mall', MALL_OFF, 90, Math.PI, 'جاري تحميل مول العرب…'); setTimeout(() => toast('🛍️ أهلاً بيك في مول العرب!'), 1400); }
 function ensureHome() { if (!HOME) HOME = buildHome({ THREE, scene, ctex, solids, sfx, toast, save, grad, openDecor }); return HOME; }
@@ -1388,7 +1417,7 @@ function startAct(ctrl) {
 function endAct(silent) { if (!ACT) return; const a = ACT; ACT = null; $('#ctl').classList.remove('drive'); $('#pedals').classList.remove('on'); a.ctrl.end(); PL.vy = 0; PL.ground = true; }
 function teleport(world, x, z, yaw, label) {
   $('#fadeTx').textContent = label; $('#fade').classList.add('on');
-  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (world === 'egypt') await ensureEgypt(); if (world === 'saudi') await ensureSaudi(); if (SAU && WORLD === 'saudi' && world !== 'saudi') SAU.onLeave(); if (SAU && world === 'saudi' && WORLD !== 'saudi') SAU.onEnter(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); if (EGY && WORLD === 'egypt' && world !== 'egypt') EGY.onLeave(); if (EGY && world === 'egypt' && WORLD !== 'egypt') EGY.onEnter(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
+  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (world === 'egypt') await ensureEgypt(); if (world === 'saudi') await ensureSaudi(); if (SAU && WORLD === 'saudi' && world !== 'saudi') SAU.onLeave(); if (SAU && world === 'saudi' && WORLD !== 'saudi') SAU.onEnter(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); if (EGY && WORLD === 'egypt' && world !== 'egypt') EGY.onLeave(); if (EGY && world === 'egypt' && WORLD !== 'egypt') EGY.onEnter(); WORLD = world; if (WORLD_MAP[world]) unlockMap(WORLD_MAP[world], 'visit'); updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
 }
 function goPark() { teleport('park', PARK_OFF, 96, Math.PI, 'جاري تحميل مدينة الملاهي…'); setTimeout(() => toast('🎡 أهلاً بيك في مدينة الملاهي!'), 1400); }
 function goCity() { teleport('city', 90, 2, 0, 'رجوع للمدينة…'); }
@@ -1588,25 +1617,28 @@ function renderSettings() { $('#sSound').textContent = S.sound ? '🔊 الصو�
 // ================= map registry + selection manager =================
 // MapData: mapId, ArabicName, EnglishName, Thumbnail, SceneName, IsUnlocked(), Description
 const MAP_DATA = [
-  { mapId: 1, ArabicName: 'جولة حرة', EnglishName: 'Free Roam', SceneName: 'city', Description: 'المدينة كلها مفتوحة: لف بالرجلين أو بالعربية، كمّل مهامك ولِم العملات والجواهر.', spawn: null, unlock: () => true },
-  { mapId: 16, ArabicName: 'مول العرب', EnglishName: 'Mall of Arabia', SceneName: 'mall', Description: 'اكتشف مول العرب، وجهتك الضخمة للتسوق والترفيه والمغامرات! تجول بين المتاجر، تعرف على المنتجات، قابل البائعين، استمتع بالسينما والملاهي، واكتشف مدينة التلج الساحرة.', spawn: 'mall', unlock: () => true },
-  { mapId: 17, ArabicName: 'آثار مصر', EnglishName: "Egypt's Monuments", SceneName: 'egypt', Description: 'رحلة في آثار مصر: المتحف المصري الكبير، أهرامات الجيزة وأبو الهول، معابد الأقصر، وأسوان والنيل وأبو سمبل. اجمع أختام جواز سفر الآثار!' },
-  { mapId: 18, ArabicName: 'عالم السعودية', EnglishName: 'Saudi Arabia World', SceneName: 'saudi', Description: 'رحلة في المملكة العربية السعودية: الرياض وجدة والعُلا ومكة المكرمة والمدينة المنورة وعسير وتبوك والشرقية. اكتشف المعالم، جاوب الأسئلة، واجمع أختام جواز السفر!' },
-  { mapId: 2, ArabicName: 'مدينة الملاهي', EnglishName: 'Amusement Park', SceneName: 'park', Description: 'مدينة ملاهي كاملة: عجلة دوارة، قطار ملاهي، كاروسيل، عربيات تصادم، حديقة مائية بزحاليق، أركيد ومنطقة أكل. اكسب تذاكر 🎟️ ونجوم ⭐ واشتري جوايز!', spawn: 'park', unlock: () => seen('fair') || S.mi >= 6, hint: 'زور مدينة الملاهي في الجولة الحرة' },
-  { mapId: 3, ArabicName: 'المدرسة', EnglishName: 'School', SceneName: 'city', Description: 'مدرسة لولو وأبلة نور مستنياك قدام الباب.', spawn: { x: 30, z: 2, yaw: 0 }, unlock: () => seen('school') || S.mi >= 6, hint: 'زور المدرسة في الجولة الحرة' },
-  { mapId: 4, ArabicName: 'البيت', EnglishName: 'Home', SceneName: 'city', Description: 'بيتك وجنينتك: غيّر الألوان واشتري ألعاب للجنينة.', spawn: 'home', unlock: () => !!S.house, hint: 'اشتري بيت في الحي السكني' },
-  { mapId: 5, ArabicName: 'الشارع', EnglishName: 'Street', SceneName: 'city', Description: 'ابدأ وانت سايق العربية في الشارع الكبير 🚗', spawn: 'street', unlock: () => !!S.drove, hint: 'اركب العربية البينك مرة' },
-  { mapId: 6, ArabicName: 'الشاطئ', EnglishName: 'Beach', SceneName: 'city', Description: 'رملة ونخل وشماسي ومنارة، ودوّر على الصدف البينك 🐚', spawn: { x: 0, z: 172, yaw: 0 }, unlock: () => seen('beach'), hint: 'زور الشاطئ في الجولة الحرة' },
+  { mapId: 1, ArabicName: 'جولة حرة', EnglishName: 'Free Roam', SceneName: 'city', Description: 'المدينة كلها مفتوحة: لف بالرجلين أو بالعربية، كمّل مهامك ولِم العملات والجواهر، وسافر من مطار لولو لمصر والسعودية ومول العرب. أي مكان تزوره بيتفتح لك في الخرايط!', spawn: null, unlock: () => true },
+  { mapId: 17, ArabicName: 'مصر', EnglishName: 'Egypt', SceneName: 'egypt', Description: 'مصر كلها في خريطة واحدة: المتحف المصري الكبير والأهرامات، الأقصر وأسوان بالباخرة، الغردقة (أكواريوم وغواصة وعرض الدولفين)، دهب والبلو هول، شرم الشيخ ورأس محمد، والعلمين على البحر المتوسط. تحديات بالعملات والجواهر!', spawn: 'egypt', unlock: () => !!(S.egypt && S.egypt.stamps && S.egypt.stamps.length), hint: 'سافر لمصر من مطار لولو في الجولة الحرة', price: { c: 400, g: 20 } },
+  { mapId: 16, ArabicName: 'مول العرب', EnglishName: 'Mall of Arabia', SceneName: 'mall', hint: 'ادخل مول العرب من الجولة الحرة', price: { c: 300, g: 15 }, Description: 'اكتشف مول العرب، وجهتك الضخمة للتسوق والترفيه والمغامرات! تجول بين المتاجر، تعرف على المنتجات، قابل البائعين، استمتع بالسينما والملاهي، واكتشف مدينة التلج الساحرة.', spawn: 'mall', unlock: () => !!S.mall },
+  { mapId: 18, ArabicName: 'عالم السعودية', EnglishName: 'Saudi Arabia World', SceneName: 'saudi', hint: 'سافر للسعودية من مطار لولو في الجولة الحرة', price: { c: 500, g: 25 }, unlock: () => !!(S.saudi && S.saudi.stamps && S.saudi.stamps.length), Description: 'رحلة في المملكة العربية السعودية: الرياض وجدة والعُلا ومكة المكرمة والمدينة المنورة وعسير وتبوك والشرقية. اكتشف المعالم، جاوب الأسئلة، واجمع أختام جواز السفر!' },
+  { mapId: 2, price: { c: 300, g: 15 }, ArabicName: 'مدينة الملاهي', EnglishName: 'Amusement Park', SceneName: 'park', Description: 'مدينة ملاهي كاملة: عجلة دوارة، قطار ملاهي، كاروسيل، عربيات تصادم، حديقة مائية بزحاليق، أركيد ومنطقة أكل. اكسب تذاكر 🎟️ ونجوم ⭐ واشتري جوايز!', spawn: 'park', unlock: () => seen('fair') || S.mi >= 6, hint: 'زور مدينة الملاهي في الجولة الحرة' },
+  { mapId: 3, price: { c: 150, g: 8 }, ArabicName: 'المدرسة', EnglishName: 'School', SceneName: 'city', Description: 'مدرسة لولو وأبلة نور مستنياك قدام الباب.', spawn: { x: 30, z: 2, yaw: 0 }, unlock: () => seen('school') || S.mi >= 6, hint: 'زور المدرسة في الجولة الحرة' },
+  { mapId: 4, price: { c: 200, g: 10 }, ArabicName: 'البيت', EnglishName: 'Home', SceneName: 'city', Description: 'بيتك وجنينتك: غيّر الألوان واشتري ألعاب للجنينة.', spawn: 'home', unlock: () => !!S.house, hint: 'اشتري بيت في الحي السكني' },
+  { mapId: 5, price: { c: 150, g: 8 }, ArabicName: 'الشارع', EnglishName: 'Street', SceneName: 'city', Description: 'ابدأ وانت سايق العربية في الشارع الكبير 🚗', spawn: 'street', unlock: () => !!S.drove, hint: 'اركب العربية البينك مرة' },
+  { mapId: 6, price: { c: 150, g: 8 }, ArabicName: 'الشاطئ', EnglishName: 'Beach', SceneName: 'city', Description: 'رملة ونخل وشماسي ومنارة، ودوّر على الصدف البينك 🐚', spawn: { x: 0, z: 172, yaw: 0 }, unlock: () => seen('beach'), hint: 'زور الشاطئ في الجولة الحرة' },
   { mapId: 7, ArabicName: 'عالم الثلج', EnglishName: 'Snow World', SceneName: null, Description: 'قلعة التلج والبطاريق… بنجهّزها!' },
   { mapId: 8, ArabicName: 'عالم الفضاء', EnglishName: 'Space World', SceneName: null, Description: 'صاروخ ومحطة فضاء ونجوم… قريبًا!' },
   { mapId: 9, ArabicName: 'عالم الديناصورات', EnglishName: 'Dinosaur World', SceneName: null, Description: 'ديناصورات طيبة وبركان… قريبًا!' },
   { mapId: 10, ArabicName: 'قصر الأميرات', EnglishName: 'Princess Castle', SceneName: null, Description: 'قصر وردي وقوس قزح… قريبًا!' },
   { mapId: 11, ArabicName: 'المزرعة', EnglishName: 'Farm', SceneName: null, Description: 'بقرة وفراخ وطاحونة… قريبًا!' },
-  { mapId: 12, ArabicName: 'مول لولو', EnglishName: 'LOLO Mall', SceneName: 'city', Description: 'قدام مول لولو البنفسجي (جوه المول بيتجهّز).', spawn: { x: -64, z: -30, yaw: -Math.PI / 2 }, unlock: () => seen('mall') || S.mi >= 3, hint: 'زور مول لولو في الجولة الحرة' },
+  { mapId: 12, price: { c: 150, g: 8 }, ArabicName: 'مول لولو', EnglishName: 'LOLO Mall', SceneName: 'city', Description: 'قدام مول لولو البنفسجي (جوه المول بيتجهّز).', spawn: { x: -64, z: -30, yaw: -Math.PI / 2 }, unlock: () => seen('mall') || S.mi >= 3, hint: 'زور مول لولو في الجولة الحرة' },
   { mapId: 13, ArabicName: 'المدينة المائية', EnglishName: 'Water Park', SceneName: null, Description: 'زحاليق مياه وحمامات سباحة… قريبًا!' },
-  { mapId: 14, ArabicName: 'حلبة السباق', EnglishName: 'Racing Track', SceneName: 'lolo-drive', Description: 'سباقات حقيقية ضد عربيات تانية في لعبة لولو درايف 🏁', unlock: () => !!S.drove, hint: 'سوق العربية مرة في الجولة الحرة' },
+  { mapId: 14, price: { c: 250, g: 12 }, ArabicName: 'حلبة السباق', EnglishName: 'Racing Track', SceneName: 'lolo-drive', Description: 'سباقات حقيقية ضد عربيات تانية في لعبة لولو درايف 🏁', unlock: () => !!S.drove, hint: 'سوق العربية مرة في الجولة الحرة' },
   { mapId: 15, ArabicName: 'الغابة السحرية', EnglishName: 'Magic Forest', SceneName: null, Description: 'شجرة سحرية وكريستال… قريبًا!' },
-].map((m) => Object.assign(m, { Thumbnail: `assets/maps/m${String(m.mapId).padStart(2, '0')}.webp`, IsUnlocked: () => !!m.SceneName && (!m.unlock || m.unlock()) }));
+].map((m) => Object.assign(m, { Thumbnail: `assets/maps/m${String(m.mapId).padStart(2, '0')}.webp`, IsUnlocked: () => !!m.SceneName && (!m.unlock || (S.unl || []).includes(m.mapId) || m.unlock()) }));
+function unlockMap(id, how) { const m = MAP_DATA.find((x) => x.mapId === id); if (!m || m.IsUnlocked()) return false; S.unl = [...new Set([...(S.unl || []), id])]; save(); if (how !== 'buy') setTimeout(() => toast(`🔓 خريطة جديدة اتفتحت: ${m.ArabicName}! تقدر تدخلها من الخرايط على طول`), 1800); return true; }
+const WORLD_MAP = { egypt: 17, mall: 16, saudi: 18, park: 2 };
+function buyMap(cur) { const m = MAP_DATA.find((x) => x.mapId === MapSelectionManager.selected); if (!m || !m.price || m.IsUnlocked()) return; const need = cur === 'g' ? m.price.g : m.price.c, have = cur === 'g' ? S.gems : S.coins; if (have < need) { toast(cur === 'g' ? `💎 محتاج ${need - have} جوهرة كمان — لِمها من الجولة الحرة والتحديات` : `🪙 محتاج ${need - have} عملة كمان — العب التحديات والمهام`); sfx.pop(); return; } if (cur === 'g') S.gems -= need; else S.coins -= need; unlockMap(m.mapId, 'buy'); updPills(); sfx.win(); toast(`🔓 فتحت ${m.ArabicName}!`); MapSelectionManager.render(); MapSelectionManager.select(m.mapId); }
 function seen(z) { return (S.seen || []).includes(z); }
 function zoneOf(x, z) {
   if (z > 160) return 'beach';
@@ -1621,7 +1653,7 @@ const MapSelectionManager = {
     $('#mgrid').innerHTML = MAP_DATA.map((m, n) => {
       const st = this.status(m), isNew = st === 'ok' && m.mapId !== 1 && !known.includes(m.mapId);
       return `<button class="mcard ${st === 'ok' ? '' : st === 'soon' ? 'soon' : 'locked'} ${this.selected === m.mapId ? 'sel' : ''}" data-map="${m.mapId}" style="animation-delay:${n * 0.03}s">
-        <img src="${m.Thumbnail}" alt="" loading="lazy">${st === 'lock' ? `<div class="lock"><b>🔒</b><span>${m.hint}</span></div>` : ''}${st === 'soon' ? '<span class="soonTag">قريبًا</span>' : ''}${isNew ? '<span class="newTag">جديد!</span>' : ''}
+        <img src="${m.Thumbnail}" alt="" loading="lazy">${st === 'lock' ? `<div class="lock"><b>🔒</b><span>${m.price ? `🪙 ${m.price.c} أو 💎 ${m.price.g}` : m.hint}</span></div>` : ''}${st === 'soon' ? '<span class="soonTag">قريبًا</span>' : ''}${isNew ? '<span class="newTag">جديد!</span>' : ''}
         <span class="nm">${m.ArabicName}</span></button>`;
     }).join('');
   },
@@ -1632,6 +1664,7 @@ const MapSelectionManager = {
     $('#pImg').src = m.Thumbnail; $('#pName').textContent = `${m.mapId}. ${m.ArabicName}`; $('#pEn').textContent = m.EnglishName; $('#pDesc').textContent = m.Description;
     const ps = $('#pSt'); ps.className = 'pst ' + st; ps.textContent = st === 'ok' ? '✅ مفتوحة' : st === 'soon' ? '🚧 قريبًا' : '🔒 ' + m.hint;
     $('#pPlay').disabled = st !== 'ok'; $('#mapPrev').classList.add('on');
+    $('#pBuy').innerHTML = st === 'lock' && m.price ? `<div class="pbt">🔒 افتحها دلوقتي:</div><button data-a="buyMapC">🪙 ${m.price.c}</button><button data-a="buyMapG">💎 ${m.price.g}</button><div class="pbh">أو ${m.hint}</div>` : '';
     if (st === 'ok') { S.mapsKnown = [...new Set([...(S.mapsKnown || []), id])]; save(); }
   },
   play(id = this.selected) {
@@ -1687,6 +1720,8 @@ document.addEventListener('click', (e) => {
   else if (a === 'toMaps') MapSelectionManager.open();
   else if (a === 'closePrev') $('#mapPrev').classList.remove('on');
   else if (a === 'playMap') MapSelectionManager.play();
+  else if (a === 'buyMapC') buyMap('c');
+  else if (a === 'buyMapG') buyMap('g');
   else if (a === 'exit') { history.length > 1 ? history.back() : (location.href = '/'); }
   else if (a === 'settings') { if (!state.play) { $('#settings').classList.add('on'); renderSettings(); state.panel = 'settings'; } else openPanel('settings'); }
   else if (a === 'back') { closePanel(); if (state.play) openPanel('pause'); }
@@ -1787,3 +1822,4 @@ Promise.allSettled([
 });
 window.LOLO_WORLD = { get HOME() { return HOME; }, enterHouse, HOUSES, PL, get S() { return S; }, get PARK() { return PARK; }, get WORLD() { return WORLD; }, get ACT() { return ACT; }, goPark, goCity, startAct, endAct, MAP_DATA, MapSelectionManager, RIDE, OB, SH: SHELLS, census: () => { const c = {}; scene.traverse((o) => { if (!o.isMesh || !o.visible) return; let p = o, vis = true; while (p) { if (!p.visible) vis = false; p = p.parent; } if (!vis) return; const top = (() => { let q = o; while (q.parent && q.parent !== scene) q = q.parent; return q; })(); const k = (o.isInstancedMesh ? 'I:' : '') + (top === o ? 'direct:' + o.geometry.type + ':' + o.material.type : 'group:' + (top.name || top.type) + ':' + top.children.length); c[k] = (c[k] || 0) + 1; }); return JSON.stringify(Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 25)); }, prof: () => { renderer.info.autoReset = false; renderer.info.reset(); const t = performance.now(); renderer.render(scene, camera); const r = Object.assign({ ms: +(performance.now() - t).toFixed(1) }, renderer.info.render); renderer.info.autoReset = true; let meshes = 0, inst = 0, shadowCasters = 0; scene.traverse((o) => { if (o.isMesh) { meshes++; if (o.isInstancedMesh) inst++; if (o.castShadow && o.visible) shadowCasters++; } }); return Object.assign(r, { meshes, inst, shadowCasters, camBlock: camBlock.length, solids: solids.length, circles: circles.length }); }, dbgInst: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.name) { o.geometry.computeBoundingBox(); const m = new THREE.Matrix4(); o.getMatrixAt(0, m); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(p, q, sc); const bb = o.geometry.boundingBox; out.push([o.material.name, o.count, [bb.min.x, bb.min.y, bb.max.x, bb.max.y].map((v) => +v.toFixed(2)), [p.x, p.y, p.z, sc.x, sc.y, sc.z].map((v) => +v.toFixed(2)), o.visible, o.material.visible, o.material.opacity, o.material.transparent, o.material.alphaTest]); } }); return JSON.stringify(out); }, dbgLeaves: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.alphaTest) { const m = o.material; out.push([m.name, o.count, m.alphaTest, m.side, m.map && m.map.image && m.map.image.width, m.color && m.color.getHexString(), o.geometry.attributes.color ? 'vc' : '', o.geometry.attributes.position.count]); } }); return JSON.stringify(out); }, info: () => JSON.stringify(renderer.info.render), setCam: (y, p) => { camYaw = y; camPitch = p; lastDrag = performance.now() + 1e5; }, S, PL, CAR, MIS, begin, enterCar, exitCar, completeMission, get state() { return state; }, LAND };
 window.__LW = { NET, PL, S, curLook, VS, GUIDE, get MALL() { return MALL; }, get SAU() { return SAU; }, get state() { return state; } };
+Object.defineProperty(window, "__EGY", { get: () => EGY }); window.__MSM = MapSelectionManager;
