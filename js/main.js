@@ -11,7 +11,7 @@ import { makeLoloMascot } from './mascot.js?v=1';
 import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=10';
 import { buildEgypt, EGY_OFF } from './egypt.js?v=6';
 import { buildSaudi, SA_OFF } from './saudi.js?v=4';
-import { buildArab, ARAB_OFF, COUNTRIES, CBY as ARAB_CBY } from './arab.js?v=2';
+import { buildArab, ARAB_OFF, COUNTRIES, CBY as ARAB_CBY } from './arab.js?v=3';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
