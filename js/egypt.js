@@ -10,7 +10,8 @@
 // (name, date, story) that can also be read aloud; visiting stamps the "Egypt passport" and gives coins.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
-import { buildCoast, COAST_REG, COAST_SITES } from './egyptcoast.js?v=2';
+import { buildCoast, COAST_REG, COAST_SITES } from './egyptcoast.js?v=3';
+import { voLoad, voPlay, voStop, voPlaying, voReady, voHas, voClean } from './vo.js?v=1';
 
 export const EGY_OFF = 9000;
 
@@ -318,11 +319,13 @@ export function buildEgypt(C) {
   const TTS = window.speechSynthesis || null; let arVoice = null;
   const pickVoice = () => { if (!TTS) return; const vs = TTS.getVoices() || []; arVoice = vs.find((v) => /^ar[-_]EG/i.test(v.lang)) || vs.find((v) => /^ar/i.test(v.lang)) || null; };
   if (TTS) { pickVoice(); try { TTS.addEventListener('voiceschanged', pickVoice); } catch (e) {} }
-  const canSpeak = () => !!(TTS && arVoice);
-  function speak(text) { if (!canSpeak()) return false; try { TTS.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = arVoice; u.lang = arVoice.lang; u.rate = 0.95; TTS.speak(u); return true; } catch (e) { return false; } }
-  function hush() { try { if (TTS) TTS.cancel(); } catch (e) {} }
+  voLoad('eg');
+  const canSpeak = () => voReady('eg') || !!(TTS && arVoice);
+  function speak(text, voOnly) { text = voClean(text); if (!text) return false; hush(); if (voPlay('eg', text)) return true; if (voOnly || !(TTS && arVoice)) return false; try { TTS.cancel(); const u = new SpeechSynthesisUtterance(text); u.voice = arVoice; u.lang = arVoice.lang; u.rate = 0.95; TTS.speak(u); return true; } catch (e) { return false; } }
+  function hush() { voStop(); try { if (TTS) TTS.cancel(); } catch (e) {} }
+  let CAP = null;
   let CH = [], curSite = null;
-  function talk(n, tx, choices) { CH = choices; openUI('dlg', `<div class="dbox"><div class="dav">${n.av}</div><div style="flex:1"><div class="dnm">${esc(n.nm)} · <small>${esc(n.role)}</small></div><div class="dtx">${esc(tx)}</div><div class="dch">${choices.map((c, i) => `<button data-eg="ch" data-v="${i}">${esc(c[0])}</button>`).join('')}</div></div></div>`); n.k.emo = { k: 'wave', t: 1.2 }; C.sfx.pop(); }
+  function talk(n, tx, choices) { if (CAP) { CAP.push(tx); return; } CH = choices; if (st().voice) setTimeout(() => speak(tx, true), 60); openUI('dlg', `<div class="dbox"><div class="dav">${n.av}</div><div style="flex:1"><div class="dnm">${esc(n.nm)} · <small>${esc(n.role)}</small></div><div class="dtx">${esc(tx)}</div><div class="dch">${choices.map((c, i) => `<button data-eg="ch" data-v="${i}">${esc(c[0])}</button>`).join('')}</div></div></div>`); n.k.emo = { k: 'wave', t: 1.2 }; C.sfx.pop(); }
   function say(n, tx) { if (n.bub) n.k.remove(n.bub); n.bub = bubbleSprite(tx); n.bub.position.set(0, 3.1, 0); n.k.add(n.bub); n.bubT = 3.2; }
   const siteText = (s) => `${s.n}. ${s.d}. ${s.f.join(' ')}`;
   function openSite(id) {
@@ -373,7 +376,7 @@ export function buildEgypt(C) {
   }
   ui.addEventListener('click', (e) => { const b = e.target.closest('[data-eg]'); if (!b) return; C.sfx.click(); const a = b.dataset.eg, v = b.dataset.v;
     if (a === 'close') closeUI(); else if (a === 'ch') { const c = CH[+v]; if (c) c[1](); } else if (a === 'go') goSpot(v); else if (a === 'fly') COAST.fly(v);
-    else if (a === 'voice') { const m = st(); if (m.voice && TTS && TTS.speaking) { hush(); m.voice = 0; } else { m.voice = 1; if (curSite) speak(siteText(curSite)); } C.save(); b.classList.toggle('on', !!m.voice); b.textContent = m.voice ? '🔊 بيشرح دلوقتي' : '🔊 اسمع الشرح'; } });
+    else if (a === 'voice') { const m = st(); if (m.voice && ((TTS && TTS.speaking) || voPlaying())) { hush(); m.voice = 0; } else { m.voice = 1; if (curSite) speak(siteText(curSite)); } C.save(); b.classList.toggle('on', !!m.voice); b.textContent = m.voice ? '🔊 بيشرح دلوقتي' : '🔊 اسمع الشرح'; } });
   ride.addEventListener('click', (e) => { if (e.target.closest('[data-eg="skip"]') && RIDE) { C.sfx.click(); endRide(); } });
   const SCRIPTS = {
     salma: (n) => talk(n, 'أهلاً بيك في آثار مصر! ابدأ بالمتحف المصري الكبير والأهرامات، وبعدين اركب باخرة لولو على النيل للأقصر وأسوان. تحب تروح فين؟', [['🏛️ المتحف الكبير', () => goSpot('gem')], ['🔺 الأهرامات', () => goSpot('giza')], ['🚢 مرسى الباخرة', () => goSpot('cdock')], ['🛂 جواز سفر الآثار', openMap], ['👋 شكرًا', closeUI]]),
@@ -414,7 +417,7 @@ export function buildEgypt(C) {
     for (const n of NPC) {
       const dx = C.PL.x - n.k.position.x, dz = C.PL.z - n.k.position.z, d = Math.hypot(dx, dz);
       if (d < 6.5) n.k.rotation.y = angLerp(n.k.rotation.y, Math.atan2(dx, dz), dt * 5); else n.k.rotation.y = angLerp(n.k.rotation.y, n.yaw, dt * 2);
-      if (d < 5 && !n.seen && !RIDE) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello); C.sfx.pop(); } if (d > 14) n.seen = false;
+      if (d < 5 && !n.seen && !RIDE) { n.seen = true; n.k.emo = { k: 'wave', t: 1.4 }; say(n, n.hello); C.sfx.pop(); if (st().voice && !document.body.classList.contains('mallFocus')) speak(n.hello, true); } if (d > 14) n.seen = false;
       C.animKid(n.k, 0, dt, false);
       if (n.bub) { n.bubT -= dt; n.bub.material.opacity = Math.min(1, n.bubT); if (n.bubT <= 0) { n.k.remove(n.bub); n.bub = null; } }
     }
@@ -436,6 +439,7 @@ export function buildEgypt(C) {
   return {
     root, update, interactables, goal, drawMap, onEnter, onLeave, camBlock, B, OFF, MAPW: 520, SPAWN: { x: OFF, z: 208, yaw: Math.PI }, viewOn: false,
     get camOverride() { if (COAST.cam) return COAST.cam; if (!RIDE) return null; const z = ship.position.z, dir = RIDE.z1 > RIDE.z0 ? 1 : -1; return { p: [OFF + 234, 15, z - dir * 30], l: [OFF + 262, 4, z + dir * 16] }; },
+    voiceLines() { const out = new Set(); SITES.forEach((s) => out.add(siteText(s))); NILE_FACTS.forEach((f) => out.add(f.replace(/^\S+\s/, ''))); NPC.forEach((n) => out.add(n.hello)); CAP = []; try { NPC.forEach((n) => { try { SCRIPTS[n.id](n); } catch (e) {} }); } finally { CAP.forEach((t) => out.add(t)); CAP = null; } (COAST.lines || []).forEach((f) => out.add(f.replace(/^\S+\s/, ''))); return [...out].map(voClean).filter(Boolean); },
     get riding() { return !!RIDE || COAST.busy; }, get coast() { return COAST; },
   };
 }
