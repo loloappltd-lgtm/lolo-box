@@ -10,6 +10,7 @@ import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
 import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
 import { buildEgypt, EGY_OFF } from './egypt.js?v=3';
+import { buildSaudi, SA_OFF } from './saudi.js?v=1';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -786,7 +787,7 @@ function interactables() {
   if (ACT) return [{ x: PL.x, z: PL.z, r: 99, label: '🚪 انزل', act: endAct }];
   if (WORLD === 'park') return PL.mode === 'walk' ? PARK.interactables() : [];
   if (WORLD === 'home') return PL.mode === 'walk' && HOME ? HOME.interactables() : [];
-  if (WORLD === 'mall' || WORLD === 'egypt') { const xw = XW(); return PL.mode === 'walk' && xw ? xw.interactables() : []; }
+  if (WORLD === 'mall' || WORLD === 'egypt' || WORLD === 'saudi') { const xw = XW(); return PL.mode === 'walk' && xw ? xw.interactables() : []; }
   const L = [];
   if (PL.mode === 'walk') L.push({ x: 90, z: 4, r: 5, label: '🎡 ادخل مدينة الملاهي الكبيرة', act: goPark });
   if (PL.mode === 'walk') {
@@ -862,7 +863,7 @@ canvas.addEventListener('pointerdown', (e) => { if (!state.play) return; camDrag
 canvas.addEventListener('pointermove', (e) => { if (!camDrag || e.pointerId !== camDrag.id) return; camYaw -= (e.clientX - camDrag.x) * 0.006; camPitch = clamp(camPitch + (e.clientY - camDrag.y) * 0.004, 0.06, 1.1); camDrag.x = e.clientX; camDrag.y = e.clientY; lastDrag = performance.now(); });
 const endDrag = (e) => { if (camDrag && e.pointerId === camDrag.id) camDrag = null; };
 canvas.addEventListener('pointerup', endDrag); canvas.addEventListener('pointercancel', endDrag);
-function jump() { if (PL.mode !== 'walk' || !PL.ground || state.talk || RIDE.on) return; PL.vy = 8.2; PL.ground = false; sfx.jump(); }
+function jump() { if (PL.mode !== 'walk' || !PL.ground || state.talk || RIDE.on) return; { const xw = XW(); if (xw && xw.noJump && xw.noJump(PL.x, PL.z)) { toast('🤍 هنا مكان مقدس… نمشي بهدوء'); return; } } PL.vy = 8.2; PL.ground = false; sfx.jump(); }
 let curAct = null;
 function doAct() { if (state.talk) return nextLine(); if (curAct) curAct.act(); }
 function carBtn() { if (state.talk) return; if (PL.mode === 'drive') exitCar(); else if (Math.hypot(PL.x - CAR.x, PL.z - CAR.z) < 4.2) enterCar(); }
@@ -878,7 +879,7 @@ function collide(o, r) {
   }
   for (const c of circles) { const dx = o.x - c.x, dz = o.z - c.z, d = Math.hypot(dx, dz), m = r + c.r; if (d < m && d > 0.001) { o.x += (dx / d) * (m - d); o.z += (dz / d) * (m - d); hit = true; } }
   if (WORLD === 'home' && HOME) { const bx = HOME.HX - 0.45, bz = HOME.HZ - 0.45; if (o.x < HOME_OFF - bx) { o.x = HOME_OFF - bx; hit = true; } if (o.x > HOME_OFF + bx) { o.x = HOME_OFF + bx; hit = true; } if (o.z < -bz) { o.z = -bz; hit = true; } if (o.z > bz) { o.z = bz; hit = true; } return hit; }
-  if (XW()) { const B = XW().B, XO = XW().OFF; if (o.x < XO - B) { o.x = XO - B; hit = true; } if (o.x > XO + B) { o.x = XO + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
+  if (XW()) { if (XW().clamp && XW().clamp(o)) hit = true; const B = XW().B, XO = XW().OFF; if (o.x < XO - B) { o.x = XO - B; hit = true; } if (o.x > XO + B) { o.x = XO + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
   if (WORLD === 'park') { const B = PARK.B; if (o.x < PARK_OFF - B) { o.x = PARK_OFF - B; hit = true; } if (o.x > PARK_OFF + B) { o.x = PARK_OFF + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
   const lr = landR(o.x, o.z), d = Math.hypot(o.x, o.z); if (d > lr) { o.x *= lr / d; o.z *= lr / d; hit = true; }
   return hit;
@@ -1344,7 +1345,17 @@ async function ensureEgypt() {
   try { await renderer.compileAsync(scene, camera); } catch (e) {}
   return EGY;
 }
-function XW() { return WORLD === 'mall' ? MALL : WORLD === 'egypt' ? EGY : null; }
+function XW() { return WORLD === 'mall' ? MALL : WORLD === 'egypt' ? EGY : WORLD === 'saudi' ? SAU : null; }
+// ---- Saudi Arabia World (LOLO_SAUDI_2026) ----
+let SAU = null;
+async function ensureSaudi() {
+  if (SAU) return SAU;
+  SAU = buildSaudi({ scene, toon, ctex, solids, circles, PL, sfx, toast, get S() { return S; }, save, updPills, renderer, PRESETS, cloneLook, animKid,
+    makeAvatar: (L) => AV.makeAvatar(L), randomLook: (g) => AV.randomLook(g), getKid: () => kid, goCity,
+    setPanel: (p) => { state.panel = p; }, isPlaying: () => state.play && !state.panel && !state.talk });
+  try { await renderer.compileAsync(scene, camera); } catch (e) {}
+  return SAU;
+}
 function goMall() { teleport('mall', MALL_OFF, 90, Math.PI, 'جاري تحميل مول العرب…'); setTimeout(() => toast('🛍️ أهلاً بيك في مول العرب!'), 1400); }
 function ensureHome() { if (!HOME) HOME = buildHome({ THREE, scene, ctex, solids, sfx, toast, save, grad, openDecor }); return HOME; }
 function enterHouse(h) {
@@ -1377,7 +1388,7 @@ function startAct(ctrl) {
 function endAct(silent) { if (!ACT) return; const a = ACT; ACT = null; $('#ctl').classList.remove('drive'); $('#pedals').classList.remove('on'); a.ctrl.end(); PL.vy = 0; PL.ground = true; }
 function teleport(world, x, z, yaw, label) {
   $('#fadeTx').textContent = label; $('#fade').classList.add('on');
-  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (world === 'egypt') await ensureEgypt(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); if (EGY && WORLD === 'egypt' && world !== 'egypt') EGY.onLeave(); if (EGY && world === 'egypt' && WORLD !== 'egypt') EGY.onEnter(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
+  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (world === 'egypt') await ensureEgypt(); if (world === 'saudi') await ensureSaudi(); if (SAU && WORLD === 'saudi' && world !== 'saudi') SAU.onLeave(); if (SAU && world === 'saudi' && WORLD !== 'saudi') SAU.onEnter(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); if (EGY && WORLD === 'egypt' && world !== 'egypt') EGY.onLeave(); if (EGY && world === 'egypt' && WORLD !== 'egypt') EGY.onEnter(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
 }
 function goPark() { teleport('park', PARK_OFF, 96, Math.PI, 'جاري تحميل مدينة الملاهي…'); setTimeout(() => toast('🎡 أهلاً بيك في مدينة الملاهي!'), 1400); }
 function goCity() { teleport('city', 90, 2, 0, 'رجوع للمدينة…'); }
@@ -1580,6 +1591,7 @@ const MAP_DATA = [
   { mapId: 1, ArabicName: 'جولة حرة', EnglishName: 'Free Roam', SceneName: 'city', Description: 'المدينة كلها مفتوحة: لف بالرجلين أو بالعربية، كمّل مهامك ولِم العملات والجواهر.', spawn: null, unlock: () => true },
   { mapId: 16, ArabicName: 'مول العرب', EnglishName: 'Mall of Arabia', SceneName: 'mall', Description: 'اكتشف مول العرب، وجهتك الضخمة للتسوق والترفيه والمغامرات! تجول بين المتاجر، تعرف على المنتجات، قابل البائعين، استمتع بالسينما والملاهي، واكتشف مدينة التلج الساحرة.', spawn: 'mall', unlock: () => true },
   { mapId: 17, ArabicName: 'آثار مصر', EnglishName: "Egypt's Monuments", SceneName: 'egypt', Description: 'رحلة في آثار مصر: المتحف المصري الكبير، أهرامات الجيزة وأبو الهول، معابد الأقصر، وأسوان والنيل وأبو سمبل. اجمع أختام جواز سفر الآثار!' },
+  { mapId: 18, ArabicName: 'عالم السعودية', EnglishName: 'Saudi Arabia World', SceneName: 'saudi', Description: 'رحلة في المملكة العربية السعودية: الرياض وجدة والعُلا ومكة المكرمة والمدينة المنورة وعسير وتبوك والشرقية. اكتشف المعالم، جاوب الأسئلة، واجمع أختام جواز السفر!' },
   { mapId: 2, ArabicName: 'مدينة الملاهي', EnglishName: 'Amusement Park', SceneName: 'park', Description: 'مدينة ملاهي كاملة: عجلة دوارة، قطار ملاهي، كاروسيل، عربيات تصادم، حديقة مائية بزحاليق، أركيد ومنطقة أكل. اكسب تذاكر 🎟️ ونجوم ⭐ واشتري جوايز!', spawn: 'park', unlock: () => seen('fair') || S.mi >= 6, hint: 'زور مدينة الملاهي في الجولة الحرة' },
   { mapId: 3, ArabicName: 'المدرسة', EnglishName: 'School', SceneName: 'city', Description: 'مدرسة لولو وأبلة نور مستنياك قدام الباب.', spawn: { x: 30, z: 2, yaw: 0 }, unlock: () => seen('school') || S.mi >= 6, hint: 'زور المدرسة في الجولة الحرة' },
   { mapId: 4, ArabicName: 'البيت', EnglishName: 'Home', SceneName: 'city', Description: 'بيتك وجنينتك: غيّر الألوان واشتري ألعاب للجنينة.', spawn: 'home', unlock: () => !!S.house, hint: 'اشتري بيت في الحي السكني' },
@@ -1629,9 +1641,10 @@ const MapSelectionManager = {
     setTimeout(async () => {
       let sp = m.spawn;
       const prevW = WORLD;
-      if (m.SceneName === 'mall') { await ensureMall(); sp = MALL.SPAWN; WORLD = 'mall'; if (prevW !== 'mall') MALL.onEnter(); } else if (m.SceneName === 'egypt') { await ensureEgypt(); sp = EGY.SPAWN; WORLD = 'egypt'; if (prevW !== 'egypt') EGY.onEnter(); } else if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD !== 'city' || PL.x > 1000 || PL.x < -1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
+      if (m.SceneName === 'mall') { await ensureMall(); sp = MALL.SPAWN; WORLD = 'mall'; if (prevW !== 'mall') MALL.onEnter(); } else if (m.SceneName === 'egypt') { await ensureEgypt(); sp = EGY.SPAWN; WORLD = 'egypt'; if (prevW !== 'egypt') EGY.onEnter(); } else if (m.SceneName === 'saudi') { await ensureSaudi(); sp = SAU.SPAWN; WORLD = 'saudi'; if (prevW !== 'saudi') SAU.onEnter(); } else if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD !== 'city' || PL.x > 1000 || PL.x < -1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
       if (MALL && prevW === 'mall' && WORLD !== 'mall') MALL.onLeave();
       if (EGY && prevW === 'egypt' && WORLD !== 'egypt') EGY.onLeave();
+      if (SAU && prevW === 'saudi' && WORLD !== 'saudi') SAU.onLeave();
       if (ACT) endAct(true);
       if (sp === 'home') { const h = myHouse(); sp = h ? { x: h.x + 2, z: h.z + h.dir * 9, yaw: h.dir > 0 ? Math.PI : 0 } : null; }
       if (sp === 'street') { CAR.x = 3.5; CAR.z = -100; CAR.yaw = 0; CAR.v = 0; syncCar(0); sp = { x: CAR.x - 2.5, z: CAR.z, yaw: 0 }; }
@@ -1743,6 +1756,7 @@ function frame(now) {
   } else if (eng) eng.g.gain.value = 0;
   if (MALL) { MALL.update(dt, now, WORLD === 'mall'); if (WORLD === 'mall' && (goalT += dt) > 1) { goalT = 0; updGoal(); } }
   if (EGY) { EGY.update(dt, now, WORLD === 'egypt'); if (WORLD === 'egypt' && (goalT += dt) > 1) { goalT = 0; updGoal(); } }
+  if (SAU) { SAU.update(dt, now, WORLD === 'saudi'); if (WORLD === 'saudi' && (goalT += dt) > 1) { goalT = 0; updGoal(); } }
   if (PARK) { PARK.update(dt, now); if ((goalT += dt) > 1) { goalT = 0; if (WORLD === 'park') updGoal(); } }
   if (balloonObj && kid) { const rx = Math.cos(PL.yaw) * 0.35, rz = -Math.sin(PL.yaw) * 0.35; balloonObj.position.set(kid.position.x - rx, kid.position.y + 1.0 + Math.sin(now / 500) * 0.1, kid.position.z - rz); balloonObj.rotation.z = Math.sin(now / 700) * 0.1; }
   NET.update(dt); updVs(dt, now); updGuide();
@@ -1772,4 +1786,4 @@ Promise.allSettled([
   draw(); ready = true; setTimeout(() => $('#load').classList.add('hide'), 150);
 });
 window.LOLO_WORLD = { get HOME() { return HOME; }, enterHouse, HOUSES, PL, get S() { return S; }, get PARK() { return PARK; }, get WORLD() { return WORLD; }, get ACT() { return ACT; }, goPark, goCity, startAct, endAct, MAP_DATA, MapSelectionManager, RIDE, OB, SH: SHELLS, census: () => { const c = {}; scene.traverse((o) => { if (!o.isMesh || !o.visible) return; let p = o, vis = true; while (p) { if (!p.visible) vis = false; p = p.parent; } if (!vis) return; const top = (() => { let q = o; while (q.parent && q.parent !== scene) q = q.parent; return q; })(); const k = (o.isInstancedMesh ? 'I:' : '') + (top === o ? 'direct:' + o.geometry.type + ':' + o.material.type : 'group:' + (top.name || top.type) + ':' + top.children.length); c[k] = (c[k] || 0) + 1; }); return JSON.stringify(Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 25)); }, prof: () => { renderer.info.autoReset = false; renderer.info.reset(); const t = performance.now(); renderer.render(scene, camera); const r = Object.assign({ ms: +(performance.now() - t).toFixed(1) }, renderer.info.render); renderer.info.autoReset = true; let meshes = 0, inst = 0, shadowCasters = 0; scene.traverse((o) => { if (o.isMesh) { meshes++; if (o.isInstancedMesh) inst++; if (o.castShadow && o.visible) shadowCasters++; } }); return Object.assign(r, { meshes, inst, shadowCasters, camBlock: camBlock.length, solids: solids.length, circles: circles.length }); }, dbgInst: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.name) { o.geometry.computeBoundingBox(); const m = new THREE.Matrix4(); o.getMatrixAt(0, m); const p = new THREE.Vector3(), q = new THREE.Quaternion(), sc = new THREE.Vector3(); m.decompose(p, q, sc); const bb = o.geometry.boundingBox; out.push([o.material.name, o.count, [bb.min.x, bb.min.y, bb.max.x, bb.max.y].map((v) => +v.toFixed(2)), [p.x, p.y, p.z, sc.x, sc.y, sc.z].map((v) => +v.toFixed(2)), o.visible, o.material.visible, o.material.opacity, o.material.transparent, o.material.alphaTest]); } }); return JSON.stringify(out); }, dbgLeaves: () => { const out = []; scene.traverse((o) => { if (o.isInstancedMesh && o.material && o.material.alphaTest) { const m = o.material; out.push([m.name, o.count, m.alphaTest, m.side, m.map && m.map.image && m.map.image.width, m.color && m.color.getHexString(), o.geometry.attributes.color ? 'vc' : '', o.geometry.attributes.position.count]); } }); return JSON.stringify(out); }, info: () => JSON.stringify(renderer.info.render), setCam: (y, p) => { camYaw = y; camPitch = p; lastDrag = performance.now() + 1e5; }, S, PL, CAR, MIS, begin, enterCar, exitCar, completeMission, get state() { return state; }, LAND };
-window.__LW = { NET, PL, S, curLook, VS, GUIDE, get MALL() { return MALL; } };
+window.__LW = { NET, PL, S, curLook, VS, GUIDE, get MALL() { return MALL; }, get SAU() { return SAU; }, get state() { return state; } };
