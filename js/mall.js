@@ -9,7 +9,7 @@
 // ShoppingCartSystem / InventorySystem.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
-import { voLoad, voPlay, voStop } from './vo.js?v=1';
+import { voLoad, voPlay, voStop } from './vo.js?v=2';
 
 export const MALL_OFF = 6000;
 // computer players shown in the mall and in the friends list until real friends are online

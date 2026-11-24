@@ -7,7 +7,7 @@
 // Makkah and Madinah are shown with respect: viewed from outside, no coins, chests, bots, races or jumping there.
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
-import { voLoad, voPlay, voStop, voPlaying, voReady, voClean } from './vo.js?v=1';
+import { voLoad, voPlay, voStop, voPlaying, voReady, voClean } from './vo.js?v=2';
 
 export const SA_OFF = 12000;
 

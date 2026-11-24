@@ -11,7 +11,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from './jsm/utils/BufferGeometryUtils.js';
 import { buildCoast, COAST_REG, COAST_SITES } from './egyptcoast.js?v=3';
-import { voLoad, voPlay, voStop, voPlaying, voReady, voHas, voClean } from './vo.js?v=1';
+import { voLoad, voPlay, voStop, voPlaying, voReady, voHas, voClean } from './vo.js?v=2';
 
 export const EGY_OFF = 9000;
 

@@ -1,9 +1,13 @@
 // Generate the game's Arabic voice-over with ElevenLabs (runs on the server).
 // usage: XI_KEY=... node tools/gen-vo.cjs <lines.json> <voiceId> <outDir> [model]
+// If tools/vo-say-<pack>.json exists next to tools/vo-lines-<pack>.json, the audio is made from its spoken form
+// (numbers in words, tashkeel); a <hash>.txt next to each mp3 remembers which spoken text it was made from.
 // The API key is read from the XI_KEY environment variable only (never pass it as an argument or commit it).
 // Existing mp3 files are skipped, so the script can be re-run safely; it rewrites <outDir>/index.json at the end.
 const fs = require('fs'), path = require('path'), https = require('https');
 const [linesFile, voice, outDir, model = 'eleven_multilingual_v2'] = process.argv.slice(2);
+const sayFile = linesFile && linesFile.replace('vo-lines-', 'vo-say-');
+const SAY = sayFile && fs.existsSync(sayFile) ? JSON.parse(fs.readFileSync(sayFile, 'utf8')) : {};
 const KEY = (process.env.XI_KEY || '').trim();
 if (!linesFile || !voice || !outDir) { console.log('usage: XI_KEY=... node tools/gen-vo.cjs <lines.json> <voiceId> <outDir>'); process.exit(1); }
 if (!KEY) { console.log('XI_KEY is empty'); process.exit(1); }
@@ -24,21 +28,23 @@ function tts(text) {
 (async () => {
   const lines = [...new Set(JSON.parse(fs.readFileSync(linesFile, 'utf8')).map(voClean).filter(Boolean))];
   fs.mkdirSync(outDir, { recursive: true });
-  const todo = lines.filter((t) => !fs.existsSync(path.join(outDir, voHash(t) + '.mp3')));
-  const chars = todo.reduce((a, t) => a + t.length, 0);
+  const spoken = (t) => SAY[t] || t;
+  const stale = (t) => { const b = path.join(outDir, voHash(t)); if (!fs.existsSync(b + '.mp3')) return true; const made = fs.existsSync(b + '.txt') ? fs.readFileSync(b + '.txt', 'utf8') : t; return made !== spoken(t); };
+  const todo = lines.filter(stale);
+  const chars = todo.reduce((a, t) => a + spoken(t).length, 0);
   console.log(`lines: ${lines.length}, to generate: ${todo.length}, characters: ${chars}`);
   let done = 0, fail = 0;
   for (const t of todo) {
     let ok = false;
     for (let a = 0; a < 3 && !ok; a++) {
-      try { const buf = await tts(t); fs.writeFileSync(path.join(outDir, voHash(t) + '.mp3'), buf); ok = true; }
+      try { const buf = await tts(spoken(t)); fs.writeFileSync(path.join(outDir, voHash(t) + '.mp3'), buf); fs.writeFileSync(path.join(outDir, voHash(t) + '.txt'), spoken(t)); ok = true; }
       catch (e) { if (e.status === 401 || e.status === 402 || e.status === 403 || e.status === 422 || /authentication|quota|payment/i.test(e.message)) { console.log('STOP: ' + e.message); a = 9; fail = -1; break; } await new Promise((r) => setTimeout(r, 2000 * (a + 1))); if (a === 2) console.log('failed: ' + e.message); }
     }
     if (fail === -1) break;
     if (ok) done++; else fail++;
     if ((done + fail) % 10 === 0) console.log(`${done + Math.max(fail, 0)}/${todo.length}`);
   }
-  const have = lines.map(voHash).filter((h) => fs.existsSync(path.join(outDir, h + '.mp3')));
+  const have = lines.map(voHash).filter((h) => fs.existsSync(path.join(outDir, h + '.mp3'))).map((h) => h + '@' + Math.floor(fs.statSync(path.join(outDir, h + '.mp3')).mtimeMs / 1000).toString(36));
   fs.writeFileSync(path.join(outDir, 'index.json'), JSON.stringify(have));
   console.log(`VO DONE: ${have.length}/${lines.length} ready, new ${done}, failed ${Math.max(fail, 0)}`);
 })();
