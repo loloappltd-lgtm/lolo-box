@@ -9,6 +9,7 @@ import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } fro
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
 import { buildMall, MALL_OFF, BOT_NAMES } from './mall.js?v=8';
+import { buildEgypt, EGY_OFF } from './egypt.js?v=1';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -761,7 +762,7 @@ function completeMission() {
 function updGoal() {
   const m = curMis(), el = $('#goal');
   if (WORLD === 'park' && PARK) { el.innerHTML = PARK.goal(); return; }
-  if (WORLD === 'mall' && MALL) { el.innerHTML = MALL.goal(); return; }
+  { const xw = XW(); if (xw) { el.innerHTML = xw.goal(); return; } }
   if (WORLD === 'home') { el.innerHTML = HOME && HOME.editable ? '🏠 بيتي من جوه<small>قرّب من أي حاجة وغيّرها، أو افتح 🎨 ديكور البيت</small>' : '🏡 بيت للبيع<small>اشتري البيت عشان تغيّر الديكور</small>'; return; }
   if (!m) { el.innerHTML = '⭐ استكشف المدينة<small>لِم العملات 🪙 والجواهر 💎 المستخبية</small>'; return; }
   el.innerHTML = `⭐ ${m.name}<small>${m.desc()}</small>` + (m.prog ? `<div class="bar"><i style="width:${m.prog() * 100}%"></i></div>` : '');
@@ -785,7 +786,7 @@ function interactables() {
   if (ACT) return [{ x: PL.x, z: PL.z, r: 99, label: '🚪 انزل', act: endAct }];
   if (WORLD === 'park') return PL.mode === 'walk' ? PARK.interactables() : [];
   if (WORLD === 'home') return PL.mode === 'walk' && HOME ? HOME.interactables() : [];
-  if (WORLD === 'mall') return PL.mode === 'walk' && MALL ? MALL.interactables() : [];
+  if (WORLD === 'mall' || WORLD === 'egypt') { const xw = XW(); return PL.mode === 'walk' && xw ? xw.interactables() : []; }
   const L = [];
   if (PL.mode === 'walk') L.push({ x: 90, z: 4, r: 5, label: '🎡 ادخل مدينة الملاهي الكبيرة', act: goPark });
   if (PL.mode === 'walk') {
@@ -877,7 +878,7 @@ function collide(o, r) {
   }
   for (const c of circles) { const dx = o.x - c.x, dz = o.z - c.z, d = Math.hypot(dx, dz), m = r + c.r; if (d < m && d > 0.001) { o.x += (dx / d) * (m - d); o.z += (dz / d) * (m - d); hit = true; } }
   if (WORLD === 'home' && HOME) { const bx = HOME.HX - 0.45, bz = HOME.HZ - 0.45; if (o.x < HOME_OFF - bx) { o.x = HOME_OFF - bx; hit = true; } if (o.x > HOME_OFF + bx) { o.x = HOME_OFF + bx; hit = true; } if (o.z < -bz) { o.z = -bz; hit = true; } if (o.z > bz) { o.z = bz; hit = true; } return hit; }
-  if (WORLD === 'mall' && MALL) { const B = MALL.B; if (o.x < MALL_OFF - B) { o.x = MALL_OFF - B; hit = true; } if (o.x > MALL_OFF + B) { o.x = MALL_OFF + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
+  if (XW()) { const B = XW().B, XO = XW().OFF; if (o.x < XO - B) { o.x = XO - B; hit = true; } if (o.x > XO + B) { o.x = XO + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
   if (WORLD === 'park') { const B = PARK.B; if (o.x < PARK_OFF - B) { o.x = PARK_OFF - B; hit = true; } if (o.x > PARK_OFF + B) { o.x = PARK_OFF + B; hit = true; } if (o.z < -B) { o.z = -B; hit = true; } if (o.z > B) { o.z = B; hit = true; } return hit; }
   const lr = landR(o.x, o.z), d = Math.hypot(o.x, o.z); if (d > lr) { o.x *= lr / d; o.z *= lr / d; hit = true; }
   return hit;
@@ -978,7 +979,7 @@ function updCam(dt, snap) {
   let distA = dist; if (ACT && ACT.cam) { const c = ACT.cam; distA = c.dist; camPitch = lerp(camPitch, c.pitch, dt * 2); if (c.yaw !== undefined) camYaw = angLerp(camYaw, c.yaw, dt * 2); if (c.follow && performance.now() - lastDrag > 1200) camYaw = angLerp(camYaw, PL.yaw, dt * 2.5); }
   camT.set(PL.x, PL.y + hgt, PL.z);
   const cp = Math.cos(camPitch), dir = new THREE.Vector3(-Math.sin(camYaw) * cp, Math.sin(camPitch), -Math.cos(camYaw) * cp);
-  ray.set(camT, dir); ray.far = distA; const hit = RIDE.on || ACT || (WORLD !== 'city' && WORLD !== 'mall') ? null : ray.intersectObjects(WORLD === 'mall' && MALL ? MALL.camBlock : camBlock, false)[0];
+  ray.set(camT, dir); ray.far = distA; const hit = RIDE.on || ACT || (WORLD !== 'city' && !XW()) ? null : ray.intersectObjects(XW() ? XW().camBlock : camBlock, false)[0];
   const d = hit ? Math.max(1.5, hit.distance - 0.6) : distA;
   camW.copy(camT).addScaledVector(dir, d); if (camW.y < 0.6) camW.y = 0.6;
   if (snap) camera.position.copy(camW); else camera.position.lerp(camW, 1 - Math.exp(-dt * 12));
@@ -1005,7 +1006,7 @@ function drawMini() {
   const W = mini.width, s = 1.6;
   mg.save(); mg.clearRect(0, 0, W, W); mg.beginPath(); mg.arc(W / 2, W / 2, W / 2, 0, 7); mg.clip();
   if (WORLD === 'home' && HOME) { const s3 = 9; mg.fillStyle = '#3b2a63'; mg.fillRect(0, 0, W, W); mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - HOME_OFF) * s3, -PL.z * s3); HOME.drawMap(mg, s3); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
-  if (WORLD === 'mall' && MALL) { mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - MALL_OFF) * s, -PL.z * s); MALL.drawMap(mg, s); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
+  if (XW()) { const xw = XW(); mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - xw.OFF) * s, -PL.z * s); xw.drawMap(mg, s); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
   if (WORLD === 'park') { mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-(PL.x - PARK_OFF) * s, -PL.z * s); PARK.drawMap(mg, s); NET.dots(mg, s, PARK_OFF); mg.restore(); mg.save(); mg.translate(W / 2, W / 2); mg.rotate(-PL.yaw + camYaw); mg.fillStyle = '#ffd23f'; mg.strokeStyle = '#7a3fe0'; mg.lineWidth = 4; mg.beginPath(); mg.moveTo(0, -18); mg.lineTo(13, 13); mg.lineTo(0, 6); mg.lineTo(-13, 13); mg.closePath(); mg.fill(); mg.stroke(); mg.restore(); return; }
   mg.translate(W / 2, W / 2); mg.rotate(camYaw - Math.PI); mg.translate(-PL.x * s, -PL.z * s);
   drawWorld(mg, s);
@@ -1024,7 +1025,7 @@ function drawBig() {
   const c = $('#bm'), g = c.getContext('2d'), W = c.width, s = W / 380;
   g.save(); g.clearRect(0, 0, W, W); g.translate(W / 2, W / 2);
   if (WORLD === 'home' && HOME) { const s3 = W / 22; HOME.drawMap(g, s3); g.translate((PL.x - HOME_OFF) * s3, PL.z * s3); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
-  if (WORLD === 'mall' && MALL) { const s2 = W / 240; MALL.drawMap(g, s2); g.translate((PL.x - MALL_OFF) * s2, PL.z * s2); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
+  if (XW()) { const xw = XW(), s2 = W / (xw.MAPW || 240); xw.drawMap(g, s2); g.translate((PL.x - xw.OFF) * s2, PL.z * s2); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
   if (WORLD === 'park') { const s2 = W / 230; PARK.drawMap(g, s2); NET.dots(g, s2, PARK_OFF, true); g.font = '900 30px Cairo, Tajawal, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; for (const [n, x, z] of PARK.LABELS) { g.lineWidth = 7; g.strokeStyle = '#fff'; g.strokeText(n, x * s2, z * s2); g.fillStyle = '#5a20b8'; g.fillText(n, x * s2, z * s2); } g.translate((PL.x - PARK_OFF) * s2, PL.z * s2); g.rotate(-PL.yaw + Math.PI); g.fillStyle = '#ffd23f'; g.strokeStyle = '#7a3fe0'; g.lineWidth = 4; g.beginPath(); g.moveTo(0, -16); g.lineTo(12, 12); g.lineTo(0, 6); g.lineTo(-12, 12); g.closePath(); g.fill(); g.stroke(); g.restore(); return; }
   drawWorld(g, s);
   g.font = '900 34px Cairo, Tajawal, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -1333,6 +1334,17 @@ async function ensureMall() {
   try { await renderer.compileAsync(scene, camera); } catch (e) {}
   return MALL;
 }
+// ---- Egypt's monuments (LOLO_EGYPT_2026) ----
+let EGY = null;
+async function ensureEgypt() {
+  if (EGY) return EGY;
+  EGY = buildEgypt({ scene, toon, ctex, solids, circles, PL, sfx, toast, get S() { return S; }, save, updPills, renderer, PRESETS, cloneLook, animKid,
+    makeAvatar: (L) => AV.makeAvatar(L), randomLook: (g) => AV.randomLook(g), getKid: () => kid, goCity,
+    setPanel: (p) => { state.panel = p; }, isPlaying: () => state.play && !state.panel && !state.talk });
+  try { await renderer.compileAsync(scene, camera); } catch (e) {}
+  return EGY;
+}
+function XW() { return WORLD === 'mall' ? MALL : WORLD === 'egypt' ? EGY : null; }
 function goMall() { teleport('mall', MALL_OFF, 90, Math.PI, 'جاري تحميل مول العرب…'); setTimeout(() => toast('🛍️ أهلاً بيك في مول العرب!'), 1400); }
 function ensureHome() { if (!HOME) HOME = buildHome({ THREE, scene, ctex, solids, sfx, toast, save, grad, openDecor }); return HOME; }
 function enterHouse(h) {
@@ -1365,7 +1377,7 @@ function startAct(ctrl) {
 function endAct(silent) { if (!ACT) return; const a = ACT; ACT = null; $('#ctl').classList.remove('drive'); $('#pedals').classList.remove('on'); a.ctrl.end(); PL.vy = 0; PL.ground = true; }
 function teleport(world, x, z, yaw, label) {
   $('#fadeTx').textContent = label; $('#fade').classList.add('on');
-  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
+  setTimeout(async () => { if (ACT) endAct(true); if (PL.mode === 'drive') exitCarForce(); if (world === 'park') await ensurePark(); if (world === 'home') ensureHome(); if (world === 'mall') await ensureMall(); if (world === 'egypt') await ensureEgypt(); if (MALL && WORLD === 'mall' && world !== 'mall') MALL.onLeave(); if (MALL && world === 'mall' && WORLD !== 'mall') MALL.onEnter(); if (EGY && WORLD === 'egypt' && world !== 'egypt') EGY.onLeave(); if (EGY && world === 'egypt' && WORLD !== 'egypt') EGY.onEnter(); WORLD = world; updGoal(); PL.x = x; PL.z = z; PL.y = 0.12; PL.vy = 0; PL.yaw = yaw; camYaw = yaw; kid.visible = true; updCam(0, true); setTimeout(() => $('#fade').classList.remove('on'), 250); }, 450);
 }
 function goPark() { teleport('park', PARK_OFF, 96, Math.PI, 'جاري تحميل مدينة الملاهي…'); setTimeout(() => toast('🎡 أهلاً بيك في مدينة الملاهي!'), 1400); }
 function goCity() { teleport('city', 90, 2, 0, 'رجوع للمدينة…'); }
@@ -1567,6 +1579,7 @@ function renderSettings() { $('#sSound').textContent = S.sound ? '🔊 الصو�
 const MAP_DATA = [
   { mapId: 1, ArabicName: 'جولة حرة', EnglishName: 'Free Roam', SceneName: 'city', Description: 'المدينة كلها مفتوحة: لف بالرجلين أو بالعربية، كمّل مهامك ولِم العملات والجواهر.', spawn: null, unlock: () => true },
   { mapId: 16, ArabicName: 'مول العرب', EnglishName: 'Mall of Arabia', SceneName: 'mall', Description: 'اكتشف مول العرب، وجهتك الضخمة للتسوق والترفيه والمغامرات! تجول بين المتاجر، تعرف على المنتجات، قابل البائعين، استمتع بالسينما والملاهي، واكتشف مدينة التلج الساحرة.', spawn: 'mall', unlock: () => true },
+  { mapId: 17, ArabicName: 'آثار مصر', EnglishName: "Egypt's Monuments", SceneName: 'egypt', Description: 'رحلة في آثار مصر: المتحف المصري الكبير، أهرامات الجيزة وأبو الهول، معابد الأقصر، وأسوان والنيل وأبو سمبل. اجمع أختام جواز سفر الآثار!' },
   { mapId: 2, ArabicName: 'مدينة الملاهي', EnglishName: 'Amusement Park', SceneName: 'park', Description: 'مدينة ملاهي كاملة: عجلة دوارة، قطار ملاهي، كاروسيل، عربيات تصادم، حديقة مائية بزحاليق، أركيد ومنطقة أكل. اكسب تذاكر 🎟️ ونجوم ⭐ واشتري جوايز!', spawn: 'park', unlock: () => seen('fair') || S.mi >= 6, hint: 'زور مدينة الملاهي في الجولة الحرة' },
   { mapId: 3, ArabicName: 'المدرسة', EnglishName: 'School', SceneName: 'city', Description: 'مدرسة لولو وأبلة نور مستنياك قدام الباب.', spawn: { x: 30, z: 2, yaw: 0 }, unlock: () => seen('school') || S.mi >= 6, hint: 'زور المدرسة في الجولة الحرة' },
   { mapId: 4, ArabicName: 'البيت', EnglishName: 'Home', SceneName: 'city', Description: 'بيتك وجنينتك: غيّر الألوان واشتري ألعاب للجنينة.', spawn: 'home', unlock: () => !!S.house, hint: 'اشتري بيت في الحي السكني' },
@@ -1616,8 +1629,9 @@ const MapSelectionManager = {
     setTimeout(async () => {
       let sp = m.spawn;
       const prevW = WORLD;
-      if (m.SceneName === 'mall') { await ensureMall(); sp = MALL.SPAWN; WORLD = 'mall'; if (prevW !== 'mall') MALL.onEnter(); } else if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD !== 'city' || PL.x > 1000 || PL.x < -1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
+      if (m.SceneName === 'mall') { await ensureMall(); sp = MALL.SPAWN; WORLD = 'mall'; if (prevW !== 'mall') MALL.onEnter(); } else if (m.SceneName === 'egypt') { await ensureEgypt(); sp = EGY.SPAWN; WORLD = 'egypt'; if (prevW !== 'egypt') EGY.onEnter(); } else if (m.SceneName === 'park') { await ensurePark(); sp = PARK.SPAWN; WORLD = 'park'; } else { if (WORLD !== 'city' || PL.x > 1000 || PL.x < -1000) { PL.x = 90; PL.z = 2; PL.yaw = 0; } WORLD = 'city'; }
       if (MALL && prevW === 'mall' && WORLD !== 'mall') MALL.onLeave();
+      if (EGY && prevW === 'egypt' && WORLD !== 'egypt') EGY.onLeave();
       if (ACT) endAct(true);
       if (sp === 'home') { const h = myHouse(); sp = h ? { x: h.x + 2, z: h.z + h.dir * 9, yaw: h.dir > 0 ? Math.PI : 0 } : null; }
       if (sp === 'street') { CAR.x = 3.5; CAR.z = -100; CAR.yaw = 0; CAR.v = 0; syncCar(0); sp = { x: CAR.x - 2.5, z: CAR.z, yaw: 0 }; }
@@ -1728,6 +1742,7 @@ function frame(now) {
     if (eng) { const sp = PL.mode === 'drive' ? Math.abs(CAR.v) : 0, t = AC.currentTime; eng.o.frequency.setTargetAtTime(45 + sp * 4.5, t, 0.05); eng.g.gain.setTargetAtTime(S.sound && PL.mode === 'drive' ? 0.05 : 0, t, 0.1); }
   } else if (eng) eng.g.gain.value = 0;
   if (MALL) { MALL.update(dt, now, WORLD === 'mall'); if (WORLD === 'mall' && (goalT += dt) > 1) { goalT = 0; updGoal(); } }
+  if (EGY) { EGY.update(dt, now, WORLD === 'egypt'); if (WORLD === 'egypt' && (goalT += dt) > 1) { goalT = 0; updGoal(); } }
   if (PARK) { PARK.update(dt, now); if ((goalT += dt) > 1) { goalT = 0; if (WORLD === 'park') updGoal(); } }
   if (balloonObj && kid) { const rx = Math.cos(PL.yaw) * 0.35, rz = -Math.sin(PL.yaw) * 0.35; balloonObj.position.set(kid.position.x - rx, kid.position.y + 1.0 + Math.sin(now / 500) * 0.1, kid.position.z - rz); balloonObj.rotation.z = Math.sin(now / 700) * 0.1; }
   NET.update(dt); updVs(dt, now); updGuide();
