@@ -1795,9 +1795,11 @@ function frame(now) {
   if (window.__tl) { const ph = Math.floor(now / 3000) % 3; window.__tl.forEach((g) => g.forEach((m, n) => m.scale.setScalar(n === ph ? 1.3 : 0.6))); }
   NET.tick(now);
   if (!state.play) {
-    const t = now / 14000; if (window.__dbg) { camera.position.set(0.1, 70, 30); camera.lookAt(0, 0, 30); } else { camera.position.set(Math.sin(t) * 150 - 30, 70, Math.cos(t) * 150); camera.lookAt(-10, 6, 0); }
+    if (scene.fog && !scene.fog.__menu && scene.fog.isFog) { scene.fog.__menu = [scene.fog.near, scene.fog.far]; scene.fog.near = 320; scene.fog.far = 1100; }
+    const t = now / 14000; if (window.__dbg) { camera.position.set(0.1, 70, 30); camera.lookAt(0, 0, 30); } else { camera.position.set(Math.sin(t) * 135 - 30, 58 + Math.sin(now / 5000) * 3, Math.cos(t) * 135); camera.lookAt(-10, 4, 0); }
     sun.position.set(60, 120, 40); sun.target.position.set(0, 0, 0); updNPC(dt, now); draw(); return;
   }
+  if (scene.fog && scene.fog.__menu) { [scene.fog.near, scene.fog.far] = scene.fog.__menu; scene.fog.__menu = null; }
   if (!state.panel) {
     if (ACT) { if (!ACT.ctrl.update(dt)) endAct(); } else if (RIDE.on) updRide(dt); else if (PL.mode === 'walk') updWalk(dt); else updDrive(dt);
     if (WORLD === 'city') { updObby(dt); trackZones(dt); }
