@@ -8,7 +8,7 @@ import { buildHome, HOME_OFF } from './home.js?v=1';
 import { initAvatar, WARD, PRESETS, SKIN, PAL, HAIRC, cloneLook, NEW_CHARS } from './avatar.js?v=3';
 import { initCharSel } from './charsel.js?v=2';
 import { makeLoloMascot } from './mascot.js?v=1';
-import { buildMall, MALL_OFF } from './mall.js?v=5';
+import { buildMall, MALL_OFF } from './mall.js?v=6';
 import { EffectComposer } from './jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from './jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './jsm/postprocessing/UnrealBloomPass.js';
@@ -1313,7 +1313,7 @@ let MALL = null;
 async function ensureMall() {
   if (MALL) return MALL;
   MALL = buildMall({ scene, toon, ctex, solids, circles, PL, sfx, toast, get S() { return S; }, save, updPills, renderer, PRESETS, cloneLook, animKid,
-    makeAvatar: (L) => AV.makeAvatar(L), randomLook: (g) => AV.randomLook(g), getKid: () => kid, goCity,
+    makeAvatar: (L) => AV.makeAvatar(L), randomLook: (g) => AV.randomLook(g), getKid: () => kid, goCity, collide: (o, r) => collide(o, r),
     setPanel: (p) => { state.panel = p; }, isPlaying: () => state.play && !state.panel && !state.talk });
   try { await renderer.compileAsync(scene, camera); } catch (e) {}
   return MALL;

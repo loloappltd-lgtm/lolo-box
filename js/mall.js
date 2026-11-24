@@ -59,6 +59,54 @@ PRODUCTS.push(...[
   { id: 'd15', d: 'gaming', k: 'headset', n: 'سماعة جيمنج آر جي بي', price: 50, c: '#18c95a', specs: { 'الصوت': 'محيطي 7.1', 'المايك': 'عازل للدوشة', 'الإضاءة': 'ملونة', 'التوصيل': 'USB' }, f: ['كلام واضح', 'وسادات ناعمة', 'إضاءة'] },
   { id: 'd16', d: 'gaming', k: 'chair', n: 'كرسي جيمنج', price: 140, c: '#18c95a', specs: { 'الخامة': 'جلد صناعي', 'الظهر': 'بيرجع لورا', 'العجل': '5 عجلات', 'الوسائد': 'رقبة وضهر' }, f: ['مريح للعب الطويل', 'بيلف', 'ارتفاع بيتظبط'] },
 ].map((p) => Object.assign(p, { store: 'dream' })));
+// store 3: LOLO Hypermarket (LOLO_MALL_HYPER_2026) — every product carries the Lolo brand; prices in game coins only
+Object.assign(DEPTS, {
+  icecream: { n: 'آيس كريم لولو', i: '🍦' }, dairy: { n: 'الألبان والجبن', i: '🥛' }, produce: { n: 'فاكهة وخضار', i: '🍎' }, bakery: { n: 'المخبوزات', i: '🥐' },
+  sweets: { n: 'حلويات وسناكس', i: '🍫' }, drinks: { n: 'العصائر والمياه', i: '🧃' }, pantry: { n: 'البقالة', i: '🍝' }, clean: { n: 'المنظفات', i: '🧼' },
+  care: { n: 'العناية الشخصية', i: '🧴' }, school: { n: 'أدوات مدرسية', i: '✏️' },
+});
+STORES.hyper = 'هايبر ماركت لولو';
+PRODUCTS.push(...[
+  { id: 'hi1', d: 'icecream', k: 'tub', n: 'آيس كريم لولو فانيليا', price: 8, c: '#fff1c2', c2: '#ffffff', specs: { 'الحجم': '1 لتر', 'الطعم': 'فانيليا', 'النوع': 'علبة عائلية' }, f: ['كريمي', 'للعيلة كلها', 'بارد ومنعش'] },
+  { id: 'hi2', d: 'icecream', k: 'tub', n: 'آيس كريم لولو شوكولاتة', price: 8, c: '#6b3a1f', c2: '#3b1d0c', specs: { 'الحجم': '1 لتر', 'الطعم': 'شوكولاتة', 'النوع': 'علبة عائلية' }, f: ['قطع شوكولاتة', 'كريمي', 'المفضل عند الأطفال'] },
+  { id: 'hi3', d: 'icecream', k: 'cone', n: 'كورنيه لولو فراولة', price: 5, c: '#ff8fb8', specs: { 'الحجم': 'كورنيه واحد', 'الطعم': 'فراولة', 'الإضافات': 'صوص فراولة' }, f: ['بسكوتة مقرمشة', 'لون وردي', 'حجم مناسب'] },
+  { id: 'hi4', d: 'icecream', k: 'stick', n: 'مصاصة لولو مانجو', price: 3, c: '#ffb31a', specs: { 'الحجم': 'مصاصة', 'الطعم': 'مانجو', 'النوع': 'ثلج بالفاكهة' }, f: ['منعشة', 'طعم مانجو طبيعي', 'للصيف'] },
+  { id: 'hi5', d: 'icecream', k: 'box', n: 'ساندوتش آيس كريم لولو', price: 6, c: '#7a4dff', specs: { 'الحجم': '4 قطع', 'الطعم': 'فانيليا بالبسكوت', 'النوع': 'ساندوتش' }, f: ['بسكوت طري', 'قطع صغيرة', 'سهل في الأكل'] },
+  { id: 'hm1', d: 'dairy', k: 'carton', n: 'لبن لولو كامل الدسم', price: 4, c: '#2f8bff', specs: { 'الحجم': '1 لتر', 'النوع': 'كامل الدسم', 'التخزين': 'في التلاجة' }, f: ['كالسيوم', 'طازة', 'للفطار'] },
+  { id: 'hm2', d: 'dairy', k: 'carton', n: 'لبن لولو بالشوكولاتة', price: 4, c: '#8a4b26', specs: { 'الحجم': '250 مل', 'الطعم': 'شوكولاتة', 'التخزين': 'في التلاجة' }, f: ['بالشفاطة', 'للمدرسة', 'طعم حلو'] },
+  { id: 'hm3', d: 'dairy', k: 'tub', n: 'زبادي لولو بالفراولة', price: 3, c: '#ff6fa0', c2: '#ffffff', small: true, specs: { 'الحجم': '120 جرام', 'الطعم': 'فراولة', 'التخزين': 'في التلاجة' }, f: ['قطع فاكهة', 'خفيف', 'صحي'] },
+  { id: 'hm4', d: 'dairy', k: 'box', n: 'جبنة لولو بيضاء', price: 6, c: '#ffffff', flat: true, specs: { 'الحجم': '500 جرام', 'النوع': 'جبنة بيضاء', 'التخزين': 'في التلاجة' }, f: ['للساندوتشات', 'طرية', 'قليلة الملح'] },
+  { id: 'hf1', d: 'produce', k: 'fruit', v: 'apple', n: 'تفاح لولو أحمر', price: 3, c: '#e8213d', specs: { 'الوزن': '1 كيلو', 'المصدر': 'مزارع لولو', 'النوع': 'طازة' }, f: ['مقرمش', 'فيتامينات', 'حلو'] },
+  { id: 'hf2', d: 'produce', k: 'fruit', v: 'banana', n: 'موز لولو', price: 3, c: '#ffd23f', specs: { 'الوزن': '1 كيلو', 'المصدر': 'مزارع لولو', 'النوع': 'طازة' }, f: ['طاقة', 'سهل التقشير', 'للرياضيين'] },
+  { id: 'hf3', d: 'produce', k: 'fruit', v: 'orange', n: 'برتقال لولو', price: 3, c: '#ff8a1f', specs: { 'الوزن': '1 كيلو', 'المصدر': 'مزارع لولو', 'النوع': 'للعصير' }, f: ['فيتامين سي', 'عصير كتير', 'طعم منعش'] },
+  { id: 'hf4', d: 'produce', k: 'fruit', v: 'cucumber', n: 'خيار لولو', price: 2, c: '#3ec95a', specs: { 'الوزن': '1 كيلو', 'المصدر': 'مزارع لولو', 'النوع': 'بلدي' }, f: ['للسلطة', 'مقرمش', 'صحي'] },
+  { id: 'hb1', d: 'bakery', k: 'bread', v: 'baladi', n: 'عيش لولو بلدي', price: 2, c: '#c98a4a', specs: { 'العدد': '5 أرغفة', 'النوع': 'بلدي', 'الخبز': 'النهارده' }, f: ['سخن', 'طري', 'للفطار والغدا'] },
+  { id: 'hb2', d: 'bakery', k: 'bread', v: 'croissant', n: 'كرواسون لولو', price: 4, c: '#e6a24a', specs: { 'العدد': '3 قطع', 'النوع': 'بالزبدة', 'الخبز': 'النهارده' }, f: ['هش', 'بالزبدة', 'للفطار'] },
+  { id: 'hb3', d: 'bakery', k: 'box', n: 'كيك لولو بالشوكولاتة', price: 9, c: '#5a2c14', specs: { 'الحجم': 'كيكة صغيرة', 'الطعم': 'شوكولاتة', 'المناسبة': 'عيد ميلاد' }, f: ['طرية', 'كريمة', 'للاحتفال'] },
+  { id: 'hs1', d: 'sweets', k: 'bag', n: 'شيبسي لولو بالجبنة', price: 2, c: '#ffc21a', specs: { 'الحجم': 'كيس عائلي', 'الطعم': 'جبنة', 'النوع': 'بطاطس' }, f: ['مقرمش', 'طعم جبنة', 'للرحلات'] },
+  { id: 'hs2', d: 'sweets', k: 'box', n: 'شوكولاتة لولو بالبندق', price: 5, c: '#6b2fd6', flat: true, specs: { 'الحجم': '100 جرام', 'الطعم': 'بندق', 'النوع': 'لوح' }, f: ['قطع بندق', 'ناعمة', 'هدية حلوة'] },
+  { id: 'hs3', d: 'sweets', k: 'box', n: 'بسكوت لولو', price: 3, c: '#2fc4ff', specs: { 'الحجم': '12 قطعة', 'الطعم': 'زبدة', 'النوع': 'بسكوت' }, f: ['مع اللبن', 'للمدرسة', 'مقرمش'] },
+  { id: 'hs4', d: 'sweets', k: 'jar', n: 'حلاوة لولو', price: 6, c: '#d9a066', specs: { 'الحجم': '400 جرام', 'الطعم': 'سادة', 'النوع': 'طحينية' }, f: ['للفطار', 'طاقة', 'طعم زمان'] },
+  { id: 'hj1', d: 'drinks', k: 'bottle', n: 'عصير لولو برتقال', price: 3, c: '#ff8a1f', specs: { 'الحجم': '1 لتر', 'الطعم': 'برتقال', 'السكر': 'خفيف' }, f: ['فيتامين سي', 'طبيعي', 'ساقع'] },
+  { id: 'hj2', d: 'drinks', k: 'carton', n: 'عصير لولو مانجو', price: 2, c: '#ffb31a', small: true, specs: { 'الحجم': '200 مل', 'الطعم': 'مانجو', 'النوع': 'بالشفاطة' }, f: ['للمدرسة', 'طعم مانجو', 'حجم صغير'] },
+  { id: 'hj3', d: 'drinks', k: 'bottle', n: 'مياه لولو', price: 1, c: '#7fd8ff', specs: { 'الحجم': '600 مل', 'النوع': 'مياه معدنية', 'الحرارة': 'ساقعة' }, f: ['نقية', 'مهمة كل يوم', 'تتحط في الشنطة'] },
+  { id: 'hj4', d: 'drinks', k: 'can', n: 'عصير لولو تفاح', price: 2, c: '#7cf04a', specs: { 'الحجم': '330 مل', 'الطعم': 'تفاح', 'النوع': 'كانز' }, f: ['منعش', 'بدون ألوان صناعية', 'ساقع'] },
+  { id: 'hp1', d: 'pantry', k: 'bag', n: 'أرز لولو', price: 7, c: '#ffffff', big: true, specs: { 'الوزن': '1 كيلو', 'النوع': 'أرز مصري', 'الطبخ': '20 دقيقة' }, f: ['حبة مدورة', 'للمحشي', 'نظيف'] },
+  { id: 'hp2', d: 'pantry', k: 'box', n: 'مكرونة لولو', price: 4, c: '#ffd23f', specs: { 'الوزن': '500 جرام', 'الشكل': 'قلم', 'الطبخ': '10 دقايق' }, f: ['للأكل السريع', 'بتحبها العيلة', 'سهلة'] },
+  { id: 'hp3', d: 'pantry', k: 'bottle', n: 'زيت لولو', price: 9, c: '#ffe27a', big: true, specs: { 'الحجم': '1 لتر', 'النوع': 'زيت عباد الشمس', 'الاستخدام': 'طبخ' }, f: ['خفيف', 'للطبخ', 'صحي'] },
+  { id: 'hp4', d: 'pantry', k: 'jar', n: 'عسل لولو', price: 10, c: '#ffb31a', specs: { 'الوزن': '500 جرام', 'النوع': 'عسل نحل', 'الاستخدام': 'فطار' }, f: ['طبيعي', 'طاقة', 'مع العيش'] },
+  { id: 'hp5', d: 'pantry', k: 'box', n: 'كورن فليكس لولو', price: 8, c: '#ff4f6a', specs: { 'الوزن': '375 جرام', 'الطعم': 'عسل', 'الاستخدام': 'مع اللبن' }, f: ['فطار سريع', 'مقرمش', 'فيتامينات'] },
+  { id: 'hc1', d: 'clean', k: 'bottle', n: 'صابون غسيل لولو', price: 9, c: '#2f8bff', big: true, specs: { 'الحجم': '2 لتر', 'النوع': 'سائل', 'الريحة': 'ورد' }, f: ['بينضف كويس', 'ريحة حلوة', 'للهدوم الملونة'] },
+  { id: 'hc2', d: 'clean', k: 'bottle', n: 'منظف أطباق لولو', price: 5, c: '#3ec95a', specs: { 'الحجم': '750 مل', 'النوع': 'سائل', 'الريحة': 'ليمون' }, f: ['رغوة كتير', 'على الإيد', 'ريحة ليمون'] },
+  { id: 'hc3', d: 'clean', k: 'box', n: 'مناديل لولو', price: 3, c: '#b277ff', specs: { 'العدد': '200 منديل', 'النوع': 'ناعمة', 'الطبقات': 'طبقتين' }, f: ['ناعمة', 'للبيت والعربية', 'قوية'] },
+  { id: 'hk1', d: 'care', k: 'bottle', n: 'شامبو لولو للأطفال', price: 7, c: '#ff8fd0', specs: { 'الحجم': '400 مل', 'النوع': 'بدون دموع', 'الريحة': 'فراولة' }, f: ['مايحرقش العين', 'شعر ناعم', 'ريحة حلوة'] },
+  { id: 'hk2', d: 'care', k: 'tube', n: 'معجون أسنان لولو', price: 4, c: '#2fc4ff', specs: { 'الحجم': '75 مل', 'الطعم': 'نعناع خفيف', 'السن': 'للأطفال' }, f: ['بيحمي الأسنان', 'طعم حلو', 'مرتين في اليوم'] },
+  { id: 'hk3', d: 'care', k: 'box', n: 'صابونة لولو', price: 2, c: '#ffd23f', small: true, specs: { 'الوزن': '100 جرام', 'النوع': 'صابونة', 'الريحة': 'ليمون' }, f: ['تغسل إيدك', 'رغوة', 'ريحة حلوة'] },
+  { id: 'hw1', d: 'school', k: 'notebook', n: 'كراسة لولو', price: 3, c: '#7a4dff', specs: { 'الورق': '80 ورقة', 'المقاس': 'A4', 'الخطوط': 'مسطرة' }, f: ['غلاف لولو', 'ورق تقيل', 'للمدرسة'] },
+  { id: 'hw2', d: 'school', k: 'box', n: 'ألوان لولو 24 لون', price: 6, c: '#ff4fc8', flat: true, specs: { 'العدد': '24 لون', 'النوع': 'خشب', 'الاستخدام': 'رسم وتلوين' }, f: ['ألوان زاهية', 'سهلة البري', 'آمنة'] },
+  { id: 'hw3', d: 'school', k: 'bag', n: 'شنطة لولو المدرسية', price: 20, c: '#2f6bff', big: true, specs: { 'الحجم': 'متوسطة', 'الجيوب': '3 جيوب', 'الخامة': 'ضد المية' }, f: ['رسمة لولو', 'خفيفة على الضهر', 'متينة'] },
+  { id: 'hw4', d: 'school', k: 'box', n: 'مقلمة لولو', price: 4, c: '#3ec95a', flat: true, specs: { 'الحجم': 'كبيرة', 'السوست': 'سوستتين', 'الخامة': 'قماش' }, f: ['تشيل أقلامك كلها', 'ألوان حلوة', 'متينة'] },
+].map((p) => Object.assign(p, { store: 'hyper' })));
 const PBY = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
 
 const CSS = `
@@ -164,7 +212,7 @@ export function buildMall(C) {
   const bench = (x, z, rot) => rot ? [[x, 0.5, z, 0.6, 0.12, 2.2, '#b07b4a'], [x - 0.3, 0.9, z, 0.12, 0.7, 2.2, '#b07b4a'], [x, 0.25, z - 0.9, 0.5, 0.5, 0.15, '#4a3b6b'], [x, 0.25, z + 0.9, 0.5, 0.5, 0.15, '#4a3b6b']] : [[x, 0.5, z, 2.2, 0.12, 0.6, '#b07b4a'], [x, 0.9, z + 0.3, 2.2, 0.7, 0.12, '#b07b4a'], [x - 0.9, 0.25, z, 0.15, 0.5, 0.5, '#4a3b6b'], [x + 0.9, 0.25, z, 0.15, 0.5, 0.5, '#4a3b6b']];
   { const L = [], LL = [];
     for (let z = 22; z <= 92; z += 12) for (const s of [-1, 1]) { L.push(...palm(s * 14, z, 5 + (z % 3))); circ(s * 14, z, 0.6); }
-    for (const [x, z] of [[-46, 20], [46, 20], [-30, 90], [30, 90], [-60, -60], [60, -60], [-64, 0], [64, 0], [-80, 70], [80, 70]]) { L.push(...palm(x, z, 6)); circ(x, z, 0.6); }
+    for (const [x, z] of [[-46, 20], [46, 20], [-30, 90], [30, 90], [-60, -60], [60, -60], [-64, 0], [-80, 70], [80, 70]]) { L.push(...palm(x, z, 6)); circ(x, z, 0.6); }
     for (let z = 26; z <= 90; z += 16) for (const s of [-1, 1]) { LL.push(...lamp(s * 9, z)); circ(s * 9, z, 0.3); }
     for (const [x, z] of [[-6, 62], [6, 62], [-20, 30], [20, 30]]) LL.push(...bench(x, z, false));
     vox(L, root, { shadow: true }); vox(LL, root, { shadow: true });
@@ -237,7 +285,7 @@ export function buildMall(C) {
     L.push(...bench(-46, -14.6, false), ...bench(46, -14.6, false), ...bench(-46, -25.4, false), ...bench(46, -25.4, false));
     vox(L, root, { shadow: true });
     sign(textTex([['الاستعلامات', 64, '#ffffff', '#4a14b0'], ['Information', 40, '#ffd23f']], { w: 512, h: 200 }), 4, 1.6, -18, 3.2, -20, Math.PI / 2);
-    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000 ✅', 40, '#ffd23f'], ['سينما لولو ✅  ·  راية  ·  الفين', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
+    const dir = textTex([['🗺️ دليل المول', 56, '#ffffff'], ['بي تك ✅  ·  دريم 2000 ✅', 40, '#ffd23f'], ['السينما ✅  ·  الهايبر ✅  ·  راية', 40, '#ffd23f']], { w: 512, h: 400, bg: '#4a14b0', r: 20 });
     sign(dir, 4, 3.1, 17.7, 2.3, -20, -Math.PI / 2);
     sign(textTex([['🍿 فشار', 64, '#ffffff', '#b32466']], { w: 256, h: 96 }), 3, 1.1, -34, 4.2, -18.15); sign(textTex([['🍦 آيس كريم', 56, '#ffffff', '#1f64b8']], { w: 256, h: 96 }), 3, 1.1, 34, 4.2, -18.15);
   }
@@ -623,6 +671,213 @@ export function buildMall(C) {
     };
   })();
 
+  // ======================= STORE 3: LOLO HYPERMARKET (LOLO_MALL_HYPER_2026) =======================
+  // A big annex east of the mall: x 58..88, z -56..-2. Its door (x 58, z -24..-16) faces the mall's east side door.
+  // 10 checkout lanes along x 64..67, then fresh food, freezers (Lolo ice cream), fridges, gondolas and wall shelves.
+  (function buildHyper() {
+    const X0 = 58, X1 = 88, Z0 = -56, Z1 = -2, HH = 9, OR = '#ff8a1f', PURP = '#6a2fe0';
+    // ---- shell ----
+    const HW = [];
+    const WC = '#f2dfb4'; wall(X0, Z0, X0, -24, HH, WC, true, HW); wall(X0, -16, X0, Z1, HH, WC, true, HW); HW.push([X0, (HH + 7) / 2, -20, WT, HH - 7, 8, WC]);
+    wall(X0, Z0, X1, Z0, HH, WC, true, HW); wall(X1, Z0, X1, Z1, HH, WC, true, HW); wall(X0, Z1, X1, Z1, HH, WC, true, HW);
+    vox(HW, root, { block: true });
+    vox([[X0 - 0.45, HH - 0.6, (Z0 + Z1) / 2, 0.2, 1.2, Z1 - Z0 + 0.4, OR], [(X0 + X1) / 2, HH - 0.6, Z1 + 0.45, X1 - X0 + 0.4, 1.2, 0.2, OR], [X0 - 0.45, 0.4, (Z0 + Z1) / 2, 0.3, 0.8, Z1 - Z0, PURP], [(X0 + X1) / 2, 0.4, Z1 + 0.45, X1 - X0, 0.8, 0.3, PURP]]);
+    const hsign = textTex([['هايبر ماركت لولو', 104, '#ffffff', '#4a14b0'], ['LOLO HYPERMARKET', 52, '#ffd23f']], { w: 1024, h: 300, bg: '#6a2fe0', border: '#ffd23f', r: 30 });
+    sign(hsign, 12, 3.5, X0 - 0.5, 6.6, -20, -Math.PI / 2); sign(hsign, 16, 4.7, (X0 + X1) / 2, 6.2, Z1 + 0.6);
+    { const roof = new THREE.Mesh(new THREE.BoxGeometry(X1 - X0, 0.3, Z1 - Z0), toon('#cfc6e4')); roof.position.set((X0 + X1) / 2, HH, (Z0 + Z1) / 2); root.add(roof); }
+    // automatic doors in the west wall + a pointer sign inside the mall above its east door
+    for (const s of [-1, 1]) { const d = new THREE.Mesh(new THREE.BoxGeometry(0.2, 7, 4.2), doorMat); const bz = -20 + s * 2.1; d.position.set(X0, 3.5, bz); root.add(d); doors.push({ m: d, bx: X0, bz, s, ax: 'z', cx: X0, cz: -20, open: 0 }); }
+    sign(textTex([['🛒 هايبر ماركت لولو ←', 60, '#ffffff']], { w: 640, h: 110, bg: '#6a2fe0', border: '#ffd23f', r: 18 }), 5.6, 0.96, 51.5, 8.9, -20, -Math.PI / 2);
+    // ---- floor + ceiling lights ----
+    tiledPlane(T.store, X1 - X0 - 0.8, Z1 - Z0 - 0.8, (X0 + X1) / 2, (Z0 + Z1) / 2, 0.06, 2.5);
+    { const lm = new THREE.MeshBasicMaterial({ color: '#f4fbff', toneMapped: false }); for (let x = 62; x <= 86; x += 8) { const s = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.08, Z1 - Z0 - 4), lm); s.position.set(x, HH - 0.2, (Z0 + Z1) / 2); root.add(s); } }
+    const FXH = [], STOCK = [];
+    const SC = ['#ff4f6a', '#2fc4ff', '#ffd23f', '#7cf04a', '#b277ff', '#ff8a1f', '#ffffff', '#ff8fd0', '#3ec95a', '#6a2fe0'];
+    let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    // fills a shelf face with small coloured packs (visual stock)
+    const stock = (x0, x1, z0, z1, ys, face) => { for (const y of ys) { const alongX = Math.abs(x1 - x0) > Math.abs(z1 - z0); const len = alongX ? x1 - x0 : z1 - z0; for (let t = 0.3; t < Math.abs(len) - 0.2; t += 0.42) { const c = SC[(rnd() * SC.length) | 0], h = 0.25 + rnd() * 0.22; if (alongX) STOCK.push([x0 + t, y + h / 2, z0, 0.32, h, 0.3, c]); else STOCK.push([x0, y + h / 2, z0 + Math.sign(len) * t, 0.3, h, 0.32, c]); } } };
+    // ---- 10 checkout lanes ----
+    const LANES = [-53, -49.5, -46, -42.5, -39, -35.5, -32, -28.5, -11, -7.5];
+    const numTex = (i) => textTex([[`${i + 1}`, 120, '#ffffff']], { w: 160, h: 160, bg: '#ff8a1f', border: '#ffffff', r: 80 });
+    LANES.forEach((z, i) => {
+      FXH.push([65.5, 0.5, z, 3.2, 1.0, 0.9, '#3b2a8f'], [65.5, 1.03, z, 3.3, 0.06, 1.0, '#1d2030'], [64.3, 1.35, z - 0.15, 0.5, 0.6, 0.08, '#2b2f48'], [67.4, 1.6, z, 0.12, 3.2, 0.12, '#c7cede']);
+      solid(63.8, 67.2, z - 0.5, z + 0.5);
+      const n = sign(numTex(i), 0.7, 0.7, 67.4, 3.4, z); n.rotation.y = -Math.PI / 2; const n2 = sign(numTex(i), 0.7, 0.7, 67.4, 3.4, z); n2.rotation.y = Math.PI / 2;
+    });
+    sign(textTex([['💳 الكاشير — 10 كاشير', 60, '#ffffff']], { w: 640, h: 110, bg: '#6a2fe0', border: '#ffd23f', r: 18 }), 5.6, 0.96, 66, 5.8, -20, Math.PI / 2);
+    // ---- sections ----
+    const sectionSign = (d, x, z, ry = 0) => sign(textTex([[DEPTS[d].i + ' ' + DEPTS[d].n, 54, '#ffffff']], { w: 512, h: 110, bg: PURP, border: '#ffd23f', r: 18 }), 4.6, 1.0, x, 5.4, z, ry);
+    // fridges on the east wall (dairy z -54..-42, drinks z -40..-28)
+    FXH.push([86.9, 1.6, -41, 1.2, 3.2, 26, '#e9f3ff'], [86.3, 1.6, -41, 0.05, 3.1, 25.8, '#bfe6ff']); solid(86.2, 87.6, -54, -28);
+    for (const y of [0.55, 1.25, 1.95, 2.65]) FXH.push([86.6, y, -41, 0.9, 0.05, 26, '#c7cede']);
+    stock(86.55, 86.55, -53.8, -28.2, [0.58, 1.28, 1.98, 2.68], 'z');
+    sectionSign('dairy', 85.4, -48, -Math.PI / 2); sectionSign('drinks', 85.4, -34, -Math.PI / 2);
+    // Lolo ice cream island: a long chest freezer with a giant cone on top
+    FXH.push([81, 0.5, -18, 6.2, 1.0, 2.4, '#ffffff'], [81, 1.02, -18, 6.0, 0.04, 2.2, '#bff0ff'], [81, 0.12, -18, 6.4, 0.24, 2.6, '#ff8fb8']); solid(77.9, 84.1, -19.2, -16.8);
+    { const cone = new THREE.Mesh(new THREE.ConeGeometry(0.7, 2.2, 12), toon('#e0a14a')); cone.rotation.x = Math.PI; cone.position.set(81, 3.4, -18.4); root.add(cone);
+      for (const [y, c] of [[4.7, '#ff8fb8'], [5.3, '#fff1c2'], [5.85, '#6b3a1f']]) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.75, 16, 12), toon(c)); b.position.set(81, y, -18.4); root.add(b); }
+      sign(textTex([['🍦 لولو آيس كريم', 64, '#ffffff', '#b32466']], { w: 640, h: 120, bg: '#ff4f9a', border: '#ffffff', r: 24 }), 5, 0.94, 81, 7.0, -18.4); }
+    // fresh produce crates
+    for (const [x, z, c] of [[72, -19, '#e8213d'], [75, -19, '#ffd23f'], [72, -12, '#ff8a1f'], [75, -12, '#3ec95a']]) { FXH.push([x, 0.45, z, 2.4, 0.9, 1.8, '#a0703f'], [x, 0.92, z, 2.2, 0.06, 1.6, '#6b4a1f']); for (let i = 0; i < 18; i++) STOCK.push([x - 0.9 + (i % 6) * 0.36, 1.02, z - 0.55 + ((i / 6) | 0) * 0.5, 0.26, 0.2, 0.26, c]); solid(x - 1.25, x + 1.25, z - 0.95, z + 0.95); }
+    sectionSign('produce', 73.5, -15.5, Math.PI / 2);
+    // north wall shelves: bakery (x 70..78) and pantry (x 79..86)
+    FXH.push([78, 1.5, -55.2, 17, 3.0, 1.0, '#f3e9ff']); solid(69.5, 86.5, -55.8, -54.6);
+    for (const y of [0.6, 1.3, 2.0]) FXH.push([78, y, -54.75, 17, 0.06, 0.4, '#c7cede']);
+    stock(69.7, 86.3, -55.05, -55.05, [0.63, 1.33, 2.03]);
+    sectionSign('bakery', 74, -54.5); sectionSign('pantry', 82.5, -54.5);
+    // south wall shelves: promotions (visual)
+    FXH.push([78, 1.5, -2.85, 17, 3.0, 1.0, '#f3e9ff']); solid(69.5, 86.5, -3.4, -2.2); stock(69.7, 86.3, -3.25, -3.25, [0.63, 1.33, 2.03]);
+    sign(textTex([['🏷️ عروض لولو', 64, '#ffffff', '#b32466']], { w: 512, h: 110, bg: '#ff4f9a', border: '#ffffff', r: 18 }), 4.2, 0.9, 78, 4.4, -3.3, Math.PI);
+    // gondolas (double sided, along z)
+    for (const gx of [72.5, 78.5, 83.5]) { FXH.push([gx, 1.4, -39, 1.2, 2.8, 18, '#f3e9ff'], [gx, 2.9, -39, 1.3, 0.2, 18.2, OR]); for (const y of [0.55, 1.25, 1.95]) for (const s of [-1, 1]) FXH.push([gx + s * 0.55, y, -39, 0.3, 0.05, 18, '#c7cede']); solid(gx - 0.65, gx + 0.65, -48, -30); for (const s of [-1, 1]) stock(gx + s * 0.42, gx + s * 0.42, -47.8, -30.2, [0.58, 1.28, 1.98]); }
+    sectionSign('sweets', 71.3, -39, Math.PI / 2); sectionSign('school', 73.7, -39, -Math.PI / 2); sectionSign('clean', 77.3, -39, Math.PI / 2); sectionSign('care', 79.7, -39, -Math.PI / 2);
+    // carts at the entrance
+    for (let i = 0; i < 4; i++) { const x = 60.2, z = -10 - i * 0.7; FXH.push([x, 0.75, z, 1.1, 0.5, 0.6, '#c7cede'], [x - 0.6, 1.1, z, 0.08, 0.5, 0.6, '#ff8a1f']); } solid(59.4, 61, -12.5, -9.6);
+    vox(FXH, root, { shadow: true }); vox(STOCK, root);
+    // ---- interactive Lolo products ----
+    const hput = (id, x, y, z, ry, ix, iz, r = 1.2) => { const p = PBY[id], m = productModel(p, screenTex); m.position.set(x, y, z); m.rotation.y = ry; root.add(m); const tag = sign(textTex([[p.n, 40, '#ffffff'], ['🪙 ' + p.price, 52, '#ffd23f']], { w: 400, h: 170, bg: '#3b1d78', border: '#ff8a1f', r: 16 }), 0.85, 0.36, 0, 0, 0); tag.position.set(x + Math.sin(ry) * 0.05, y - 0.12, z + Math.cos(ry) * 0.05); tag.rotation.y = ry; tag.position.y = Math.max(0.3, y - 0.16); PL3.push({ p, m, x: ix, z: iz, r, base: ry, still: true }); };
+    ['hm1', 'hm2', 'hm3', 'hm4'].forEach((id, i) => hput(id, 86.2, 1.3, -52 + i * 3, -Math.PI / 2, 84.4, -52 + i * 3));
+    ['hj1', 'hj2', 'hj3', 'hj4'].forEach((id, i) => hput(id, 86.2, 1.3, -38 + i * 3, -Math.PI / 2, 84.4, -38 + i * 3));
+    ['hi1', 'hi2', 'hi3', 'hi4', 'hi5'].forEach((id, i) => hput(id, 78.6 + i * 1.2, 1.05, -17.6, 0, 78.6 + i * 1.2, -15.6, 0.9));
+    ['hf1', 'hf2', 'hf3', 'hf4'].forEach((id, i) => { const [x, z] = [[72, -19], [75, -19], [72, -12], [75, -12]][i]; hput(id, x, 1.08, z, 0, x, z + 1.7, 1.2); });
+    ['hb1', 'hb2', 'hb3'].forEach((id, i) => hput(id, 71.5 + i * 2.5, 1.36, -54.5, 0, 71.5 + i * 2.5, -53, 1.2));
+    ['hp1', 'hp2', 'hp3', 'hp4', 'hp5'].forEach((id, i) => hput(id, 79.6 + i * 1.5, 1.36, -54.5, 0, 79.6 + i * 1.5, -53, 0.9));
+    ['hs1', 'hs2', 'hs3', 'hs4'].forEach((id, i) => hput(id, 71.75, 1.28, -46 + i * 4, -Math.PI / 2, 70.4, -46 + i * 4));
+    ['hw1', 'hw2', 'hw3', 'hw4'].forEach((id, i) => hput(id, 73.25, 1.28, -46 + i * 4, Math.PI / 2, 74.6, -46 + i * 4));
+    ['hc1', 'hc2', 'hc3'].forEach((id, i) => hput(id, 77.75, 1.28, -44 + i * 5, -Math.PI / 2, 76.4, -44 + i * 5));
+    ['hk1', 'hk2', 'hk3'].forEach((id, i) => hput(id, 79.25, 1.28, -44 + i * 5, Math.PI / 2, 80.6, -44 + i * 5));
+    // ---- staff: 10 cashiers + greeter, ice cream server, baker, stock clerk ----
+    const hUni = (base, extra) => { const Lk = uniform(base, extra); Lk.c = Object.assign({}, Lk.c, { top: '#ff8a1f', bottom: '#3b2a8f', shoes: '#ffffff' }); return Lk; };
+    const CN = [['أحمد', 1, 'short'], ['منة', 0, 'pony'], ['خالد', 3, 'short'], ['شهد', 2, 'long'], ['إسلام', 1, 'spiky'], ['ملك', 0, 'bun'], ['عمر', 3, 'curly'], ['جنى', 2, 'pony'], ['مازن', 1, 'short'], ['رنا', 0, 'long']];
+    LANES.forEach((z, i) => { const [nm, b, hair] = CN[i]; addEmployee({ id: 'h_cash' + i, nm, role: `كاشير ${i + 1} · هايبر ماركت لولو`, av: '🧾', x: 65.5, z: z - 1.0, yaw: 0, ix: 65.5, iz: z + 1.25, look: hUni(b, { hair }), hello: i % 3 ? 'أهلاً! الدفع هنا 💳' : 'اتفضل، الكاشير فاضي 😊' }); SCRIPTS['h_cash' + i] = (n) => SCRIPTS.cash(n); });
+    [
+      { id: 'h_greet', nm: 'عم فتحي', role: 'استقبال الهايبر', av: '👋', x: 61.2, z: -14.2, yaw: -Math.PI / 2, look: hUni(3, { hat: 'cap' }), hello: 'أهلاً بيك في هايبر ماركت لولو! 🛒' },
+      { id: 'h_ice', nm: 'سارة', role: 'لولو آيس كريم', av: '🍦', x: 81, z: -20.2, yaw: 0, ix: 81, iz: -15.4, look: hUni(0, { hair: 'pony' }), hello: 'آيس كريم لولو ساقع وطازة! 🍦' },
+      { id: 'h_bake', nm: 'عم حسن', role: 'المخبز', av: '🥖', x: 69.4, z: -52.6, yaw: 0, look: hUni(1, { hat: 'cap' }), hello: 'العيش لسه طالع من الفرن 🥖' },
+      { id: 'h_stock', nm: 'بلال', role: 'ترتيب الرفوف', av: '📦', x: 75.5, z: -50, yaw: 0, look: hUni(3, { hair: 'short' }), hello: 'محتاج تلاقي حاجة؟ 📦', walk: [[75.5, -50], [75.5, -27], [81, -27], [81, -50]] },
+    ].forEach(addEmployee);
+    Object.assign(SPOTS, { hyper: { x: 54, z: -20, n: 'هايبر ماركت لولو' }, h_ice: { x: 81, z: -15.6, n: 'لولو آيس كريم' }, h_dairy: { x: 84.2, z: -48, n: 'الألبان' }, h_drinks: { x: 84.2, z: -34, n: 'العصائر والمياه' }, h_produce: { x: 73.5, z: -15.5, n: 'الفاكهة والخضار' }, h_bakery: { x: 74, z: -52.8, n: 'المخبز' }, h_pantry: { x: 82.5, z: -52.8, n: 'البقالة' }, h_sweets: { x: 70.4, z: -39, n: 'الحلويات والسناكس' }, h_school: { x: 75.2, z: -39, n: 'الأدوات المدرسية' }, h_clean: { x: 76.2, z: -36, n: 'المنظفات' }, h_care: { x: 80.8, z: -36, n: 'العناية الشخصية' }, h_cash: { x: 62, z: -20, n: 'الكاشير' } });
+    Object.assign(SCRIPTS, {
+      h_greet: (n) => talk(n, 'أهلاً بيك في هايبر ماركت لولو! كل حاجة هنا ماركة لولو. تحب أوديك فين؟', [
+        ['🍦 لولو آيس كريم', () => { closeUI(); guideTo('h_ice'); }], ['🍎 الفاكهة', () => { closeUI(); guideTo('h_produce'); }], ['🥛 الألبان', () => { closeUI(); guideTo('h_dairy'); }],
+        ['🍫 الحلويات', () => { closeUI(); guideTo('h_sweets'); }], ['✏️ المدرسة', () => { closeUI(); guideTo('h_school'); }], ['🥐 المخبز', () => { closeUI(); guideTo('h_bakery'); }], ['👋 شكرًا', closeUI]]),
+      h_ice: (n) => talk(n, 'أهلاً! عندنا آيس كريم لولو فانيليا وشوكولاتة وكورنيه ومصاصات. تحب تجرب إيه؟', [
+        ['🍫 شوكولاتة', () => openProduct('hi2')], ['🍓 كورنيه فراولة', () => openProduct('hi3')], ['🥭 مصاصة مانجو', () => openProduct('hi4')], ['👋 شكرًا', closeUI]]),
+      h_bake: (n) => talk(n, 'العيش البلدي والكرواسون لسه طالعين من الفرن. تاخد إيه؟', [['🫓 عيش بلدي', () => openProduct('hb1')], ['🥐 كرواسون', () => openProduct('hb2')], ['🎂 كيك شوكولاتة', () => openProduct('hb3')], ['👋 شكرًا', closeUI]]),
+      h_stock: (n) => talk(n, 'بنزل بضاعة لولو جديدة على الرفوف كل يوم. بتدور على إيه؟', [['🍝 البقالة', () => { closeUI(); guideTo('h_pantry'); }], ['🧼 المنظفات', () => { closeUI(); guideTo('h_clean'); }], ['🧴 العناية', () => { closeUI(); guideTo('h_care'); }], ['👋 تمام', closeUI]]),
+    });
+    // shoppers with trolleys walking the aisles
+    const trolley = () => { const g = new THREE.Group(); vox([[0, 0.75, 0.75, 0.9, 0.5, 0.7, '#c7cede'], [0, 0.55, 0.75, 0.8, 0.05, 0.6, '#ffd23f'], [0, 1.1, 0.38, 0.9, 0.06, 0.06, '#ff8a1f'], [0, 0.82, 0.75, 0.6, 0.2, 0.4, '#7cf04a']], g); return g; };
+    [[[70.4, -52], [70.4, -27], [76, -27], [76, -52]], [[80.8, -26], [80.8, -52], [85, -52], [85, -26]], [[69.5, -24], [85, -24], [85, -9], [69.5, -9]]].forEach((loop, i) => { for (let j = 0; j < 2; j++) { const k = C.makeAvatar(C.randomLook((i + j) % 2 ? 'girl' : 'boy')); k.scale.setScalar(j ? 0.9 : 1.05); if (!j) k.add(trolley()); C.scene.add(k); VIS.push({ k, loop, seg: j * 2, t: 0.3 * j, sp: 1.0 + j * 0.2 }); } });
+  })();
+
+  // ======================= PLAYER BOTS + 1v1 CHALLENGES (LOLO_MALL_BOTS_2026) =======================
+  // Until the game has many real players, computer players with nicknames + a number walk around the mall and the
+  // plaza, chat, and accept or offer 1-v-1 challenges: a race to a flag, or a 30-second coin rush. Rewards are game coins.
+  const BOTS = (function buildBots() {
+    const NAMES = ['عمر_77', 'مريم_09', 'يوسف2015', 'نور_21', 'حمزة_88', 'جنى_14', 'زياد_303', 'ملك_12'];
+    const CHAT = ['حد يسابقني؟ 🏃', 'المول ده تحفة 😍', 'جبت آيس كريم لولو 🍦', 'مين جاي السينما؟ 🎬', 'GG 😎', 'يلا نلعب! 🎮', 'أنا الأسرع هنا 😎', 'مين عايز تحدي؟ ⚔️'];
+    const ZONES = [[-38, 38, -24, -16], [-30, 30, 20, 86]]; // corridor, plaza (local x0,x1,z0,z1)
+    const inZone = (x, z) => ZONES.findIndex(([a, b, c, d]) => x >= a - 4 && x <= b + 4 && z >= c - 3 && z <= d + 3);
+    const rndIn = (zi) => { const [a, b, c, d] = ZONES[zi]; return [a + Math.random() * (b - a), c + Math.random() * (d - c)]; };
+    const B = NAMES.map((nm, i) => {
+      const k = C.makeAvatar(C.randomLook(i % 2 ? 'girl' : 'boy')); k.scale.setScalar(0.95 + (i % 3) * 0.05); C.scene.add(k);
+      const tag = nameTag(nm); tag.position.set(0, 2.55, 0); k.add(tag);
+      const zi = i % 2, [x, z] = rndIn(zi);
+      const b = { k, nm, role: 'لاعب', av: '🧒', x, z, zi, tgt: rndIn(zi), st: 'wander', t: Math.random() * 3, stuck: 0, lx: x, lz: z, sp: 2.6 + Math.random() * 0.8, bub: null, bubT: 0, chatT: 4 + Math.random() * 10, skill: 0.55 + Math.random() * 0.25, offer: 0 };
+      k.position.set(OFF + x, 0.12, z); return b;
+    });
+    const step = (b, tx, tz, sp, dt) => {
+      const dx = tx - b.x, dz = tz - b.z, d = Math.hypot(dx, dz); if (d < 0.05) return d;
+      const s = Math.min(d, sp * dt), o = { x: OFF + b.x + (dx / d) * s, z: b.z + (dz / d) * s }; if (C.collide) C.collide(o, 0.4);
+      b.x = o.x - OFF; b.z = o.z; b.k.rotation.y = angLerp(b.k.rotation.y, Math.atan2(dx, dz), dt * 8); return d;
+    };
+    // ---- challenge overlay ----
+    const ch = document.createElement('div'); ch.id = 'chUI'; ch.setAttribute('dir', 'rtl'); document.body.appendChild(ch);
+    const cst = document.createElement('style'); cst.textContent = `#chUI{position:fixed;inset:0;z-index:24;pointer-events:none;font-family:Cairo,Tajawal,"Segoe UI",sans-serif;display:none}#chUI.on{display:block}
+#chUI .big{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);font-size:clamp(54px,14vh,110px);font-weight:900;color:#fff;text-shadow:0 6px 0 #6a2fe0,0 0 30px rgba(0,0,0,.4)}
+#chUI .sc{position:absolute;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);background:rgba(26,16,48,.88);color:#fff;font-weight:900;font-size:clamp(14px,2.8vh,20px);padding:8px 18px;border-radius:999px;border:3px solid #ffc21a;white-space:nowrap;display:flex;gap:14px}
+#chUI .res{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(380px,88vw);background:linear-gradient(#f7f2ff,#e8dcff);border:4px solid #a46cf5;border-radius:24px;box-shadow:0 8px 0 #6d36c9;padding:16px;text-align:center;color:#3b1d78;pointer-events:auto}
+#chUI .res h3{margin:0 0 6px;font-size:28px}#chUI .res p{margin:4px 0;font-weight:800}#chUI .res button{margin-top:10px;width:100%;height:48px;border-radius:999px;background:linear-gradient(#ffd23f,#ffb300);color:#3b1d78;font-weight:900;font-size:18px;border:3px solid #fff;font-family:inherit}`;
+    document.head.appendChild(cst);
+    let G = null, cool = 18, flag = null;
+    const coinsGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.12, 18), coinMat = toon('#ffc21a', { emissive: '#ffb300', emissiveIntensity: 0.5 });
+    function makeFlag() { const g = new THREE.Group(); vox([[0, 2, 0, 0.18, 4, 0.18, '#ffffff'], [0.7, 3.5, 0, 1.2, 0.8, 0.08, '#ff2d55']], g); const ring = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.15, 8, 32), new THREE.MeshBasicMaterial({ color: '#ffd23f', toneMapped: false })); ring.rotation.x = Math.PI / 2; ring.position.y = 0.2; g.add(ring); root.add(g); return g; }
+    function menu(b) {
+      if (G) { C.toast('⚔️ فيه تحدي شغال دلوقتي'); return; }
+      const zi = inZone(C.PL.x - OFF, C.PL.z);
+      talk(b, b.offer ? `أهلاً! أنا ${b.nm}. تتحداني؟ ⚔️` : `أهلاً! أنا ${b.nm} 👋 نلعب تحدي؟`, [
+        ...(zi >= 0 ? [['🏃 سباق للعلم', () => start(b, 'race')], ['🪙 مين يجمع عملات أكتر', () => start(b, 'coins')]] : [['📍 تعالى نلعب في الممر أو برا المول', closeUI]]),
+        ['👋 بعدين', () => { closeUI(); b.offer = 0; say(b, 'ماشي، بعدين 👋'); }]]);
+    }
+    function start(b, kind) {
+      closeUI(); b.offer = 0; GUIDE = null; beacon.visible = false;
+      const px = C.PL.x - OFF, pz = C.PL.z, zi = inZone(px, pz);
+      b.x = px + 1.6; b.z = pz; b.k.position.set(OFF + b.x, 0.12, b.z);
+      G = { b, kind, t: 0, phase: 'count', you: 0, bot: 0, coins: [] };
+      if (kind === 'race') {
+        const goals = zi === 0 ? [[-42, -20], [42, -20]] : [[0, 86], [-28, 22], [28, 22], [-28, 84], [28, 84]];
+        let best = goals[0], bd = 0; for (const g of goals) { const d = Math.hypot(g[0] - px, g[1] - pz); if (d > bd) { bd = d; best = g; } }
+        G.goal = best; flag = flag || makeFlag(); flag.visible = true; flag.position.set(best[0], 0, best[1]);
+      } else {
+        for (let i = 0; i < 14; i++) { for (let tries = 0; tries < 12; tries++) { const a = Math.random() * 6.28, r = 3 + Math.random() * 9, x = px + Math.cos(a) * r, z = pz + Math.sin(a) * r; const o = { x: OFF + x, z }; if (C.collide && C.collide(o, 0.6)) continue; if (inZone(x, z) < 0) continue; const m = new THREE.Mesh(coinsGeo, coinMat); m.rotation.x = Math.PI / 2; m.position.set(x, 1, z); root.add(m); G.coins.push(m); break; } }
+      }
+      C.setPanel('ch'); ch.className = 'on'; ch.innerHTML = '<div class="big">3</div>'; C.sfx.pop();
+    }
+    function finish() {
+      const g = G; G = null; C.setPanel('chres'); if (flag) flag.visible = false; g.coins.forEach((m) => root.remove(m));
+      const win = g.kind === 'race' ? g.won === 'you' : g.you > g.bot, tie = g.kind === 'coins' && g.you === g.bot;
+      const prize = g.kind === 'race' ? (win ? 15 : 3) : g.you + (win ? 10 : 0);
+      C.S.coins = (C.S.coins || 0) + prize; C.save(); C.updPills(); (win ? C.sfx.win : C.sfx.pop)();
+      say(g.b, win ? 'GG! إنت أسرع مني 👏' : tie ? 'تعادل! نعيدها؟ 😄' : 'GG 😎 المرة الجاية بقى!');
+      ch.innerHTML = `<div class="res"><h3>${win ? '🏆 Winner Winner!' : tie ? '🤝 تعادل' : '💪 حاول تاني'}</h3><p>${win ? `فزت على ${esc(g.b.nm)}` : tie ? `إنت و${esc(g.b.nm)} زي بعض` : `${esc(g.b.nm)} كسب المرة دي`}</p>${g.kind === 'coins' ? `<p>🪙 إنت ${g.you} · ${esc(g.b.nm)} ${g.bot}</p>` : ''}<p>جايزتك: 🪙 ${prize}</p><button data-cb="ok">تمام</button></div>`;
+      cool = 25;
+    }
+    ch.addEventListener('click', (e) => { if (!e.target.closest('[data-cb]')) return; C.sfx.click(); ch.className = ''; ch.innerHTML = ''; C.setPanel(null); });
+    function update(dt) {
+      const px = C.PL.x - OFF, pz = C.PL.z;
+      // ---- active challenge ----
+      if (G) {
+        G.t += dt; const b = G.b;
+        if (G.phase === 'count') { const n = 3 - Math.floor(G.t); const el = ch.querySelector('.big'); const txt = n > 0 ? String(n) : 'انطلق!'; if (el && el.textContent !== txt) { el.textContent = txt; C.sfx.pop(); } if (G.t > 3.6) { G.phase = 'go'; G.t = 0; C.setPanel(null); ch.innerHTML = '<div class="sc"></div>'; } b.k.rotation.y = angLerp(b.k.rotation.y, Math.atan2(px - b.x, pz - b.z), dt * 5); C.animKid(b.k, 0, dt, false); return; }
+        const sc = ch.querySelector('.sc');
+        if (G.kind === 'race') {
+          const [gx, gz] = G.goal; const sp = 3.2 + b.skill * 2.6; const d = step(b, gx, gz, sp, dt); C.animKid(b.k, sp, dt, false);
+          const dy = Math.hypot(gx - px, gz - pz);
+          if (sc) sc.innerHTML = `<span>🏁 إنت: ${dy.toFixed(0)} م</span><span>${esc(b.nm)}: ${d.toFixed(0)} م</span><span>⏱ ${Math.max(0, 40 - G.t).toFixed(0)}</span>`;
+          if (dy < 2.4) { G.won = 'you'; finish(); } else if (d < 1.2 || G.t > 40) { G.won = 'bot'; finish(); }
+        } else {
+          let tgt = null, td = 1e9; for (const m of G.coins) { const d = Math.hypot(m.position.x - b.x, m.position.z - b.z); if (d < td) { td = d; tgt = m; } }
+          const sp = 1.8 + b.skill * 1.6; if (tgt) step(b, tgt.position.x, tgt.position.z, sp, dt); C.animKid(b.k, tgt ? sp : 0, dt, false);
+          for (let i = G.coins.length - 1; i >= 0; i--) { const m = G.coins[i]; m.rotation.z += dt * 3; if (Math.hypot(m.position.x - px, m.position.z - pz) < 1.3) { G.you++; root.remove(m); G.coins.splice(i, 1); C.sfx.coin(); } else if (Math.hypot(m.position.x - b.x, m.position.z - b.z) < 0.9) { G.bot++; root.remove(m); G.coins.splice(i, 1); } }
+          if (sc) sc.innerHTML = `<span>🪙 إنت: ${G.you}</span><span>${esc(b.nm)}: ${G.bot}</span><span>⏱ ${Math.max(0, 30 - G.t).toFixed(0)}</span>`;
+          if (!G.coins.length || G.t > 30) finish();
+        }
+        b.k.position.set(OFF + b.x, 0.12, b.z);
+      }
+      // ---- free bots ----
+      cool -= dt; const pz0 = inZone(px, pz);
+      for (const b of B) {
+        if (G && G.b === b) continue;
+        let sp = 0;
+        if (b.st === 'approach') { const d = step(b, px + 1.4, pz + 1.4, 3.2, dt); sp = 3.2; if (d < 1.6) { b.st = 'wait'; b.t = 12; b.offer = 1; say(b, 'تتحداني؟ ⚔️'); C.toast(`⚔️ ${b.nm} بيتحداك! كلّمه وابدأ التحدي`); C.sfx.pop(); } if (pz0 < 0) b.st = 'wander'; }
+        else if (b.st === 'wait') { sp = 0; b.k.rotation.y = angLerp(b.k.rotation.y, Math.atan2(px - b.x, pz - b.z), dt * 5); b.t -= dt; if (b.t <= 0 || Math.hypot(px - b.x, pz - b.z) > 14) { b.st = 'wander'; b.offer = 0; cool = 20; } }
+        else if (b.st === 'idle') { b.t -= dt; if (b.t <= 0) { b.st = 'wander'; b.tgt = rndIn(b.zi); } }
+        else { const d = step(b, b.tgt[0], b.tgt[1], b.sp, dt); sp = b.sp; b.t += dt; if (b.t > 1.2) { if (Math.hypot(b.x - b.lx, b.z - b.lz) < 0.3) b.tgt = rndIn(b.zi); b.lx = b.x; b.lz = b.z; b.t = 0; } if (d < 0.8) { b.st = 'idle'; b.t = 1 + Math.random() * 3; if (Math.random() < 0.3) b.k.emo = { k: 'wave', t: 1.2 }; } }
+        b.chatT -= dt; if (b.chatT <= 0) { b.chatT = 12 + Math.random() * 18; if (Math.hypot(px - b.x, pz - b.z) < 22) say(b, CHAT[(Math.random() * CHAT.length) | 0]); }
+        b.k.position.set(OFF + b.x, 0.12, b.z); C.animKid(b.k, sp, dt, false);
+        if (b.bub) { b.bubT -= dt; b.bub.material.opacity = Math.min(1, b.bubT); if (b.bubT <= 0) { b.k.remove(b.bub); b.bub = null; } }
+      }
+      // now and then the nearest free bot walks over and offers a challenge
+      if (!G && cool <= 0 && pz0 >= 0 && C.isPlaying()) { cool = 30 + Math.random() * 20; let best = null, bd = 26; for (const b of B) { if (b.st === 'approach' || b.st === 'wait') continue; const d = Math.hypot(px - b.x, pz - b.z); if (d < bd) { bd = d; best = b; } } if (best) best.st = 'approach'; }
+    }
+    return {
+      update,
+      interact(L) { if (G) return; for (const b of B) L.push({ x: OFF + b.x, z: b.z, r: 2.4, label: b.offer ? `⚔️ تحدي ${b.nm}` : `💬 ${b.nm}`, act: () => menu(b) }); },
+      stop() { if (G) { G.coins.forEach((m) => root.remove(m)); G = null; } if (flag) flag.visible = false; ch.className = ''; ch.innerHTML = ''; },
+    };
+  })();
+
   // ---------- ProductInspectionSystem (3D view rendered with the game's renderer) ----------
   const VIEW = { on: false, scene: null, cam: null, obj: null, yaw: 0.6, pitch: 0.25, zoom: 1, drag: null, pts: new Map(), pinch: 0, id: null };
   function viewInit() {
@@ -658,7 +913,7 @@ export function buildMall(C) {
   function openProduct(id) {
     const p = PBY[id], m = st(); viewSet(id); VIEW.on = true;
     const wished = m.wish.includes(id), inCmp = m.cmp.includes(id), inCart = m.cart.filter((x) => x === id).length;
-    openUI('insp', `<div class="hint">👆 اسحب لتلف الجهاز · قرّب بصباعين أو بالأزرار</div>
+    openUI('insp', `<div class="hint">👆 اسحب لتلف ${p.store === 'hyper' ? 'المنتج' : 'الجهاز'} · قرّب بصباعين أو بالأزرار</div>
       <div class="zoom"><button data-mu="zin" aria-label="تقريب">＋</button><button data-mu="zout" aria-label="تبعيد">－</button></div>
       <div class="mpan"><div class="mhd"><b>${esc(p.n)}<small>${DEPTS[p.d].i} ${DEPTS[p.d].n} · ${STORES[p.store || 'btech']}</small></b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div>
       <div class="mbd"><div class="price">🪙 ${p.price}</div>
@@ -702,7 +957,7 @@ export function buildMall(C) {
   }
   // ---------- MallNavigationSystem: directory ----------
   function openDirectory() {
-    const rows = [['btech', '1️⃣', 'بي تك — B.TECH', 'مفتوح'], ['dream', '2️⃣', 'دريم 2000 — Dream 2000', 'مفتوح'], ['d_phones', '📱', 'دريم 2000 · الموبايلات', 'مفتوح'], ['d_laptops', '💻', 'دريم 2000 · اللابتوبات', 'مفتوح'], ['d_acc', '🎧', 'دريم 2000 · الإكسسوارات', 'مفتوح'], ['d_gaming', '🎮', 'دريم 2000 · الألعاب', 'مفتوح'], ['d_cs', '🙋', 'دريم 2000 · خدمة العملاء', 'مفتوح'], ['cinema', '🎬', 'سينما لولو — كرتون لولو', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
+    const rows = [['btech', '1️⃣', 'بي تك — B.TECH', 'مفتوح'], ['dream', '2️⃣', 'دريم 2000 — Dream 2000', 'مفتوح'], ['d_phones', '📱', 'دريم 2000 · الموبايلات', 'مفتوح'], ['d_laptops', '💻', 'دريم 2000 · اللابتوبات', 'مفتوح'], ['d_acc', '🎧', 'دريم 2000 · الإكسسوارات', 'مفتوح'], ['d_gaming', '🎮', 'دريم 2000 · الألعاب', 'مفتوح'], ['d_cs', '🙋', 'دريم 2000 · خدمة العملاء', 'مفتوح'], ['cinema', '🎬', 'سينما لولو — كرتون لولو', 'مفتوح'], ['hyper', '🛒', 'هايبر ماركت لولو (من الباب الجانبي)', 'مفتوح'], ['h_ice', '🍦', 'الهايبر · لولو آيس كريم', 'مفتوح'], ['h_produce', '🍎', 'الهايبر · فاكهة وخضار', 'مفتوح'], ['h_sweets', '🍫', 'الهايبر · حلويات وسناكس', 'مفتوح'], ['h_cash', '💳', 'الهايبر · الكاشير (10)', 'مفتوح'], ['phones', '📱', 'بي تك · الموبايلات', 'مفتوح'], ['tv', '📺', 'بي تك · الشاشات', 'مفتوح'], ['home', '🧊', 'بي تك · الأجهزة المنزلية', 'مفتوح'], ['cash', '💳', 'بي تك · الكاشير', 'مفتوح'], ['info', 'ℹ️', 'الاستعلامات', 'مفتوح'], ['exit', '🚪', 'باب الخروج', 'مفتوح']];
     const soon = [['راية — RAYA', '🚧'], ['الفين — ELFIN', '🚧'], ['سافوري لاند', '🎡'], ['مدينة التلج', '❄️']];
     openUI('list', `<div class="mpan"><div class="mhd"><b>🗺️ دليل مول العرب</b><button class="mx" data-mu="close" aria-label="إغلاق">✕</button></div><div class="mbd">
       ${rows.map(([k, i, n, s]) => `<div class="row"><span class="ic">${i}</span><div class="t">${n}<small>✅ ${s}</small></div><button data-mu="go" data-v="${k}">📍 وديني</button></div>`).join('')}
@@ -759,7 +1014,7 @@ export function buildMall(C) {
     }
     for (const v of VIS) { const a = v.loop[v.seg], b = v.loop[(v.seg + 1) % v.loop.length], L = Math.hypot(b[0] - a[0], b[1] - a[1]); v.t += (v.sp * dt) / L; if (v.t >= 1) { v.t = 0; v.seg = (v.seg + 1) % v.loop.length; } const x = a[0] + (b[0] - a[0]) * v.t, z = a[1] + (b[1] - a[1]) * v.t; v.k.position.set(OFF + x, 0.12, z); v.k.rotation.y = Math.atan2(b[0] - a[0], b[1] - a[1]); C.animKid(v.k, v.sp, dt, false); }
     C.animKid(guard, 0, dt, false); if (Math.hypot(C.PL.x - OFF - 9, C.PL.z - 19) < 6) guard.rotation.y = angLerp(guard.rotation.y, Math.atan2(C.PL.x - guard.position.x, C.PL.z - guard.position.z), dt * 4); else guard.rotation.y = angLerp(guard.rotation.y, 0, dt * 2);
-    CINE.update(dt);
+    CINE.update(dt); BOTS.update(dt);
     // guide beacon
     if (GUIDE) { barrow.position.y = 3.2 + Math.sin(t * 4) * 0.3; barrow.rotation.y = t * 2; if (Math.hypot(C.PL.x - OFF - GUIDE.x, C.PL.z - GUIDE.z) < 3) { C.toast(`✅ وصلت: ${GUIDE.n}`); C.sfx.coin(); GUIDE = null; beacon.visible = false; } }
     // products gently turn on their tables (not TVs/appliances)
@@ -774,24 +1029,24 @@ export function buildMall(C) {
     for (const n of NPC) L.push({ x: n.ix !== undefined ? o + n.ix : n.k.position.x, z: n.iz !== undefined ? n.iz : n.k.position.z, r: 2.6, label: `💬 كلّم ${n.nm}`, act: () => SCRIPTS[n.id](n) });
     for (const q of PL3) L.push({ x: o + q.x, z: q.z, r: q.r, label: `🔍 ${q.p.n}`, act: () => openProduct(q.p.id) });
     for (const [x, z, n] of [[-29, -16, 'راية'], [29, -16, 'الفين']]) L.push({ x: o + x, z, r: 4, label: `🚧 ${n}`, act: () => C.toast(`🚧 ${n} بيتجهز — هيفتح قريب في مول العرب!`) });
-    CINE.interact(L);
+    CINE.interact(L); BOTS.interact(L);
     L.push({ x: o - 34, z: -17.5, r: 3, label: '🍿 كشك الفشار', act: () => { C.sfx.pop(); C.toast('🍿 فشار سخن! (الكشك هيبيع قريب)'); } });
     L.push({ x: o + 34, z: -17.5, r: 3, label: '🍦 كشك الآيس كريم', act: () => { C.sfx.pop(); C.toast('🍦 آيس كريم بالفراولة! (الكشك هيبيع قريب)'); } });
     return L;
   }
-  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك أو دريم 2000، أو اتفرج على كرتون في السينما 🎬'}</small>`; }
+  function goal() { const m = st(); return GUIDE ? `📍 رايح: ${GUIDE.n}<small>امشي ناحية العمود الأصفر</small>` : `🛍️ مول العرب<small>${m.cart.length ? `في السلة ${m.cart.length} · ادفع عند الكاشير` : 'ادخل بي تك ودريم 2000 والهايبر، أو اتفرج على كرتون في السينما 🎬'}</small>`; }
   function drawMap(g, s) {
     g.fillStyle = '#7fd36a'; g.fillRect(-B * s, -B * s, 2 * B * s, 2 * B * s);
     g.fillStyle = '#5b5f74'; g.fillRect(-103 * s, 97 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 206 * s, 14 * s); g.fillRect(-103 * s, -107 * s, 14 * s, 218 * s); g.fillRect(89 * s, -107 * s, 14 * s, 218 * s);
     g.fillStyle = '#f1d6f2'; g.fillRect(-70 * s, 2 * s, 140 * s, 96 * s);
     g.fillStyle = '#e9ddff'; g.fillRect(-52 * s, -66 * s, 104 * s, 78 * s);
     g.fillStyle = '#14161f'; g.fillRect(8 * s, -66 * s, 42 * s, 39 * s);
-    g.fillStyle = '#2b2f37'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillStyle = '#8be000'; g.fillRect(-35 * s, -28 * s, 12 * s, 2 * s); g.fillStyle = '#2b1650'; g.fillRect(-8 * s, -66 * s, 16 * s, 26 * s); g.fillStyle = '#ffc21a'; g.fillRect(-2.6 * s, -41 * s, 5.2 * s, 2 * s); g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
+    g.fillStyle = '#2b2f37'; g.fillRect(-50 * s, -66 * s, 42 * s, 39 * s); g.fillStyle = '#8be000'; g.fillRect(-35 * s, -28 * s, 12 * s, 2 * s); g.fillStyle = '#ff8a1f'; g.fillRect(58 * s, -56 * s, 30 * s, 54 * s); g.fillStyle = '#6a2fe0'; g.fillRect(57 * s, -24 * s, 2 * s, 8 * s); g.fillStyle = '#2b1650'; g.fillRect(-8 * s, -66 * s, 16 * s, 26 * s); g.fillStyle = '#ffc21a'; g.fillRect(-2.6 * s, -41 * s, 5.2 * s, 2 * s); g.fillStyle = '#c9c3dc'; g.fillRect(-50 * s, -13 * s, 42 * s, 25 * s); g.fillRect(8 * s, -13 * s, 42 * s, 25 * s);
     g.fillStyle = '#6fd6ff'; g.beginPath(); g.arc(0, -20 * s, 4 * s, 0, 7); g.arc(0, 42 * s, 4.5 * s, 0, 7); g.fill();
     if (GUIDE) { g.fillStyle = '#ffd23f'; g.beginPath(); g.arc(GUIDE.x * s, GUIDE.z * s, 2.4 * s + 3, 0, 7); g.fill(); }
   }
   function onEnter() { welcomed = false; }
-  function onLeave() { CINE.stop(); closeUI(); hud.classList.remove('on'); bagOff(); const k = C.getKid(); if (k) k.__mallBag = false; GUIDE = null; beacon.visible = false; }
+  function onLeave() { CINE.stop(); BOTS.stop(); closeUI(); hud.classList.remove('on'); bagOff(); const k = C.getKid(); if (k) k.__mallBag = false; GUIDE = null; beacon.visible = false; }
   return { root, update, interactables, goal, drawMap, renderView, onEnter, onLeave, camBlock, get viewOn() { return VIEW.on; }, get camOverride() { return CINE.cam; }, SPAWN: { x: OFF, z: 90, yaw: Math.PI }, B, OFF, PRODUCTS, openProduct, openCart, openDirectory };
 }
 
@@ -805,7 +1060,44 @@ function makeScreens() {
     game: mk(128, 72, (g, w, h) => { g.fillStyle = '#1d2a5c'; g.fillRect(0, 0, w, h); g.fillStyle = '#ffd23f'; for (let i = 0; i < 12; i++) g.fillRect((i * 37) % w, (i * 23) % 40, 2, 2); g.fillStyle = '#7a4dff'; g.fillRect(0, 50, w, 22); g.fillStyle = '#2fc4ff'; g.fillRect(50, 34, 16, 16); }),
   };
 }
+// grocery packs for the hypermarket: each carries a "لولو" label drawn on a canvas
+const LBL = {};
+function lblTex(p) {
+  if (LBL[p.id]) return LBL[p.id];
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  g.fillStyle = p.c; g.fillRect(0, 0, 128, 128); g.fillStyle = 'rgba(255,255,255,.18)'; g.fillRect(0, 84, 128, 44);
+  g.fillStyle = '#ffffff'; rr(g, 18, 14, 92, 46, 22); g.fill(); g.font = '900 34px Cairo, Tajawal, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.direction = 'rtl'; g.fillStyle = '#6a2fe0'; g.fillText('لولو', 64, 38);
+  const short = p.n.replace(/لولو/g, '').replace(/\s+/g, ' ').trim().split(' ').slice(0, 2).join(' ');
+  g.font = '900 19px Cairo, Tajawal, sans-serif'; g.fillStyle = '#ffffff'; g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 4; g.strokeText(short, 64, 102, 120); g.fillText(short, 64, 102, 120);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; LBL[p.id] = t; return t;
+}
+function groceryModel(p) {
+  const g = new THREE.Group(); const M = (c, e) => new THREE.MeshToonMaterial(Object.assign({ color: c }, e || {})); const lab = () => new THREE.MeshToonMaterial({ map: lblTex(p) });
+  const add = (geo, mat, x = 0, y = 0, z = 0) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
+  const labelBox = (w, h, d, y) => { const side = M(p.c); add(new THREE.BoxGeometry(w, h, d), [side, side, side, side, lab(), side], 0, y, 0); };
+  const k = p.k, s = p.small ? 0.7 : p.big ? 1.25 : 1;
+  if (k === 'tub') { const r = 0.3 * s, h = 0.28 * s; add(new THREE.CylinderGeometry(r, r * 0.86, h, 20), [lab(), M(p.c2 || '#ffffff'), M(p.c)], 0, h / 2); add(new THREE.CylinderGeometry(r * 1.03, r * 1.03, 0.04, 20), M(p.c2 || '#ffffff'), 0, h + 0.02); }
+  else if (k === 'cone') { const c = add(new THREE.ConeGeometry(0.13, 0.42, 10), M('#e0a14a'), 0, 0.24); c.rotation.x = Math.PI; add(new THREE.SphereGeometry(0.15, 12, 10), M(p.c), 0, 0.5); add(new THREE.SphereGeometry(0.06, 8, 6), M('#ff2d55'), 0, 0.66); }
+  else if (k === 'stick') { add(new THREE.BoxGeometry(0.04, 0.22, 0.04), M('#e8c08a'), 0, 0.11); add(new THREE.BoxGeometry(0.2, 0.36, 0.1), [M(p.c), M(p.c), M(p.c), M(p.c), lab(), M(p.c)], 0, 0.4); }
+  else if (k === 'carton') { const w = 0.26 * s, h = 0.5 * s; labelBox(w, h, w, h / 2); const top = add(new THREE.BoxGeometry(w * 0.72, w * 0.72, w), M('#ffffff'), 0, h, 0); top.rotation.z = Math.PI / 4; top.scale.y = 0.6; }
+  else if (k === 'bottle') { const r = 0.1 * s, h = 0.46 * s; add(new THREE.CylinderGeometry(r, r, h, 16), [lab(), M(p.c), M(p.c)], 0, h / 2); add(new THREE.CylinderGeometry(r * 0.45, r, 0.1 * s, 12), M(p.c), 0, h + 0.05 * s); add(new THREE.CylinderGeometry(r * 0.5, r * 0.5, 0.06 * s, 12), M('#ffffff'), 0, h + 0.13 * s); }
+  else if (k === 'can') { add(new THREE.CylinderGeometry(0.11, 0.11, 0.3, 18), [lab(), M('#d6dbe6'), M('#d6dbe6')], 0, 0.15); }
+  else if (k === 'box') { if (p.flat) labelBox(0.42 * s, 0.26 * s, 0.08, 0.13 * s); else labelBox(0.34 * s, 0.46 * s, 0.14 * s, 0.23 * s); }
+  else if (k === 'bag') { const w = 0.34 * s, h = 0.46 * s; labelBox(w, h, 0.14 * s, h / 2); add(new THREE.BoxGeometry(w, 0.05, 0.1 * s), M(p.c), 0, h + 0.02); if (p.d === 'school') { for (const x of [-1, 1]) add(new THREE.BoxGeometry(0.05, 0.22, 0.04), M('#1d2030'), x * w * 0.3, h + 0.1, -0.02); } }
+  else if (k === 'jar') { add(new THREE.CylinderGeometry(0.14, 0.14, 0.24, 16), [lab(), M(p.c), M(p.c)], 0, 0.12); add(new THREE.CylinderGeometry(0.15, 0.15, 0.06, 16), M('#7a4dff'), 0, 0.27); }
+  else if (k === 'tube') { const t = add(new THREE.BoxGeometry(0.12, 0.4, 0.07), [M(p.c), M(p.c), M(p.c), M(p.c), lab(), M(p.c)], 0, 0.22); t.rotation.z = 0.08; add(new THREE.CylinderGeometry(0.035, 0.035, 0.05, 10), M('#ffffff'), 0.015, 0.03); }
+  else if (k === 'notebook') { const cover = M(p.c); add(new THREE.BoxGeometry(0.4, 0.04, 0.54), [cover, cover, lab(), M('#ffffff'), cover, cover], 0, 0.02); add(new THREE.BoxGeometry(0.39, 0.03, 0.53), M('#ffffff'), 0.005, 0.005); }
+  else if (k === 'bread') { if (p.v === 'croissant') { for (const [x, r, sc] of [[0, 0, 1], [-0.16, 0.5, 0.8], [0.16, -0.5, 0.8]]) { const b = add(new THREE.BoxGeometry(0.16 * sc, 0.12 * sc, 0.14 * sc), M(p.c), x, 0.07, Math.abs(x) * 0.4); b.rotation.y = r; } } else { for (let i = 0; i < 3; i++) add(new THREE.CylinderGeometry(0.24, 0.24, 0.05, 16), M(i % 2 ? '#d9a066' : p.c), 0, 0.03 + i * 0.05); } }
+  else if (k === 'fruit') {
+    const pile = (fn) => { for (const [x, z] of [[0, 0], [-0.16, 0.06], [0.16, -0.04], [0.04, -0.15], [-0.06, 0.16]]) fn(x, z); };
+    if (p.v === 'banana') { for (let i = 0; i < 4; i++) { const b = add(new THREE.BoxGeometry(0.06, 0.06, 0.34), M(p.c), -0.09 + i * 0.06, 0.05, 0); b.rotation.x = 0.25; } add(new THREE.BoxGeometry(0.26, 0.05, 0.05), M('#6b4a1f'), 0, 0.09, -0.16); }
+    else if (p.v === 'cucumber') pile((x, z) => { const c = add(new THREE.BoxGeometry(0.08, 0.08, 0.3), M(p.c), x, 0.05, z); c.rotation.y = x * 4; });
+    else pile((x, z) => { add(new THREE.BoxGeometry(0.15, 0.14, 0.15), M(p.c), x, 0.08 + (x === 0 && z === 0 ? 0.08 : 0), z); add(new THREE.BoxGeometry(0.02, 0.05, 0.02), M('#6b4a1f'), x, 0.17 + (x === 0 && z === 0 ? 0.08 : 0), z); });
+  }
+  return g;
+}
 function productModel(p, TX) {
+  if (p.store === 'hyper') return groceryModel(p);
   const g = new THREE.Group(); const M = (c, e) => new THREE.MeshToonMaterial(Object.assign({ color: c }, e || {}));
   const box = (w, h, d, c, x = 0, y = 0, z = 0, mat) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat || M(c)); m.position.set(x, y, z); m.castShadow = true; g.add(m); return m; };
   const scr = (tex, w, h, x, y, z, ry = 0) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false })); m.position.set(x, y, z); m.rotation.y = ry; g.add(m); return m; };
