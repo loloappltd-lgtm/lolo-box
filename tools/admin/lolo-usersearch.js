@@ -44,14 +44,18 @@
   }
   function tick() {
     var on = RX.test(location.pathname), bar = document.getElementById('luS');
-    if (!on) { if (bar) bar.remove(); return; }
+    if (!on) { window.__luWait = 0; if (bar) bar.remove(); return; }
     if (bar && document.body.contains(bar)) return;
-    var table = document.querySelector('#app .adminjs_Table') || document.querySelector('#app table');
-    if (!table) return;
-    var host = table.parentNode; while (host && host.parentNode && host.parentNode.id !== 'app' && host.parentNode.querySelectorAll('table').length === 1 && host.parentNode.tagName !== 'SECTION') host = host.parentNode;
-    if (!host || !host.parentNode) return;
+    var root = document.getElementById('app') || document.body;
+    var table = root.querySelector('.adminjs_Table') || root.querySelector('table');
     if (!document.getElementById('luSCss')) { var st = document.createElement('style'); st.id = 'luSCss'; st.textContent = CSS; document.head.appendChild(st); }
-    host.parentNode.insertBefore(build(), host);
+    if (table) {
+      var host = table.parentNode; while (host && host.parentNode && host.parentNode !== root && host.parentNode.querySelectorAll('table').length === 1 && host.parentNode.tagName !== 'SECTION') host = host.parentNode;
+      if (host && host.parentNode) { host.parentNode.insertBefore(build(), host); return; }
+    }
+    if ((window.__luWait = (window.__luWait || 0) + 1) < 5) return;
+    var box = root.querySelector('[class*="ActionContent"]') || root.querySelector('section section') || root;
+    box.insertBefore(build(), box.firstChild);
   }
   setInterval(tick, 600); document.addEventListener('DOMContentLoaded', tick);
 })();
