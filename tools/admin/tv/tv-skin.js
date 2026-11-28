@@ -24,11 +24,11 @@
   var css = '' +
     '#home{background:radial-gradient(ellipse at 85% -10%,#e9e3ff 0%,rgba(233,227,255,0) 55%),radial-gradient(ellipse at 0% 100%,#dfeeff 0%,rgba(223,238,255,0) 50%),#f7f6fd;color:' + INK + '}' +
     /* top bar */
-    '#home .top{height:6vw;padding:0 2.6vw 0 2vw;background:none;gap:1vw}' +
-    '#home .top img{width:3.6vw;height:3.6vw;border-radius:50%;background:#efe9ff;box-shadow:0 .3vw .8vw rgba(124,58,237,.18);margin:0}' +
-    '#home .top b{font-size:1.9vw;color:' + INK + ';flex:none}' +
-    '#home .top .btn{font:700 1.25vw "Baloo Bhaijaan 2",Tahoma,sans-serif;border-radius:5vw;padding:.55vw 1.7vw;margin:0;background:#fff;color:' + INK + ';border:.15vw solid #e7e3f8;box-shadow:0 .3vw .9vw rgba(30,27,75,.07)}' +
-    '#home .top .btn.focus{background:' + PUR + ';color:#fff;border-color:' + PUR + ';box-shadow:0 0 0 .3vw rgba(124,58,237,.25)}' +
+    '#home>.top{height:6vw;padding:0 2.6vw 0 2vw;background:none;gap:1vw}' +
+    '#home>.top img{width:3.6vw;height:3.6vw;border-radius:50%;background:#efe9ff;box-shadow:0 .3vw .8vw rgba(124,58,237,.18);margin:0}' +
+    '#home>.top b{font-size:1.9vw;color:' + INK + ';flex:none}' +
+    '#home>.top .btn{font:700 1.25vw "Baloo Bhaijaan 2",Tahoma,sans-serif;border-radius:5vw;padding:.55vw 1.7vw;margin:0;background:#fff;color:' + INK + ';border:.15vw solid #e7e3f8;box-shadow:0 .3vw .9vw rgba(30,27,75,.07)}' +
+    '#home>.top .btn.focus{background:' + PUR + ';color:#fff;border-color:' + PUR + ';box-shadow:0 0 0 .3vw rgba(124,58,237,.25)}' +
     '#lsSp{flex:1}' +
     '#lsLogo{display:flex;align-items:center;gap:.5vw;direction:ltr}' +
     '#lsLogo .w{font:900 2.5vw/1 "Baloo Bhaijaan 2",Tahoma,sans-serif;color:#ffc61a;-webkit-text-stroke:.12vw #3b2a8f;text-shadow:0 .2vw 0 #3b2a8f}' +
@@ -123,7 +123,7 @@
 
   /* ---------- top bar + banner button ---------- */
   function topBar() {
-    var top = document.querySelector('#home .top'); if (!top) return;
+    var top = document.querySelector('#home>.top'); if (!top) return;
     if (!$('lsSp')) { var sp = document.createElement('div'); sp.id = 'lsSp'; top.appendChild(sp); }
     if (!$('lsLogo')) { var d = document.createElement('div'); d.id = 'lsLogo'; d.innerHTML = '<span class="w">LOLO</span><span class="tv">TV</span>'; top.appendChild(d); }
     // order (RTL): avatar + hello | account | kid sections | space | logo
@@ -146,7 +146,7 @@
     sIt = [].slice.call(side.querySelectorAll('.si'));
     sIt.forEach(function (el, i) { el.onclick = function () { sideGo(i); }; });
   }
-  function syncHome() { var h = $('home'); document.body.classList.toggle('lsHome', !!(h && h.classList.contains('on'))); }
+  function syncHome() { var h = $('home'); if (!document.body) return; document.body.classList.toggle('lsHome', !!(h && h.classList.contains('on'))); }
   setInterval(syncHome, 300);
   function sideSet(i) { sIt.forEach(function (el) { el.classList.remove('fx'); }); sF = Math.max(0, Math.min(sIt.length - 1, i)); if (sIt[sF]) sIt[sF].classList.add('fx'); }
   function sideOpen() { if (!sIt.length) return; sideOn = true; if (window.lolo_pv) window.lolo_pv(''); var c = curCard(); if (c) c.classList.remove('focus'); sideSet(sF); }
@@ -188,5 +188,8 @@
     var el = e.target && e.target.closest ? e.target.closest('#rows .card') : null; var t = tileTarget(el);
     if (t) { e.preventDefault(); e.stopImmediatePropagation(); jumpTo(t); }
   }, true);
+  // if the home was drawn before this file loaded (cached rows), draw it once more so the new parts appear
+  function rerun() { var h = $('home'); if (!$('lsSide') && window.loloTvGoHome && h && h.classList.contains('on') && document.querySelector('#rows .card')) window.loloTvGoHome(); }
+  window.addEventListener('load', function () { setTimeout(rerun, 50); setTimeout(rerun, 1500); });
   document.addEventListener('visibilitychange', function () { if (document.hidden && window.lolo_pv) window.lolo_pv(''); });
 })();

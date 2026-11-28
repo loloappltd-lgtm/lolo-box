@@ -32,6 +32,7 @@ const v = Date.now();
 s = s.replace(/<script src="\/tv\/tv-sections\.js\?v=\d+"><\/script>\n?/, '');
 s = s.replace(/<script src="\/tv\/tv-preview\.js\?v=[^"]*"><\/script>/, '<script src="/tv/tv-preview.js?v=' + v + '"></script>');
 const tag = '<script src="/tv/tv-sections.js?v=' + v + '"></script>\n<script src="/tv/tv-skin.js?v=' + v + '"></script>\n';
-const i = s.lastIndexOf('</body>'); s = s.slice(0, i) + tag + s.slice(i);
+s = s.replace(/<script src="\/tv\/tv-(sections|skin)\.js\?v=\d+"><\/script>\n?/g, '');
+const i = s.indexOf('</head>'); if (i < 0) { console.log('NO HEAD'); process.exit(1); } s = s.slice(0, i) + tag + s.slice(i); // in <head>: ready before the page draws the home
 fs.writeFileSync(idx, s);
 console.log('TV SKIN OK');
