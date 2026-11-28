@@ -65,6 +65,7 @@
   function ensureOv() { if (ov) return ov; ov = document.createElement('div'); ov.id = 'lsOv'; document.body.appendChild(ov); return ov; }
   function setF(i) { items.forEach(function (el) { el.classList.remove('fx'); }); fi = Math.max(0, Math.min(items.length - 1, i)); if (items[fi]) { items[fi].classList.add('fx'); if (items[fi].scrollIntoView) try { items[fi].scrollIntoView({ block: 'nearest' }); } catch (e) {} } }
   function close() { if (ov) ov.classList.remove('on'); mode = ''; }
+  window.loloTvSecOpen = function () { if (tok()) openGate(); };
 
   function openGate() {
     ensureOv(); mode = 'gate';
